@@ -12,7 +12,7 @@ CLASS zcl_sec_pfl_param_classify DEFINITION
 
     CLASS-METHODS classify
       IMPORTING
-        iv_name          TYPE string
+        iv_name          TYPE csequence
       RETURNING
         VALUE(rs_result) TYPE ty_result.
 ENDCLASS.

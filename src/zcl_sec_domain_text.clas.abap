@@ -13,28 +13,28 @@ CLASS zcl_sec_domain_text DEFINITION
 
     CLASS-METHODS from_list
       IMPORTING
-        iv_code        TYPE string
+        iv_code        TYPE csequence
         it_values      TYPE tt_value
       RETURNING
         VALUE(rv_text) TYPE string.
 
     CLASS-METHODS domain_text
       IMPORTING
-        iv_domain      TYPE string
-        iv_code        TYPE string
+        iv_domain      TYPE csequence
+        iv_code        TYPE csequence
         it_fallback    TYPE tt_value OPTIONAL
       RETURNING
         VALUE(rv_text) TYPE string.
 
     CLASS-METHODS global_change_text
       IMPORTING
-        iv_code        TYPE string
+        iv_code        TYPE csequence
       RETURNING
         VALUE(rv_text) TYPE string.
 
     CLASS-METHODS namespace_change_text
       IMPORTING
-        iv_code        TYPE string
+        iv_code        TYPE csequence
       RETURNING
         VALUE(rv_text) TYPE string.
 
@@ -77,21 +77,25 @@ CLASS zcl_sec_domain_text IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD domain_text.
+    DATA lv_domain TYPE string.
+    DATA lv_code TYPE string.
     DATA lv_text TYPE dd07t-ddtext.
+    lv_domain = iv_domain.
+    lv_code = iv_code.
     SELECT SINGLE ddtext
       FROM dd07t
-      WHERE domname = @iv_domain
+      WHERE domname = @lv_domain
         AND ddlanguage = @sy-langu
         AND as4local = 'A'
-        AND domvalue_l = @iv_code
+        AND domvalue_l = @lv_code
       INTO @lv_text.
     IF sy-subrc <> 0 AND sy-langu <> 'E'.
       SELECT SINGLE ddtext
         FROM dd07t
-        WHERE domname = @iv_domain
+        WHERE domname = @lv_domain
           AND ddlanguage = 'E'
           AND as4local = 'A'
-          AND domvalue_l = @iv_code
+          AND domvalue_l = @lv_code
         INTO @lv_text.
     ENDIF.
     IF sy-subrc = 0 AND lv_text IS NOT INITIAL.
