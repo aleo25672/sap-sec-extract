@@ -10,7 +10,7 @@ Activate this package on S/4HANA 1909 (ABAP platform 7.54) or later, on-premise 
 
 Published service:
 
-`/sap/opu/odata4/sap/zapi_sec_settings_o4/srvd/sap/zapi_sec_settings/0001/`
+`/sap/opu/odata4/sap/zapi_sec_settings/srvd/sap/zapi_sec_settings/0001/`
 
 | Entity set | Source | What a row is |
 | --- | --- | --- |
@@ -112,13 +112,9 @@ GET .../ProfileParameterChanges?$filter=ChangeDate ge 2026-01-01 and ParameterNa
 
 Pull the repository with abapGit into package `ZSEC_SETTINGS`, master language English, and activate the imported objects.
 
-The service binding is not in the repository. abapGit creates it through a workbench BAdI that has no implementation on S/4HANA 1909, which stops the pull with "No implementation was selected for the current BAdI". Create the binding in ABAP Development Tools after the pull:
+The service binding is not in the repository. abapGit creates a binding through a workbench BAdI that has no implementation on S/4HANA 1909, and that import stops the pull. Create it in ABAP Development Tools: binding `ZAPI_SEC_SETTINGS`, type OData V4 - Web API, service `ZAPI_SEC_SETTINGS`, version `0001`, then publish it. The binding and the service definition share the name and are different object types.
 
-1. If a failed binding `ZAPI_SEC_SETTINGS_O4` already exists, delete it.
-2. Create service binding `ZAPI_SEC_SETTINGS_O4`, binding type OData V4 - Web API, service `ZAPI_SEC_SETTINGS`, version `0001`.
-3. Publish the binding locally.
-
-On a later pull, keep `ZAPI_SEC_SETTINGS_O4` if abapGit offers to remove objects that are not in the repository.
+A pull of the current repository does not import a binding, so that BAdI error does not occur. On a later pull, keep the binding when abapGit offers to remove objects that are not in the repository.
 
 Run ABAP Unit on package `ZSEC_SETTINGS`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, and an authorization failure that does not read profile parameters. They do not read the kernel or the database.
 
