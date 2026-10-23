@@ -5,6 +5,12 @@ CLASS zcl_sec_pfl_param_source DEFINITION
 
   PUBLIC SECTION.
     INTERFACES zif_sec_pfl_param_source.
+
+    CLASS-METHODS dynamic_flag
+      IMPORTING
+        iv_value      TYPE csequence
+      RETURNING
+        VALUE(rv_yes) TYPE abap_bool.
 ENDCLASS.
 
 
@@ -70,10 +76,20 @@ CLASS zcl_sec_pfl_param_source IMPLEMENTATION.
         ls_row-parameter_type = ls_meta-type.
         ls_row-unit = ls_meta-unit.
         ls_row-restriction_values = ls_meta-restriction_values.
-        ls_row-dynamically_changeable = xsdbool( ls_meta-is_dynamic = 'X' OR ls_meta-is_dynamic = '1' ).
+        " IS_DYNAMIC is numeric text. Comparing it with c uses packed type and
+        " raises CONVT_NO_NUMBER on the literal X. Copy it to a character first.
+        DATA lv_dynamic TYPE c LENGTH 1.
+        lv_dynamic = ls_meta-is_dynamic.
+        ls_row-dynamically_changeable = dynamic_flag( lv_dynamic ).
       ENDIF.
 
       APPEND ls_row TO rt_parameters.
     ENDLOOP.
+  ENDMETHOD.
+
+  METHOD dynamic_flag.
+    DATA lv_flag TYPE c LENGTH 1.
+    lv_flag = to_upper( condense( iv_value ) ).
+    rv_yes = xsdbool( lv_flag = 'X' OR lv_flag = '1' ).
   ENDMETHOD.
 ENDCLASS.
