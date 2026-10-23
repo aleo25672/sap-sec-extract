@@ -10,7 +10,7 @@ Activate this package on S/4HANA 1909 (ABAP platform 7.54) or later, on-premise 
 
 Published service:
 
-`/sap/opu/odata4/sap/zapi_sec_settings/srvd/sap/zapi_sec_settings/0001/`
+`/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`
 
 | Entity set | Source | What a row is |
 | --- | --- | --- |
