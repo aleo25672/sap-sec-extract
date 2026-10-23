@@ -1,0 +1,16 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "PolicyName": "RFC_USERS",
+      "Client": "100",
+      "Description": "Shorter password for technical users",
+      "CreatedBy": "BASIS",
+      "CreatedOn": 20260115120000,
+      "ChangedBy": "BASIS",
+      "ChangedOn": 20260115120000,
+      "AssignedUserCount": 4,
+      "UsersCounted": "X"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "Client": "100",
+      "ClientName": "Production",
+      "ClientRole": "P",
+      "ClientRoleText": "Production",
+      "ClientSpecificChanges": "2",
+      "ClientSpecificChangesText": "No changes allowed",
+      "CrossClientChanges": "3",
+      "CrossClientChangesText": "No repository and no cross-client customizing",
+      "ClientCopyProtection": "X",
+      "ClientCopyProtectionText": "No overwriting",
+      "CattAllowed": "",
+      "CattAllowedText": "eCATT and CATT not allowed",
+      "UpgradeCascadeLocked": "",
+      "TemporarilyLocked": "",
+      "LogicalSystem": "S4QCLNT100",
+      "LastChangedBy": "BASIS",
+      "LastChangedOn": "2026-01-15",
+      "TableChangeLogging": "X"
+    }
+  ]
+}

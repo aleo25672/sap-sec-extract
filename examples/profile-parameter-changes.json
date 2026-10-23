@@ -1,0 +1,18 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. PAHI stores a 64-character value and a date. It does not store the user or the time.",
+  "value": [
+    {
+      "HostName": "s4qhost",
+      "ParameterName": "login/min_password_lng",
+      "ChangeDate": "2026-01-15",
+      "ParameterType": "S",
+      "SystemId": "S4",
+      "ParameterState": "C",
+      "ParameterStateText": "C",
+      "ParameterTypeText": "S",
+      "ParameterValue": "10",
+      "SecurityRelevant": "X",
+      "SecurityArea": "Login"
+    }
+  ]
+}

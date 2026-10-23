@@ -1,0 +1,9 @@
+@EndUserText.label: 'Security settings'
+define service ZAPI_SEC_SETTINGS {
+  expose ZC_SEC_PFL_PARAM  as SecurityProfileParameters;
+  expose ZC_SEC_POLICY     as SecurityPolicies;
+  expose ZC_SEC_POLICY_ATTR as SecurityPolicyAttributes;
+  expose ZC_SEC_CLIENT     as ClientSettings;
+  expose ZC_SEC_SYS_CHANGE as SystemChangeOptions;
+  expose ZC_SEC_PFL_CHG    as ProfileParameterChanges;
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_SRVB" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <SRVB>
+    <METADATA>
+     <NAME>ZAPI_SEC_SETTINGS_O4</NAME>
+     <TYPE>ODATA</TYPE>
+     <DESCRIPTION>Security settings OData V4 Web API</DESCRIPTION>
+     <BINDING_VERSION>V4</BINDING_VERSION>
+     <BINDING_TYPE>ODATA</BINDING_TYPE>
+     <CATEGORY>1</CATEGORY>
+    </METADATA>
+    <SERVICES>
+     <item>
+      <NAME>ZAPI_SEC_SETTINGS</NAME>
+      <TYPE>SRVD</TYPE>
+      <VERSION>0001</VERSION>
+     </item>
+    </SERVICES>
+   </SRVB>
+  </asx:values>
+ </asx:abap>
+</abapGit>

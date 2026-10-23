@@ -1,0 +1,23 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. The caller applies the global lock to component and namespace rows.",
+  "value": [
+    {
+      "SettingScope": "Global",
+      "ObjectName": "",
+      "ChangeOption": "N",
+      "ChangeOptionText": "Not modifiable"
+    },
+    {
+      "SettingScope": "SoftwareComponent",
+      "ObjectName": "SAP_BASIS",
+      "ChangeOption": "N",
+      "ChangeOptionText": "Not modifiable, enhancements not allowed"
+    },
+    {
+      "SettingScope": "Namespace",
+      "ObjectName": "/CUST/",
+      "ChangeOption": "X",
+      "ChangeOptionText": "Modifiable"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. ValueOrigin states the derivation. The caller compares EffectiveValue with the profile parameter row.",
+  "value": [
+    {
+      "PolicyName": "RFC_USERS",
+      "AttributeName": "MIN_PASSWORD_LENGTH",
+      "ValueOrigin": "Policy",
+      "EffectiveValue": 8,
+      "DefaultValue": 6,
+      "ProfileParameter": "login/min_password_lng",
+      "Description": "Minimum password length",
+      "Client": "100"
+    },
+    {
+      "PolicyName": "RFC_USERS",
+      "AttributeName": "MIN_PASSWORD_LOWERCASE",
+      "ValueOrigin": "KernelDefault",
+      "EffectiveValue": 0,
+      "DefaultValue": 0,
+      "ProfileParameter": "login/min_password_lowercase",
+      "Description": "Minimum number of lowercase letters",
+      "Client": "100"
+    }
+  ]
+}

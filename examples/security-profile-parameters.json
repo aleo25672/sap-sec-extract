@@ -1,0 +1,22 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "ApplicationServer": "s4qhost_S4Q_21",
+      "ParameterName": "login/min_password_lng",
+      "KernelDefaultValueRaw": "6",
+      "KernelDefaultValue": "6",
+      "InstanceProfileValue": "10",
+      "Description": "Minimum password length",
+      "ParameterType": 1,
+      "Unit": "",
+      "RestrictionValues": "",
+      "DynamicallyChangeable": "X",
+      "ParameterStatus": 2,
+      "StatusText": "2",
+      "SecurityRelevant": "X",
+      "SecurityArea": "Login",
+      "SystemId": "S4Q"
+    }
+  ]
+}
