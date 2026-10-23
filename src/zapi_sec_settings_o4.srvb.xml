@@ -14,7 +14,6 @@
     <SERVICES>
      <item>
       <NAME>ZAPI_SEC_SETTINGS</NAME>
-      <TYPE>SRVD</TYPE>
       <VERSION>0001</VERSION>
      </item>
     </SERVICES>

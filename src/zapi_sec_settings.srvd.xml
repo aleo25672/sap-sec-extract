@@ -4,8 +4,10 @@
   <asx:values>
    <SRVD>
     <NAME>ZAPI_SEC_SETTINGS</NAME>
-    <SRVTYPE>S</SRVTYPE>
-    <VERSION>0001</VERSION>
+    <TYPE>SRVD</TYPE>
+    <DESCRIPTION>Security settings</DESCRIPTION>
+    <MASTER_LANGUAGE>EN</MASTER_LANGUAGE>
+    <LANGUAGE>EN</LANGUAGE>
    </SRVD>
   </asx:values>
  </asx:abap>
