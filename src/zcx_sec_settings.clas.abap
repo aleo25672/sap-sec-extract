@@ -5,9 +5,7 @@ CLASS zcx_sec_settings DEFINITION
   CREATE PUBLIC.
 
   PUBLIC SECTION.
-    INTERFACES if_t100_message.
-    INTERFACES if_t100_dyn_msg.
-
+    " IF_T100_MESSAGE and IF_T100_DYN_MSG come from CX_RAP_QUERY_PROVIDER.
     DATA filter_name TYPE string READ-ONLY.
 
     CONSTANTS:
