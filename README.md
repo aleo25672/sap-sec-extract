@@ -110,14 +110,15 @@ GET .../ProfileParameterChanges?$filter=ChangeDate ge 2026-01-01 and ParameterNa
 
 ## Import
 
-Pull the repository with abapGit into package `ZSEC_SETTINGS`, master language English.
+Pull the repository with abapGit into package `ZSEC_SETTINGS`, master language English, and activate the imported objects.
 
-If the service binding object does not deserialize, create it in ABAP Development Tools:
+The service binding is not in the repository. abapGit creates it through a workbench BAdI that has no implementation on S/4HANA 1909, which stops the pull with "No implementation was selected for the current BAdI". Create the binding in ABAP Development Tools after the pull:
 
-1. Activate the message class, exception, interfaces, classes, and custom entities.
-2. Create service definition `ZAPI_SEC_SETTINGS` from `src/zapi_sec_settings.srvd.srvdsrv`.
-3. Create service binding `ZAPI_SEC_SETTINGS_O4`, binding type OData V4 - Web API, service `ZAPI_SEC_SETTINGS`, version `0001`.
-4. Publish the binding locally.
+1. If a failed binding `ZAPI_SEC_SETTINGS_O4` already exists, delete it.
+2. Create service binding `ZAPI_SEC_SETTINGS_O4`, binding type OData V4 - Web API, service `ZAPI_SEC_SETTINGS`, version `0001`.
+3. Publish the binding locally.
+
+On a later pull, keep `ZAPI_SEC_SETTINGS_O4` if abapGit offers to remove objects that are not in the repository.
 
 Run ABAP Unit on package `ZSEC_SETTINGS`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, and an authorization failure that does not read profile parameters. They do not read the kernel or the database.
 
