@@ -117,12 +117,13 @@ CLASS zcl_sec_domain_text IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD namespace_change_text.
-    IF to_upper( condense( iv_code ) ) = 'X'.
+    DATA(lv_code) = condense( iv_code ).
+    IF to_upper( lv_code ) = 'X'.
       rv_text = 'Modifiable'.
-    ELSEIF condense( iv_code ) IS INITIAL.
+    ELSEIF lv_code IS INITIAL.
       rv_text = 'Not modifiable'.
     ELSE.
-      rv_text = iv_code.
+      rv_text = lv_code.
     ENDIF.
   ENDMETHOD.
 
