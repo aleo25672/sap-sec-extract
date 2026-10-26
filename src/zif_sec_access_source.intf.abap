@@ -24,7 +24,7 @@ INTERFACE zif_sec_access_source
       rolename             TYPE agr_users-agr_name,
       validfrom            TYPE agr_users-from_dat,
       validto              TYPE agr_users-to_dat,
-      exclusive            TYPE agr_users-exclude,
+      excluded             TYPE agr_users-exclude,
       changedon            TYPE agr_users-change_dat,
       fromcompositerole    TYPE agr_users-col_flag,
       fromorgmanagement    TYPE agr_users-org_flag,

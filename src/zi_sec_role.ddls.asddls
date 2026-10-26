@@ -1,6 +1,5 @@
 @AbapCatalog.sqlViewName: 'ZISEC_ROLE'
 @AbapCatalog.compiler.compareFilter: true
-@AbapCatalog.preserveKey: true
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Security access role'
 define view ZI_SEC_ROLE

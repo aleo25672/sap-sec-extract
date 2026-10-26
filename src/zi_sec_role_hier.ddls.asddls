@@ -1,6 +1,5 @@
 @AbapCatalog.sqlViewName: 'ZISEC_ROLE_HIER'
 @AbapCatalog.compiler.compareFilter: true
-@AbapCatalog.preserveKey: true
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Security access role hierarchy'
 define view ZI_SEC_ROLE_HIER

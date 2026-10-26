@@ -1,6 +1,5 @@
 @AbapCatalog.sqlViewName: 'ZISEC_USER'
 @AbapCatalog.compiler.compareFilter: true
-@AbapCatalog.preserveKey: true
 @AccessControl.authorizationCheck: #NOT_REQUIRED
 @EndUserText.label: 'Security access user'
 define view ZI_SEC_USER

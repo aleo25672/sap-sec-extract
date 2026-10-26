@@ -7,7 +7,7 @@ define custom entity ZC_SEC_ROLE_ASSIGN
       Client              : abap.clnt;
       ValidFrom           : abap.dats;
       ValidTo             : abap.dats;
-      Exclusive           : abap.char(1);
+      Excluded            : abap.char(1);
       ChangedOn           : abap.dats;
       FromCompositeRole   : abap.char(1);
       FromOrgManagement   : abap.char(1);

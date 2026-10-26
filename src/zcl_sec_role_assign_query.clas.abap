@@ -13,7 +13,7 @@ CLASS zcl_sec_role_assign_query DEFINITION
         client              TYPE mandt,
         validfrom           TYPE dats,
         validto             TYPE dats,
-        exclusive           TYPE c LENGTH 1,
+        excluded            TYPE c LENGTH 1,
         changedon           TYPE dats,
         fromcompositerole   TYPE c LENGTH 1,
         fromorgmanagement   TYPE c LENGTH 1,
@@ -60,7 +60,7 @@ CLASS zcl_sec_role_assign_query IMPLEMENTATION.
         client            = sy-mandt
         validfrom         = ls_raw-validfrom
         validto           = ls_raw-validto
-        exclusive         = ls_raw-exclusive
+        excluded          = ls_raw-excluded
         changedon         = ls_raw-changedon
         fromcompositerole = ls_raw-fromcompositerole
         fromorgmanagement = ls_raw-fromorgmanagement ) TO rt_rows.

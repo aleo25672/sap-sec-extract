@@ -7,7 +7,7 @@
       "Client": "100",
       "ValidFrom": "2024-01-01",
       "ValidTo": "9999-12-31",
-      "Exclusive": "",
+      "Excluded": "",
       "ChangedOn": "2024-01-15",
       "FromCompositeRole": "",
       "FromOrgManagement": ""
