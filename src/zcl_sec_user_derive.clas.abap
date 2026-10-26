@@ -50,7 +50,7 @@ CLASS zcl_sec_user_derive DEFINITION
       IMPORTING
         iv_yes         TYPE abap_bool
       RETURNING
-        VALUE(rv_flag) TYPE c LENGTH 1.
+        VALUE(rv_flag) TYPE abap_bool.
 ENDCLASS.
 
 

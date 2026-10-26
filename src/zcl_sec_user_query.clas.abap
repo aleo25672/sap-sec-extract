@@ -65,7 +65,7 @@ CLASS zcl_sec_user_query IMPLEMENTATION.
     mo_auth->check_user_display( ).
     DATA(lt_raw) = mo_source->read_users( ).
     LOOP AT lt_raw INTO DATA(ls_raw).
-      DATA(ls_lock) = zcl_sec_user_derive=>locks( ls_raw-lockflag ).
+      DATA(ls_lock) = zcl_sec_user_derive=>locks( CONV i( ls_raw-lockflag ) ).
       APPEND VALUE ty_row(
         userid                  = ls_raw-userid
         client                  = sy-mandt
