@@ -179,11 +179,24 @@ A read is the logon client. There is no RFC to other clients or other applicatio
 
 ### Import
 
-The access objects are in package `ZSEC_SETTINGS`, in the same abapGit repository as the settings extract. Pull the repository and activate `ZAPI_SEC_ACCESS` before creating the binding. `Client` on the access entities is a 3-character client id. A field typed as `abap.clnt` cannot be modeled in this service unless it is the key, which is how `ClientSettings` exposes every client.
+The access objects are in package `ZSEC_SETTINGS`, in the same abapGit repository as the settings extract. `Client` on the access entities is a 3-character client id. A field typed as `abap.clnt` cannot be modeled in this service unless it is the key, which is how `ClientSettings` exposes every client.
 
-If activation reports `The object SRVDSRV ZAPI_SEC_ACCESS does not exist`, an earlier pull stored the service definition header and left out its source. Delete `R3TR SRVD ZAPI_SEC_ACCESS` from the package in ABAP Development Tools or SE80. When the object cannot be opened, delete that directory entry in SE03 (Change Object Directory Entries), then pull again.
+The service definition is not in the repository. abapGit on this release raises `An exception was raised` while creating a new service definition, and that stops the import of `ZAPI_SEC_ACCESS`. Create it in ABAP Development Tools after the pull: name `ZAPI_SEC_ACCESS`, package `ZSEC_SETTINGS`, then activate.
 
-Create the service binding after the service definition is active: binding `ZAPI_SEC_ACCESS`, type OData V4 - Web API, service `ZAPI_SEC_ACCESS`, version `0001`, then publish it. Keep the binding when abapGit offers to remove objects that are not in the repository.
+```cds
+@EndUserText.label: 'Security access'
+define service ZAPI_SEC_ACCESS {
+  expose ZC_SEC_USER        as Users;
+  expose ZC_SEC_ROLE_ASSIGN as RoleAssignments;
+  expose ZC_SEC_PROF_ASSIGN as ProfileAssignments;
+  expose ZC_SEC_ROLE        as Roles;
+  expose ZC_SEC_ROLE_HIER   as RoleHierarchy;
+}
+```
+
+If a previous pull left a broken `R3TR SRVD ZAPI_SEC_ACCESS`, delete it before this pull. In ADT or SE80 when it opens; in SE03 (Change Object Directory Entries) when it does not. abapGit will offer to remove the service definition on later pulls because it is not in the repository. Keep it, as with the binding.
+
+Create the service binding after the service definition is active: binding `ZAPI_SEC_ACCESS`, type OData V4 - Web API, service `ZAPI_SEC_ACCESS`, version `0001`, then publish it.
 
 ## Repositories
 
