@@ -9,7 +9,7 @@ CLASS zcl_sec_user_query DEFINITION
     TYPES:
       BEGIN OF ty_row,
         userid                  TYPE c LENGTH 12,
-        client                  TYPE mandt,
+        client                  TYPE c LENGTH 3,
         usertype                TYPE c LENGTH 1,
         usertypetext            TYPE c LENGTH 60,
         usergroup               TYPE c LENGTH 12,

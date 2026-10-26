@@ -9,7 +9,7 @@ CLASS zcl_sec_role_query DEFINITION
     TYPES:
       BEGIN OF ty_row,
         rolename    TYPE c LENGTH 30,
-        client      TYPE mandt,
+        client      TYPE c LENGTH 3,
         parentrole  TYPE c LENGTH 30,
         description TYPE c LENGTH 80,
         createdby   TYPE c LENGTH 12,

@@ -10,7 +10,7 @@ CLASS zcl_sec_role_assign_query DEFINITION
       BEGIN OF ty_row,
         userid              TYPE c LENGTH 12,
         rolename            TYPE c LENGTH 30,
-        client              TYPE mandt,
+        client              TYPE c LENGTH 3,
         validfrom           TYPE dats,
         validto             TYPE dats,
         excluded            TYPE c LENGTH 1,

@@ -3,7 +3,7 @@
 define custom entity ZC_SEC_USER
 {
   key UserId                   : abap.char(12);
-      Client                   : abap.clnt;
+      Client                   : abap.char(3);
       UserType                 : abap.char(1);
       UserTypeText             : abap.char(60);
       UserGroup                : abap.char(12);

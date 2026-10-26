@@ -11,7 +11,7 @@ CLASS zcl_sec_prof_assign_query DEFINITION
         userid         TYPE c LENGTH 12,
         profilename    TYPE c LENGTH 12,
         profilesource  TYPE c LENGTH 13,
-        client         TYPE mandt,
+        client         TYPE c LENGTH 3,
         referenceuser  TYPE c LENGTH 12,
       END OF ty_row,
       tt_row TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.

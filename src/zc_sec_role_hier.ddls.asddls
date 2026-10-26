@@ -4,5 +4,5 @@ define custom entity ZC_SEC_ROLE_HIER
 {
   key CompositeRole : abap.char(30);
   key SingleRole    : abap.char(30);
-      Client        : abap.clnt;
+      Client        : abap.char(3);
 }

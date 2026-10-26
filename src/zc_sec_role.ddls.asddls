@@ -3,7 +3,7 @@
 define custom entity ZC_SEC_ROLE
 {
   key RoleName     : abap.char(30);
-      Client       : abap.clnt;
+      Client       : abap.char(3);
       ParentRole   : abap.char(30);
       Description  : abap.char(80);
       CreatedBy    : abap.char(12);

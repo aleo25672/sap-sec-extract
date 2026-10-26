@@ -4,7 +4,7 @@ define custom entity ZC_SEC_ROLE_ASSIGN
 {
   key UserId              : abap.char(12);
   key RoleName            : abap.char(30);
-      Client              : abap.clnt;
+      Client              : abap.char(3);
       ValidFrom           : abap.dats;
       ValidTo             : abap.dats;
       Excluded            : abap.char(1);

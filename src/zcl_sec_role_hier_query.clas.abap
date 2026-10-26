@@ -10,7 +10,7 @@ CLASS zcl_sec_role_hier_query DEFINITION
       BEGIN OF ty_row,
         compositerole TYPE c LENGTH 30,
         singlerole    TYPE c LENGTH 30,
-        client        TYPE mandt,
+        client        TYPE c LENGTH 3,
       END OF ty_row,
       tt_row TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
 
