@@ -1,0 +1,14 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "RoleName": "Z_FI_DISPLAY",
+      "Counter": "000001",
+      "Client": "100",
+      "ProfileName": "T-FI000001",
+      "Variant": "",
+      "Generated": "X",
+      "Version": "A"
+    }
+  ]
+}

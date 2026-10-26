@@ -61,4 +61,10 @@ CLASS zcl_sec_access_db IMPLEMENTATION.
       FROM zi_sec_role_hier
       INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
   ENDMETHOD.
+
+  METHOD zif_sec_access_source~read_role_profiles.
+    SELECT rolename, counter, profilename, variant, generated, version
+      FROM zi_sec_role_profile
+      INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
+  ENDMETHOD.
 ENDCLASS.

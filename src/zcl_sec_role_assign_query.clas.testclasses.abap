@@ -21,6 +21,9 @@ CLASS ltcl_source IMPLEMENTATION.
   METHOD zif_sec_access_source~read_role_hierarchy.
     RETURN.
   ENDMETHOD.
+  METHOD zif_sec_access_source~read_role_profiles.
+    RETURN.
+  ENDMETHOD.
 ENDCLASS.
 
 

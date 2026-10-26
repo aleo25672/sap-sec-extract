@@ -123,7 +123,7 @@ One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch 
 5. If an earlier pull left service definition `ZAPI_SEC_ACCESS` without a source, delete `R3TR SRVD ZAPI_SEC_ACCESS` before pulling. Delete it in ABAP Development Tools or SE80 when the object opens. When it does not open, delete that directory entry in SE03, Change Object Directory Entries.
 6. Pull, then activate the imported objects.
 
-The interface views `ZI_SEC_USER`, `ZI_SEC_ROLE_ASSIGN`, `ZI_SEC_PROF_ASSIGN`, `ZI_SEC_ROLE`, and `ZI_SEC_ROLE_HIER` activate with a warning. Their tables (`USR02`, `UST04`, `AGR_USERS`, `AGR_DEFINE`, `AGR_AGRS`) are client-dependent, and the logon client is applied by the session. The warning leaves the views active.
+The interface views `ZI_SEC_USER`, `ZI_SEC_ROLE_ASSIGN`, `ZI_SEC_PROF_ASSIGN`, `ZI_SEC_ROLE`, `ZI_SEC_ROLE_HIER`, and `ZI_SEC_ROLE_PROFILE` activate with a warning. Their tables (`USR02`, `UST04`, `AGR_USERS`, `AGR_DEFINE`, `AGR_AGRS`, `AGR_1016`) are client-dependent, and the logon client is applied by the session. The warning leaves the views active.
 
 The pull imports service definition `ZAPI_SEC_SETTINGS`. Create service definition `ZAPI_SEC_ACCESS` in ABAP Development Tools, using the source below. Leaving it in the repository makes the pull raise `An exception was raised` and report `Import of object ZAPI_SEC_ACCESS failed`.
 
@@ -141,12 +141,13 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_USER        as Users;
   expose ZC_SEC_ROLE_ASSIGN as RoleAssignments;
   expose ZC_SEC_PROF_ASSIGN as ProfileAssignments;
-  expose ZC_SEC_ROLE        as Roles;
-  expose ZC_SEC_ROLE_HIER   as RoleHierarchy;
+  expose ZC_SEC_ROLE         as Roles;
+  expose ZC_SEC_ROLE_HIER    as RoleHierarchy;
+  expose ZC_SEC_ROLE_PROFILE as RoleProfiles;
 }
 ```
 
-Activate it. `Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key.
+Activate it. `Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key. When the definition already exists, add the `RoleProfiles` line to its source and activate it again. The binding stays as it is.
 
 **Service binding `ZAPI_SEC_SETTINGS`.** New > Service Binding. Name `ZAPI_SEC_SETTINGS`, package `$ZEVOLVER_SEC2F`, binding type OData V4 - Web API, service `ZAPI_SEC_SETTINGS`, binding version `0001`. Activate, then choose Publish. The binding and the service definition share the name and are different object types. The published path is `/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`.
 
@@ -173,6 +174,7 @@ Published service:
 | `ProfileAssignments` | `UST04`, and the reference user's profiles | One profile on one user |
 | `Roles` | `AGR_DEFINE`, `AGR_TEXTS` line `00000` | The role header and its first description line |
 | `RoleHierarchy` | `AGR_AGRS` | One composite role and one single role |
+| `RoleProfiles` | `AGR_1016` | One generated profile of one single role |
 
 `Users` carries the user type, user group, validity, the raw `USR02-UFLAG`, the three lock bits, the password state, the password-hash version, the last logon, who created the user, the security policy, and the reference user. `SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service. `Client` is the logon client on every row and joins to `ClientSettings`.
 
@@ -188,6 +190,8 @@ The password hash is not in the extract. The person name and the email address a
 
 `Roles.Description` is `AGR_TEXTS` line `00000` in the logon language. When that line is missing, the English line is used. `ParentRole` is `AGR_DEFINE-PARENT_AGR`.
 
+`RoleProfiles` is the generated profile of a single role. `ProfileName` joins to `ProfileAssignments.ProfileName`. `RoleName` joins to `RoleAssignments.RoleName` and to `Roles.RoleName`. A profile name is 12 characters, so it is a different value from the role name. One role has one row per profile, and `Counter` keeps those rows apart. `Version` `A` is the active profile, which the user comparison writes into `UST04`. `Version` `P` is the maintenance copy. `Generated` is `X` when profile generation wrote the row. A composite role has no row. `SAP_ALL` has no row: it was not generated from a role.
+
 ### Authorization
 
 A failed check is an OData error. The response is not an empty list. Each check requires the authorization for value `*`, so a caller who can display only some user groups or some roles does not receive a partial population.
@@ -197,7 +201,7 @@ A failed check is an OData error. The response is not an empty list. Each check 
 | `Users` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
 | `RoleAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
 | `ProfileAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_PRO` field `PROFILE` = `*` activity 03 |
-| `Roles`, `RoleHierarchy` | `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
+| `Roles`, `RoleHierarchy`, `RoleProfiles` | `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
 
 `S_USER_AGR` stores the role name in `ACT_GROUP`. `AGR_NAME` is the column on `AGR_USERS` and `AGR_DEFINE`. SU53 lists `ACTVT` and `ACT_GROUP` for this object. Profile `SAP_ALL` grants both fields as `*`.
 
@@ -211,6 +215,7 @@ GET .../RoleAssignments?$filter=UserId eq 'JSMITH' and FromCompositeRole eq 'X'
 GET .../ProfileAssignments?$filter=ProfileSource eq 'ReferenceUser'
 GET .../Roles?$filter=ParentRole eq 'Z_FI_TEMPLATE'
 GET .../RoleHierarchy?$filter=CompositeRole eq 'Z_FI_COMPOSITE'
+GET .../RoleProfiles?$filter=RoleName eq 'Z_FI_DISPLAY' and Version eq 'A'
 ```
 
 A read is the logon client. There is no RFC to other clients or other application servers.

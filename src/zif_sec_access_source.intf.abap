@@ -51,7 +51,16 @@ INTERFACE zif_sec_access_source
       compositerole TYPE agr_agrs-agr_name,
       singlerole    TYPE agr_agrs-child_agr,
     END OF ty_role_hierarchy,
-    tt_role_hierarchy TYPE STANDARD TABLE OF ty_role_hierarchy WITH EMPTY KEY.
+    tt_role_hierarchy TYPE STANDARD TABLE OF ty_role_hierarchy WITH EMPTY KEY,
+    BEGIN OF ty_role_profile,
+      rolename    TYPE agr_1016-agr_name,
+      counter     TYPE agr_1016-counter,
+      profilename TYPE agr_1016-profile,
+      variant     TYPE agr_1016-variant,
+      generated   TYPE agr_1016-generated,
+      version     TYPE agr_1016-pstate,
+    END OF ty_role_profile,
+    tt_role_profile TYPE STANDARD TABLE OF ty_role_profile WITH EMPTY KEY.
 
   METHODS read_users
     RETURNING VALUE(rt_rows) TYPE tt_user.
@@ -67,4 +76,7 @@ INTERFACE zif_sec_access_source
 
   METHODS read_role_hierarchy
     RETURNING VALUE(rt_rows) TYPE tt_role_hierarchy.
+
+  METHODS read_role_profiles
+    RETURNING VALUE(rt_rows) TYPE tt_role_profile.
 ENDINTERFACE.
