@@ -112,13 +112,13 @@ GET .../ProfileParameterChanges?$filter=ChangeDate ge 2026-01-01 and ParameterNa
 
 ## Pull and activate
 
-One abapGit pull loads both services into package `$ZEVOLVER_SEC2F`. The branch that contains the access extract is `cursor/sec-access-slice-1-74e4`. The master language is English. The package object stored in the repository is `ZSEC_SETTINGS`; this installation assigns the pulled objects to `$ZEVOLVER_SEC2F`.
+One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch `main`. The master language is English. The package object stored in the repository is `ZSEC_SETTINGS`; this installation assigns the pulled objects to `$ZEVOLVER_SEC2F`.
 
 ### abapGit
 
 1. Open abapGit (transaction `ZABAPGIT`).
 2. Add the GitHub repository `https://github.com/aleo25672/sap-sec-extract.git` as an online repository, or open it if it is already linked. The same commits are on the Cursor remote `evolver/sap-sec-extract`.
-3. Select branch `cursor/sec-access-slice-1-74e4`.
+3. Select branch `main`.
 4. Set the package to `$ZEVOLVER_SEC2F` and the master language to English.
 5. If an earlier pull left service definition `ZAPI_SEC_ACCESS` without a source, delete `R3TR SRVD ZAPI_SEC_ACCESS` before pulling. Delete it in ABAP Development Tools or SE80 when the object opens. When it does not open, delete that directory entry in SE03, Change Object Directory Entries.
 6. Pull, then activate the imported objects.
