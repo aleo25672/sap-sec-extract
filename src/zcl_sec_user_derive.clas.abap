@@ -60,10 +60,10 @@ CLASS zcl_sec_user_derive IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD locks.
-    DATA(lv_flag) = CONV i( iv_lock_flag ).
-    rs_lock-globally_locked = flag( xsdbool( ( lv_flag BIT-AND c_lock_global ) = c_lock_global ) ).
-    rs_lock-locally_locked = flag( xsdbool( ( lv_flag BIT-AND c_lock_local ) = c_lock_local ) ).
-    rs_lock-failed_logon_locked = flag( xsdbool( ( lv_flag BIT-AND c_lock_failed ) = c_lock_failed ) ).
+    " Each mask is one bit of the stored flag. Integer BIT-AND is rejected on this release.
+    rs_lock-globally_locked = flag( xsdbool( ( ( iv_lock_flag DIV c_lock_global ) MOD 2 ) = 1 ) ).
+    rs_lock-locally_locked = flag( xsdbool( ( ( iv_lock_flag DIV c_lock_local ) MOD 2 ) = 1 ) ).
+    rs_lock-failed_logon_locked = flag( xsdbool( ( ( iv_lock_flag DIV c_lock_failed ) MOD 2 ) = 1 ) ).
   ENDMETHOD.
 
   METHOD user_type_fallbacks.
