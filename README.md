@@ -179,7 +179,11 @@ A read is the logon client. There is no RFC to other clients or other applicatio
 
 ### Import
 
-The access objects are in package `ZSEC_SETTINGS`, in the same abapGit repository as the settings extract. Create the service binding in ABAP Development Tools: binding `ZAPI_SEC_ACCESS`, type OData V4 - Web API, service `ZAPI_SEC_ACCESS`, version `0001`, then publish it. Keep the binding when abapGit offers to remove objects that are not in the repository.
+The access objects are in package `ZSEC_SETTINGS`, in the same abapGit repository as the settings extract. Pull the repository and activate `ZAPI_SEC_ACCESS` before creating the binding. The service definition metadata carries source type `S`, which the import uses to write the service definition source.
+
+If activation reports `The object SRVDSRV ZAPI_SEC_ACCESS does not exist`, an earlier pull stored the service definition header and left out its source. Delete `R3TR SRVD ZAPI_SEC_ACCESS` from the package in ABAP Development Tools or SE80. When the object cannot be opened, delete that directory entry in SE03 (Change Object Directory Entries), then pull again.
+
+Create the service binding after the service definition is active: binding `ZAPI_SEC_ACCESS`, type OData V4 - Web API, service `ZAPI_SEC_ACCESS`, version `0001`, then publish it. Keep the binding when abapGit offers to remove objects that are not in the repository.
 
 ## Repositories
 
