@@ -215,7 +215,7 @@ A read is the logon client. There is no RFC to other clients or other applicatio
 
 ### Install
 
-Pull and the ADT objects for this service are in [Pull and activate](#pull-and-activate). The access service definition and both bindings are created in package `$ZEVOLVER_SEC2F` after the pull.
+The abapGit pull and the ADT objects for this service are in [Pull and activate](#pull-and-activate). The access service definition and both bindings are created in package `$ZEVOLVER_SEC2F` after the pull.
 
 ## Repositories
 
