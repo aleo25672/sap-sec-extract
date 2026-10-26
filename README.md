@@ -181,7 +181,7 @@ A read is the logon client. There is no RFC to other clients or other applicatio
 
 The access objects are in package `ZSEC_SETTINGS`, in the same abapGit repository as the settings extract. `Client` on the access entities is a 3-character client id. A field typed as `abap.clnt` cannot be modeled in this service unless it is the key, which is how `ClientSettings` exposes every client.
 
-The service definition is not in the repository. abapGit on this release raises `An exception was raised` while creating a new service definition, and that stops the import of `ZAPI_SEC_ACCESS`. Create it in ABAP Development Tools after the pull: name `ZAPI_SEC_ACCESS`, package `ZSEC_SETTINGS`, then activate.
+The service definition is not in the repository. abapGit on this release raises `An exception was raised` while creating a new service definition, and that stops the import of `ZAPI_SEC_ACCESS`. Create it in ABAP Development Tools after the pull, in the same package as the other pulled objects: name `ZAPI_SEC_ACCESS`, then activate.
 
 ```cds
 @EndUserText.label: 'Security access'
