@@ -22,9 +22,10 @@ CLASS zcl_sec_access_auth IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_sec_access_auth~check_role_display.
+    " S_USER_AGR calls the role ACT_GROUP. AGR_NAME is the column on AGR_USERS.
     AUTHORITY-CHECK OBJECT 'S_USER_AGR'
-      ID 'ACTVT'    FIELD '03'
-      ID 'AGR_NAME' FIELD '*'.
+      ID 'ACTVT'     FIELD '03'
+      ID 'ACT_GROUP' FIELD '*'.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE zcx_sec_access
         EXPORTING

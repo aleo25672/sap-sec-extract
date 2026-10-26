@@ -194,10 +194,12 @@ A failed check is an OData error. The response is not an empty list. Each check 
 
 | Entity sets | Check |
 | --- | --- |
-| `Users` | `S_USER_GRP` activity 03 for user group `*` |
-| `RoleAssignments` | `S_USER_GRP` activity 03 for user group `*`, and `S_USER_AGR` activity 03 for role `*` |
-| `ProfileAssignments` | `S_USER_GRP` activity 03 for user group `*`, and `S_USER_PRO` activity 03 for profile `*` |
-| `Roles`, `RoleHierarchy` | `S_USER_AGR` activity 03 for role `*` |
+| `Users` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
+| `RoleAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
+| `ProfileAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_PRO` field `PROFILE` = `*` activity 03 |
+| `Roles`, `RoleHierarchy` | `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
+
+`S_USER_AGR` stores the role name in `ACT_GROUP`. `AGR_NAME` is the column on `AGR_USERS` and `AGR_DEFINE`. SU53 lists `ACTVT` and `ACT_GROUP` for this object. Profile `SAP_ALL` grants both fields as `*`.
 
 ### Filters
 
