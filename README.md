@@ -138,9 +138,9 @@ Create the following objects in package `$ZEVOLVER_SEC2F` after the pull has act
 ```cds
 @EndUserText.label: 'Security access'
 define service ZAPI_SEC_ACCESS {
-  expose ZC_SEC_USER        as Users;
-  expose ZC_SEC_ROLE_ASSIGN as RoleAssignments;
-  expose ZC_SEC_PROF_ASSIGN as ProfileAssignments;
+  expose ZC_SEC_USER         as Users;
+  expose ZC_SEC_ROLE_ASSIGN  as RoleAssignments;
+  expose ZC_SEC_PROF_ASSIGN  as ProfileAssignments;
   expose ZC_SEC_ROLE         as Roles;
   expose ZC_SEC_ROLE_HIER    as RoleHierarchy;
   expose ZC_SEC_ROLE_PROFILE as RoleProfiles;
