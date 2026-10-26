@@ -39,7 +39,7 @@ A landscape pull is one call per application server. Policy and client data are 
 
 ## IT general controls
 
-RSPFPAR is the current profile of this application server. These four entity sets are the settings that report does not show. Read together, they are the evidence for two SOX IT general controls: access to programs and data, and change management.
+RSPFPAR is the current profile of this application server. These four entity sets are the settings that report does not show. Read together, they are the evidence for two SOX IT general controls: access to programs and data, and change management. The accounts, the roles, and the profiles for that access control are the second service. The test that ties a profile on a user back to the role that generated it is under [Role profiles](#role-profiles).
 
 | Entity sets | IT general control | What it adds to RSPFPAR |
 | --- | --- | --- |
@@ -110,6 +110,8 @@ GET .../ProfileParameterChanges?$filter=ChangeDate ge 2026-01-01 and ParameterNa
 
 `ParameterStatus` and `StatusText` repeat the raw `SPFL_PARAMETER_LIST-STATE`. The numeric legend is release-specific, so the service does not translate it.
 
+The gateway returns 100 rows in one response. `@odata.count` is the size of the filtered set when the request includes `$count=true`. `@odata.nextLink` is the following page, relative to the service root. Call that URL as the server wrote it, including `top` without a `$`. The last page has no `@odata.nextLink`. The header `Prefer: odata.maxpagesize=1683` asks for a larger page, and the response header `Preference-Applied` shows the size the server used. The same paging applies to both services.
+
 ## Pull and activate
 
 One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch `main`. The master language is English. The package object stored in the repository is `ZSEC_SETTINGS`; this installation assigns the pulled objects to `$ZEVOLVER_SEC2F`.
@@ -147,7 +149,7 @@ define service ZAPI_SEC_ACCESS {
 }
 ```
 
-Activate it. `Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key. When the definition already exists, add the `RoleProfiles` line to its source and activate it again. The binding stays as it is.
+Activate it. `Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key. When the definition already exists, add the `RoleProfiles` line to its source and activate it again. Reload `$metadata`. When `RoleProfiles` is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again. The published path stays the same.
 
 **Service binding `ZAPI_SEC_SETTINGS`.** New > Service Binding. Name `ZAPI_SEC_SETTINGS`, package `$ZEVOLVER_SEC2F`, binding type OData V4 - Web API, service `ZAPI_SEC_SETTINGS`, binding version `0001`. Activate, then choose Publish. The binding and the service definition share the name and are different object types. The published path is `/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`.
 
@@ -186,11 +188,46 @@ The password hash is not in the extract. The person name and the email address a
 
 `PasswordState` is the stored integer. `0` can be changed and does not have to be. `1` is an initial password. `2` has expired. `3` no longer meets the current rules. `254` and `255` are the stored forms of `-2` and `-1`: the password cannot be changed, or it cannot be changed until the wait period ends. `PasswordHashVersion` is `USR02-CODVN`. `H` is the generic hash. `X` means the password is deactivated. Older codes stay on the row so the caller can see them. The hash value itself is not returned.
 
-`ProfileSource` is `Assigned` for a row in `UST04` and `ReferenceUser` for a profile of the user named in `ReferenceUser`. The same profile can appear twice when the user has it directly and also inherits it. `RoleAssignments` already contains the single roles that came from a composite: `FromCompositeRole` is `AGR_USERS-COL_FLAG`, and `FromOrgManagement` is `AGR_USERS-ORG_FLAG`. `Excluded` is `AGR_USERS-EXCLUDE`. `RoleHierarchy` is how the caller finds which composite contains a single role. Two composites can contain the same single role.
+`ProfileSource` is `Assigned` for a row in `UST04` and `ReferenceUser` for a profile of the user named in `ReferenceUser`. The same profile can appear twice when the user has it directly and also inherits it. `RoleAssignments` already contains the single roles that came from a composite: `FromCompositeRole` is `AGR_USERS-COL_FLAG`, and `FromOrgManagement` is `AGR_USERS-ORG_FLAG`. `Excluded` is `AGR_USERS-EXCLUDE`. `RoleHierarchy` is how the caller finds which composite contains a single role. Two composites can contain the same single role. The same user and role can also appear on two rows when `AGR_USERS` stores two validity intervals. The entity key is `UserId` and `RoleName`, so those rows share a key, and both intervals stay in the payload.
 
 `Roles.Description` is `AGR_TEXTS` line `00000` in the logon language. When that line is missing, the English line is used. `ParentRole` is `AGR_DEFINE-PARENT_AGR`.
 
-`RoleProfiles` is the generated profile of a single role. `ProfileName` joins to `ProfileAssignments.ProfileName`. `RoleName` joins to `RoleAssignments.RoleName` and to `Roles.RoleName`. A profile name is 12 characters, so it is a different value from the role name. One role has one row per profile, and `Counter` keeps those rows apart. `Version` `A` is the active profile, which the user comparison writes into `UST04`. `Version` `P` is the maintenance copy. `Generated` is `X` when profile generation wrote the row. A composite role has no row. `SAP_ALL` has no row: it was not generated from a role.
+`RoleProfiles` reads `AGR_1016`. `RoleName` and `Counter` are the key. `Counter` is a 6-character numeric string, such as `000001`. `ProfileName` is 12 characters. `Variant` is the profile-generator variant. `Generated` is `X` when generation wrote the row. `Version` is `AGR_1016-PSTATE`: `A` is the active profile, and `P` is the maintenance copy.
+
+### Access to programs and data
+
+A reviewer authorizes roles. The kernel checks profiles. A generated profile is the collection of authorizations of one single role. The profile name is 12 characters and the role name is 30, so `RoleProfiles` is the match between them. The service returns the populations. The caller applies the test.
+
+| Population | Entity sets | Control question |
+| --- | --- | --- |
+| Accounts and their roles | `Users`, `RoleAssignments`, `RoleHierarchy` | Which roles does this account have, including a role received through a composite or through organizational management? |
+| Profiles on the account | `ProfileAssignments` | Which profiles will the kernel check, including a profile typed directly on the user and a profile inherited from a reference user? |
+| Generated profile of a single role | `RoleProfiles` | Was each of those profiles generated by a role the account still has? |
+
+`RoleAssignments` is the review population. `ValidFrom` and `ValidTo` are the interval stored on `AGR_USERS`. `Excluded` means the role was removed from the composite for this user. `FromCompositeRole` means the single role arrived through a composite, and `RoleHierarchy` names that composite. `FromOrgManagement` means HR organizational management assigned the role. `Users.SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service for the password and logon rules that apply to the account.
+
+`ProfileAssignments` is what the check uses. `ProfileSource` `Assigned` is stored on the user in `UST04`. `ProfileSource` `ReferenceUser` is a profile of `Users.ReferenceUser`. The dialog account does not hold that profile in its own `UST04`, and the service does not copy the reference user's roles onto the dialog account. `SAP_ALL` is a profile in this set.
+
+### Role profiles
+
+Keep `RoleProfiles` rows with `Version` `A`. User comparison, transaction PFUD, writes that active profile into `UST04`. `Version` `P` is the copy still open in PFCG. A composite role has no `AGR_1016` row. The single roles inside it do. `SAP_ALL` has no row, because it was not generated from a role.
+
+For each `ProfileAssignments` row with `ProfileSource` `Assigned`:
+
+1. Join `ProfileName` to `RoleProfiles.ProfileName` where `Version` is `A`.
+2. Join that `RoleName` to `RoleAssignments.RoleName` for the same `UserId`.
+
+A profile that finds both rows was generated by a role the user still has. When `FromCompositeRole` is `X`, `RoleHierarchy` names the composite the reviewer authorized.
+
+A profile that finds no active `RoleProfiles` row has no generating role left in PFCG. `SAP_ALL`, a profile typed on the user in SU01, and a profile whose role has been deleted from the system are in this group.
+
+A profile that finds a role in `RoleProfiles` and finds no `RoleAssignments` row for that user remained in `UST04` after the role was removed. User comparison did not delete it.
+
+A `RoleAssignments` row whose active `RoleProfiles` profile is missing from `ProfileAssignments` for that user is the opposite gap. The role is assigned, and user comparison has not copied the generated profile into the user master.
+
+`Version` `P` without a current `Version` `A` row for the same role means the role was changed in PFCG and the profile has not been generated again.
+
+A reference-user profile uses the same two joins against the reference user's own `RoleAssignments`. The profile is inherited. The role is not.
 
 ### Authorization
 
