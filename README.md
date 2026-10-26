@@ -6,6 +6,8 @@ The service returns raw values and, where a value is derived, the derivation. Th
 
 Activate this package on S/4HANA 1909 (ABAP platform 7.54) or later, on-premise or private cloud. It is not ABAP Cloud. `CL_SPFL_PROFILE_PARAMETER` is the class RSPFPAR uses, and it is not a released Cloud API.
 
+The same repository contains a second service, `ZAPI_SEC_ACCESS`, for the account and assignment population. That service is documented under [Security access extract](#security-access-extract).
+
 ## Entity sets
 
 Published service:
@@ -116,9 +118,68 @@ The service binding is not in the repository. abapGit creates a binding through 
 
 A pull of the current repository does not import a binding, so that BAdI error does not occur. On a later pull, keep the binding when abapGit offers to remove objects that are not in the repository.
 
-Run ABAP Unit on package `ZSEC_SETTINGS`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, and an authorization failure that does not read profile parameters. They do not read the kernel or the database.
+Run ABAP Unit on package `ZSEC_SETTINGS`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, and an authorization failure that does not read profile parameters or access rows. They do not read the kernel or the database.
 
 `examples/` holds one contract sample per entity set. The values are illustrative.
+
+## Security access extract
+
+Read-only OData V4 service for the accounts in the logon client and for the roles and profiles assigned to them. The caller decides which accounts are in scope for an access review. The service returns the stored assignment, including a role the user received through a composite role or through HR organizational management.
+
+Published service:
+
+`/sap/opu/odata4/sap/zapi_sec_access/srvd_a2x/sap/zapi_sec_access/0001/`
+
+| Entity set | Source | What a row is |
+| --- | --- | --- |
+| `Users` | `USR02`, `USREFUS` | One user in the logon client |
+| `RoleAssignments` | `AGR_USERS` | One role on one user, with validity dates |
+| `ProfileAssignments` | `UST04`, and the reference user's profiles | One profile on one user |
+| `Roles` | `AGR_DEFINE`, `AGR_TEXTS` line `00000` | The role header and its first description line |
+| `RoleHierarchy` | `AGR_AGRS` | One composite role and one single role |
+
+`Users` carries the user type, user group, validity, the raw `USR02-UFLAG`, the three lock bits, the password state, the password-hash version, the last logon, who created the user, the security policy, and the reference user. `SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service. `Client` is the logon client on every row and joins to `ClientSettings`.
+
+The password hash is not in the extract. The person name and the email address are not in the extract. `I_User` is not a source: a normal read of that view returns no rows, and the account fields the review uses are on `USR02`.
+
+`UserType` is `A` dialog, `B` system, `C` communications, `L` reference, or `S` service. `UserTypeText` is the domain text, with those English names when the domain text is missing.
+
+`LockFlag` is the raw `USR02-UFLAG`. The three flags are the bits inside it: `32` globally locked by the administrator, `64` locally locked by the administrator, and `128` locked by failed logons. A stored value can combine those bits. A stray `+1` left by a maintenance lock does not change them, so `33` is still globally locked.
+
+`PasswordState` is the stored integer. `0` can be changed and does not have to be. `1` is an initial password. `2` has expired. `3` no longer meets the current rules. `254` and `255` are the stored forms of `-2` and `-1`: the password cannot be changed, or it cannot be changed until the wait period ends. `PasswordHashVersion` is `USR02-CODVN`. `H` is the generic hash. `X` means the password is deactivated. Older codes stay on the row so the caller can see them. The hash value itself is not returned.
+
+`ProfileSource` is `Assigned` for a row in `UST04` and `ReferenceUser` for a profile of the user named in `ReferenceUser`. The same profile can appear twice when the user has it directly and also inherits it. `RoleAssignments` already contains the single roles that came from a composite: `FromCompositeRole` is `AGR_USERS-COL_FLAG`, and `FromOrgManagement` is `AGR_USERS-ORG_FLAG`. `Exclusive` is `AGR_USERS-EXCLUDE`. `RoleHierarchy` is how the caller finds which composite contains a single role. Two composites can contain the same single role.
+
+`Roles.Description` is `AGR_TEXTS` line `00000` in the logon language. When that line is missing, the English line is used. `ParentRole` is `AGR_DEFINE-PARENT_AGR`.
+
+### Authorization
+
+A failed check is an OData error. The response is not an empty list. Each check requires the authorization for value `*`, so a caller who can display only some user groups or some roles does not receive a partial population.
+
+| Entity sets | Check |
+| --- | --- |
+| `Users` | `S_USER_GRP` activity 03 for user group `*` |
+| `RoleAssignments` | `S_USER_GRP` activity 03 for user group `*`, and `S_USER_AGR` activity 03 for role `*` |
+| `ProfileAssignments` | `S_USER_GRP` activity 03 for user group `*`, and `S_USER_PRO` activity 03 for profile `*` |
+| `Roles`, `RoleHierarchy` | `S_USER_AGR` activity 03 for role `*` |
+
+### Filters
+
+The same range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count` as the settings service. A filter on an unknown property is an error (message 002 of `ZSEC_ACCESS`).
+
+```http
+GET .../Users?$filter=UserType eq 'A' and GloballyLocked eq 'X'
+GET .../RoleAssignments?$filter=UserId eq 'JSMITH' and FromCompositeRole eq 'X'
+GET .../ProfileAssignments?$filter=ProfileSource eq 'ReferenceUser'
+GET .../Roles?$filter=ParentRole eq 'Z_FI_TEMPLATE'
+GET .../RoleHierarchy?$filter=CompositeRole eq 'Z_FI_COMPOSITE'
+```
+
+A read is the logon client. There is no RFC to other clients or other application servers.
+
+### Import
+
+The access objects are in package `ZSEC_SETTINGS`, in the same abapGit repository as the settings extract. Create the service binding in ABAP Development Tools: binding `ZAPI_SEC_ACCESS`, type OData V4 - Web API, service `ZAPI_SEC_ACCESS`, version `0001`, then publish it. Keep the binding when abapGit offers to remove objects that are not in the repository.
 
 ## Repositories
 

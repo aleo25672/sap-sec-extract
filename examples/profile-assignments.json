@@ -1,0 +1,19 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "UserId": "JSMITH",
+      "ProfileName": "T_FI_DISPLAY",
+      "ProfileSource": "Assigned",
+      "Client": "100",
+      "ReferenceUser": ""
+    },
+    {
+      "UserId": "JSMITH",
+      "ProfileName": "S_RFC_SHOW",
+      "ProfileSource": "ReferenceUser",
+      "Client": "100",
+      "ReferenceUser": "RFC_REF"
+    }
+  ]
+}

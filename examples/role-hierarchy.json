@@ -1,0 +1,10 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "CompositeRole": "Z_FI_COMPOSITE",
+      "SingleRole": "Z_FI_DISPLAY",
+      "Client": "100"
+    }
+  ]
+}

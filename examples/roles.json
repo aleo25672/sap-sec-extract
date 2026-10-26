@@ -1,0 +1,15 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "RoleName": "Z_FI_DISPLAY",
+      "Client": "100",
+      "ParentRole": "",
+      "Description": "Display finance documents",
+      "CreatedBy": "BASIS",
+      "CreatedOn": "2024-01-15",
+      "ChangedBy": "BASIS",
+      "ChangedOn": "2024-01-15"
+    }
+  ]
+}

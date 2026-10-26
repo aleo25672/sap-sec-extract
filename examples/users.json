@@ -1,0 +1,28 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "UserId": "JSMITH",
+      "Client": "100",
+      "UserType": "A",
+      "UserTypeText": "Dialog",
+      "UserGroup": "SUPER",
+      "ValidFrom": "2020-01-01",
+      "ValidTo": "9999-12-31",
+      "LockFlag": 0,
+      "GloballyLocked": "",
+      "LocallyLocked": "",
+      "FailedLogonLocked": "",
+      "PasswordState": 0,
+      "PasswordStateText": "Password can be changed, change is not required",
+      "PasswordHashVersion": "H",
+      "PasswordHashVersionText": "Generic hash",
+      "LastLogonDate": "2026-10-20",
+      "LastLogonTime": "08:15:00",
+      "CreatedBy": "BASIS",
+      "CreatedOn": "2020-01-15",
+      "SecurityPolicy": "RFC_USERS",
+      "ReferenceUser": ""
+    }
+  ]
+}
