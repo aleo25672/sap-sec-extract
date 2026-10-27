@@ -116,9 +116,22 @@ The gateway returns 100 rows in one response. `@odata.count` is the size of the 
 
 One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch `main`. The master language is English. The package object stored in the repository is `ZSEC_SETTINGS`; this installation assigns the pulled objects to `$ZEVOLVER_SEC2F`.
 
+### Standalone abapGit
+
+The pull publishes both service bindings when the standalone program is abapGit v1.133.0 (17 February 2026) or later. v1.134.0 (10 July 2026) is the current release. Open the repository list and read the version under About.
+
+When that version is older, upgrade the standalone program before the pull. After the upgrade, the pull publishes the bindings. Publishing them in ABAP Development Tools is not required.
+
+1. Download `zabapgit_standalone.prog.abap` from the [abapGit build repository](https://github.com/abapGit/build), branch `main`. The same steps are on the [abapGit upgrade page](https://docs.abapgit.org/user-guide/getting-started/upgrade.html).
+2. In SE38, open report `ZABAPGIT_STANDALONE`. When transaction `ZABAPGIT` starts a different report, open that report.
+3. Switch to change mode. Choose Utilities, More Utilities, Upload/Download, Upload, and select the downloaded file.
+4. Activate the report and run it. About shows v1.133.0 or later.
+
+Keep the program in its current package. The developer version, installed as a package of classes and started with transaction `ZABAPGIT`, is updated by pulling `https://github.com/abapGit/abapGit` into that package. Do not upload the standalone source over that package.
+
 ### abapGit
 
-1. Open abapGit (transaction `ZABAPGIT`).
+1. Open abapGit (transaction `ZABAPGIT`, or report `ZABAPGIT_STANDALONE`).
 2. Add the GitHub repository `https://github.com/aleo25672/sap-sec-extract.git` as an online repository, or open it if it is already linked. The same commits are on the Cursor remote `evolver/sap-sec-extract`.
 3. Select branch `main`.
 4. Set the package to `$ZEVOLVER_SEC2F` and the master language to English.
@@ -143,7 +156,7 @@ define service ZAPI_SEC_ACCESS {
 
 `Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key.
 
-The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. Publishing during the pull requires abapGit v1.133.0 (17 February 2026) or later. v1.134.0 (10 July 2026) is the current release. An older abapGit creates the binding and leaves it unpublished. The version is shown in the abapGit repository, under About. The published paths are:
+The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. The version that publishes during the pull is in [Standalone abapGit](#standalone-abapgit). The published paths are:
 
 `/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`
 
