@@ -1,0 +1,69 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. TableName is the structure stored on the change document. Password hashes and address values are empty. User ids on UNAME and KEY stay.",
+  "value": [
+    {
+      "RoleName": "Z_FI_DISPLAY",
+      "ChangeNumber": "0000000100",
+      "TableName": "AGR_DEFINE",
+      "TableKey": "100Z_FI_DISPLAY",
+      "FieldName": "AGR_NAME",
+      "ItemChange": "I",
+      "Client": "100",
+      "ChangedBy": "ADMIN",
+      "ChangeDate": "2026-10-27",
+      "ChangeTime": "11:00:00",
+      "TransactionCode": "PFCG",
+      "HeaderChange": "I",
+      "ValueOld": "",
+      "ValueNew": ""
+    },
+    {
+      "RoleName": "Z_FI_DISPLAY",
+      "ChangeNumber": "0000000101",
+      "TableName": "AGR_USERS",
+      "TableKey": "100Z_FI_DISPLAYJSMITH",
+      "FieldName": "UNAME",
+      "ItemChange": "I",
+      "Client": "100",
+      "ChangedBy": "ADMIN",
+      "ChangeDate": "2026-10-27",
+      "ChangeTime": "11:15:00",
+      "TransactionCode": "PFCG",
+      "HeaderChange": "U",
+      "ValueOld": "",
+      "ValueNew": "JSMITH"
+    },
+    {
+      "RoleName": "Z_FI_DISPLAY",
+      "ChangeNumber": "0000000102",
+      "TableName": "AGR_USERS",
+      "TableKey": "100Z_FI_DISPLAYJSMITH",
+      "FieldName": "UNAME",
+      "ItemChange": "D",
+      "Client": "100",
+      "ChangedBy": "ADMIN",
+      "ChangeDate": "2026-10-27",
+      "ChangeTime": "11:20:00",
+      "TransactionCode": "PFCG",
+      "HeaderChange": "U",
+      "ValueOld": "JSMITH",
+      "ValueNew": ""
+    },
+    {
+      "RoleName": "Z_FI_DISPLAY",
+      "ChangeNumber": "0000000103",
+      "TableName": "AGR_1251",
+      "TableKey": "100Z_FI_DISPLAYS_TCODETCD",
+      "FieldName": "LOW",
+      "ItemChange": "U",
+      "Client": "100",
+      "ChangedBy": "ADMIN",
+      "ChangeDate": "2026-10-27",
+      "ChangeTime": "11:30:00",
+      "TransactionCode": "PFCG",
+      "HeaderChange": "U",
+      "ValueOld": "FB03",
+      "ValueNew": "*"
+    }
+  ]
+}

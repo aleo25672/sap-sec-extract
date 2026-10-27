@@ -38,8 +38,8 @@ ENDCLASS.
 
 CLASS zcl_sec_usr_chg_guard IMPLEMENTATION.
   METHOD class_constructor.
-    " Address and person tables on change document object IDENTITY.
-    " The same names are cleared in ZI_SEC_USR_CHG.
+    " Address, person, and password fields. UNAME and KEY stay.
+    " The same names are cleared in ZI_SEC_USR_CHG and ZI_SEC_ROLE_CHG.
     gt_tables = VALUE #(
       ( |ADRP| ) ( |ADRC| ) ( |ADR2| ) ( |ADR3| ) ( |ADR6| ) ( |ADCP| ) ( |ADRT| ) ( |USR03| ) ).
     gt_fields = VALUE #(

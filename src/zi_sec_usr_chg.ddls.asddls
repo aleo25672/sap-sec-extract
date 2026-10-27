@@ -19,7 +19,7 @@ define view ZI_SEC_USR_CHG
       cdhdr.utime                                                 as ChangeTime,
       cdhdr.tcode                                                 as TransactionCode,
       cdhdr.change_ind                                            as HeaderChange,
-      // Same tables and fields as ZCL_SEC_USR_CHG_GUARD. A blank value keeps the field name.
+      // Same tables and fields as ZCL_SEC_USR_CHG_GUARD and ZI_SEC_ROLE_CHG.
       cast(
         case
           when cdpos.tabname is initial
