@@ -4,7 +4,7 @@ Read-only OData V4 service for the profile parameters shown by report RSPFPAR, p
 
 The service returns raw values and, where a value is derived, the derivation. The caller compares a policy with the application server and decides whether a production client is locked.
 
-Activate this package on S/4HANA 1909 (ABAP platform 7.54) or later, on-premise or private cloud. It is not ABAP Cloud. `CL_SPFL_PROFILE_PARAMETER` is the class RSPFPAR uses, and it is not a released Cloud API.
+Activate this package on S/4HANA 2025 (ABAP Platform 2025), on-premise or private cloud. It is not ABAP Cloud. `CL_SPFL_PROFILE_PARAMETER` is the class RSPFPAR uses, and it is not a released Cloud API.
 
 The same repository contains a second service, `ZAPI_SEC_ACCESS`, for the account and assignment population. That service is documented under [Security access extract](#security-access-extract).
 
@@ -141,19 +141,17 @@ define service ZAPI_SEC_ACCESS {
 }
 ```
 
-`Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key. After the pull, reload `$metadata`. When `RoleProfiles` is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again. The published path stays the same.
+`Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key.
 
-The pull leaves out both service bindings. On S/4HANA 1909, abapGit creates a binding through a workbench BAdI that has no implementation, and that error stops the pull. Create the bindings in ABAP Development Tools.
+The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. The published paths are:
 
-### ABAP Development Tools
+`/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`
 
-Create the bindings in package `$ZEVOLVER_SEC2F` after the pull has activated the service definitions.
+`/sap/opu/odata4/sap/zapi_sec_access/srvd_a2x/sap/zapi_sec_access/0001/`
 
-**Service binding `ZAPI_SEC_SETTINGS`.** New > Service Binding. Name `ZAPI_SEC_SETTINGS`, package `$ZEVOLVER_SEC2F`, binding type OData V4 - Web API, service `ZAPI_SEC_SETTINGS`, binding version `0001`. Activate, then choose Publish. The binding and the service definition share the name and are different object types. The published path is `/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`.
+A binding that is already published is unpublished, updated, and published again. The path stays the same. Reload `$metadata` after the pull. When `RoleProfiles` is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again.
 
-**Service binding `ZAPI_SEC_ACCESS`.** Create this binding after service definition `ZAPI_SEC_ACCESS` is active. New > Service Binding. Name `ZAPI_SEC_ACCESS`, package `$ZEVOLVER_SEC2F`, binding type OData V4 - Web API, service `ZAPI_SEC_ACCESS`, binding version `0001`. Activate, then choose Publish. The published path is `/sap/opu/odata4/sap/zapi_sec_access/srvd_a2x/sap/zapi_sec_access/0001/`.
-
-On a later pull, abapGit offers to remove the objects that are not in the repository. Keep both bindings. The service definitions are in the repository, so the pull updates them.
+The service definitions and the bindings are in the repository, so a later pull updates them.
 
 Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, and an authorization failure that does not read profile parameters or access rows. They do not read the kernel or the database.
 
@@ -257,7 +255,7 @@ A read is the logon client. There is no RFC to other clients or other applicatio
 
 ### Install
 
-The abapGit pull and the ADT objects for this service are in [Pull and activate](#pull-and-activate). The pull imports service definition `ZAPI_SEC_ACCESS`. The bindings are created in package `$ZEVOLVER_SEC2F` after the pull.
+The abapGit pull for this service is in [Pull and activate](#pull-and-activate). The pull imports service definition `ZAPI_SEC_ACCESS` and binding `ZAPI_SEC_ACCESS`, and it publishes the binding.
 
 ## Repositories
 
