@@ -120,14 +120,21 @@ One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch 
 
 The pull publishes both service bindings when the standalone program is abapGit v1.133.0 (17 February 2026) or later. v1.134.0 (10 July 2026) is the current release. Open the repository list and read the version under About.
 
-When that version is older, upgrade the standalone program before the pull. After the upgrade, the pull publishes the bindings. Publishing them in ABAP Development Tools is not required.
+When that version is older, upgrade the standalone program before the pull of this repository. After the upgrade, the pull publishes the bindings. Publishing them in ABAP Development Tools is not required.
 
-1. Download `zabapgit_standalone.prog.abap` from the [abapGit build repository](https://github.com/abapGit/build), branch `main`. The same steps are on the [abapGit upgrade page](https://docs.abapgit.org/user-guide/getting-started/upgrade.html).
-2. In SE38, open report `ZABAPGIT_STANDALONE`. When transaction `ZABAPGIT` starts a different report, open that report.
-3. Switch to change mode. Choose Utilities, More Utilities, Upload/Download, Upload, and select the downloaded file.
-4. Activate the report and run it. About shows v1.133.0 or later.
+The standalone program is report `ZABAPGIT_STANDALONE`, about 37,000 lines, in the [abapGit build repository](https://github.com/abapGit/build). Pasting that source into ABAP Development Tools sends one save request. The server answers `500 Internal Server Error` with a log id and a timestamp. The id is the entry in `ST22` at that timestamp, and the previous source stays in place. Uploading the same file in SE38 (Utilities, More Utilities, Upload/Download, Upload) loads it into the SAP GUI editor, and the editor closes the session. The [abapGit upgrade page](https://docs.abapgit.org/user-guide/getting-started/upgrade.html) describes that upload. On this system the upgrade is a pull of the build repository, which writes the report on the server.
 
-Keep the program in its current package. The developer version, installed as a package of classes and started with transaction `ZABAPGIT`, is updated by pulling `https://github.com/abapGit/abapGit` into that package. Do not upload the standalone source over that package.
+1. In SE38, open `ZABAPGIT_STANDALONE` and choose Program, Copy. Name the copy with the version it is running, for example `ZABAPGIT_STANDALONE_1_121_0`, and keep the copy in a local package. Run the copy for every later step. The copy stays on the old version.
+2. In SE80, create a local package that will hold only this program, for example `$STANDALONE_ABAPGIT`. Leave the transport empty. The package has to exist before the pull. A package name entered on New Online is not created when the pull stops.
+3. Run the copy. Choose New Online. Set the URL to `https://github.com/abapGit/build.git` and the package to `$STANDALONE_ABAPGIT`.
+4. The build repository contains `PROG ZABAPGIT_STANDALONE`. When that program already exists in another package, the pull stops with `PROG ZABAPGIT_STANDALONE already exists outside of $STANDALONE_ABAPGIT package hierarchy`. In SE38, open `ZABAPGIT_STANDALONE`, choose Goto, Object Directory Entry, switch to change mode, set the package to `$STANDALONE_ABAPGIT`, and save. A move between local packages does not ask for a transport. Pull again.
+5. Activate `ZABAPGIT_STANDALONE` when the pull leaves it inactive, and run it. About shows v1.133.0 or later.
+
+A repository link saved against a package that does not exist is removed from the copy. Open the build repository and choose Advanced, Danger, Remove Repository. On this release the entry can sit directly under Advanced. The popup removes the Git link. The package and its objects stay. Remove Objects and Uninstall delete every object in the package named on the repository, including its subpackages.
+
+When no abapGit program starts, switch SE38 to the back-end editor before uploading. Choose Utilities, Settings, ABAP Editor, Editor, and select Back-End Editor. On newer systems the label is Text-Based Editor. Open `ZABAPGIT_STANDALONE` in change mode and upload `zabapgit_standalone.prog.abap` from the build repository. The back-end editor does not use the frontend control that closes the session.
+
+The developer version is a package of classes started with transaction `ZABAPGIT`. Update it by pulling `https://github.com/abapGit/abapGit` into that package. The standalone source stays in `ZABAPGIT_STANDALONE`.
 
 ### abapGit
 
