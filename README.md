@@ -122,20 +122,12 @@ One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch 
 2. Add the GitHub repository `https://github.com/aleo25672/sap-sec-extract.git` as an online repository, or open it if it is already linked. The same commits are on the Cursor remote `evolver/sap-sec-extract`.
 3. Select branch `main`.
 4. Set the package to `$ZEVOLVER_SEC2F` and the master language to English.
-5. If an earlier pull left service definition `ZAPI_SEC_ACCESS` without a source, delete `R3TR SRVD ZAPI_SEC_ACCESS` before pulling. Delete it in ABAP Development Tools or SE80 when the object opens. When it does not open, delete that directory entry in SE03, Change Object Directory Entries.
+5. On a system where an earlier pull left `ZAPI_SEC_ACCESS` as a header with no source, delete `R3TR SRVD ZAPI_SEC_ACCESS` before pulling. Delete it in ABAP Development Tools or SE80 when the object opens. When it does not open, delete that directory entry in SE03, Change Object Directory Entries. A new system has no such object. A definition that already has its source is updated by the pull.
 6. Pull, then activate the imported objects.
 
 The interface views `ZI_SEC_USER`, `ZI_SEC_ROLE_ASSIGN`, `ZI_SEC_PROF_ASSIGN`, `ZI_SEC_ROLE`, `ZI_SEC_ROLE_HIER`, and `ZI_SEC_ROLE_PROFILE` activate with a warning. Their tables (`USR02`, `UST04`, `AGR_USERS`, `AGR_DEFINE`, `AGR_AGRS`, `AGR_1016`) are client-dependent, and the logon client is applied by the session. The warning leaves the views active.
 
-The pull imports service definition `ZAPI_SEC_SETTINGS`. Create service definition `ZAPI_SEC_ACCESS` in ABAP Development Tools, using the source below. Leaving it in the repository makes the pull raise `An exception was raised` and report `Import of object ZAPI_SEC_ACCESS failed`.
-
-The pull also leaves out both service bindings. On S/4HANA 1909, abapGit creates a binding through a workbench BAdI that has no implementation, and that error stops the pull. Create the bindings in ABAP Development Tools.
-
-### ABAP Development Tools
-
-Create the following objects in package `$ZEVOLVER_SEC2F` after the pull has activated.
-
-**Service definition `ZAPI_SEC_ACCESS`.** In the project, choose New > Other ABAP Repository Object > Service Definition. Name it `ZAPI_SEC_ACCESS`, assign package `$ZEVOLVER_SEC2F`, and replace the generated source with:
+The pull imports both service definitions. `ZAPI_SEC_ACCESS` is stored the same way as `ZAPI_SEC_SETTINGS`: a header file and the CDS source in `zapi_sec_access.srvd.srvdsrv`. abapGit writes that definition after the views and classes it exposes, which is the create that produced `ZAPI_SEC_SETTINGS`. The source is:
 
 ```cds
 @EndUserText.label: 'Security access'
@@ -149,13 +141,19 @@ define service ZAPI_SEC_ACCESS {
 }
 ```
 
-Activate it. `Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key. When the definition already exists, add the `RoleProfiles` line to its source and activate it again. Reload `$metadata`. When `RoleProfiles` is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again. The published path stays the same.
+`Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key. After the pull, reload `$metadata`. When `RoleProfiles` is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again. The published path stays the same.
+
+The pull leaves out both service bindings. On S/4HANA 1909, abapGit creates a binding through a workbench BAdI that has no implementation, and that error stops the pull. Create the bindings in ABAP Development Tools.
+
+### ABAP Development Tools
+
+Create the bindings in package `$ZEVOLVER_SEC2F` after the pull has activated the service definitions.
 
 **Service binding `ZAPI_SEC_SETTINGS`.** New > Service Binding. Name `ZAPI_SEC_SETTINGS`, package `$ZEVOLVER_SEC2F`, binding type OData V4 - Web API, service `ZAPI_SEC_SETTINGS`, binding version `0001`. Activate, then choose Publish. The binding and the service definition share the name and are different object types. The published path is `/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`.
 
 **Service binding `ZAPI_SEC_ACCESS`.** Create this binding after service definition `ZAPI_SEC_ACCESS` is active. New > Service Binding. Name `ZAPI_SEC_ACCESS`, package `$ZEVOLVER_SEC2F`, binding type OData V4 - Web API, service `ZAPI_SEC_ACCESS`, binding version `0001`. Activate, then choose Publish. The published path is `/sap/opu/odata4/sap/zapi_sec_access/srvd_a2x/sap/zapi_sec_access/0001/`.
 
-On a later pull, abapGit offers to remove the objects that are not in the repository. Keep service definition `ZAPI_SEC_ACCESS` and both bindings.
+On a later pull, abapGit offers to remove the objects that are not in the repository. Keep both bindings. The service definitions are in the repository, so the pull updates them.
 
 Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, and an authorization failure that does not read profile parameters or access rows. They do not read the kernel or the database.
 
@@ -259,7 +257,7 @@ A read is the logon client. There is no RFC to other clients or other applicatio
 
 ### Install
 
-The abapGit pull and the ADT objects for this service are in [Pull and activate](#pull-and-activate). The access service definition and both bindings are created in package `$ZEVOLVER_SEC2F` after the pull.
+The abapGit pull and the ADT objects for this service are in [Pull and activate](#pull-and-activate). The pull imports service definition `ZAPI_SEC_ACCESS`. The bindings are created in package `$ZEVOLVER_SEC2F` after the pull.
 
 ## Repositories
 
