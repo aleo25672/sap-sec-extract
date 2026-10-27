@@ -28,12 +28,12 @@ CLASS zcl_sec_usr_chg_guard DEFINITION
       RAISING
         zcx_sec_access.
 
+    CLASS-METHODS class_constructor.
+
   PRIVATE SECTION.
     TYPES ty_name TYPE c LENGTH 30.
     CLASS-DATA gt_tables TYPE HASHED TABLE OF ty_name WITH UNIQUE KEY table_line.
     CLASS-DATA gt_fields TYPE HASHED TABLE OF ty_name WITH UNIQUE KEY table_line.
-
-    CLASS-METHODS class_constructor.
 ENDCLASS.
 
 

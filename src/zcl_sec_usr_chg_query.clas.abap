@@ -32,9 +32,9 @@ CLASS zcl_sec_usr_chg_query DEFINITION
 
     METHODS read_rows
       IMPORTING
-        it_userid     TYPE zif_sec_access_source=>tt_selopt OPTIONAL
-        it_changedate TYPE zif_sec_access_source=>tt_selopt OPTIONAL
-        it_changedby  TYPE zif_sec_access_source=>tt_selopt OPTIONAL
+        it_userid     TYPE zcl_sec_query_util=>tt_range OPTIONAL
+        it_changedate TYPE zcl_sec_query_util=>tt_range OPTIONAL
+        it_changedby  TYPE zcl_sec_query_util=>tt_range OPTIONAL
       RETURNING
         VALUE(rt_rows) TYPE tt_row
       RAISING
@@ -46,19 +46,13 @@ CLASS zcl_sec_usr_chg_query DEFINITION
 
     METHODS selection_for
       IMPORTING
-        it_range        TYPE zif_sec_access_source=>tt_selopt
+        it_range        TYPE zcl_sec_query_util=>tt_range
         iv_upper        TYPE abap_bool
         iv_date         TYPE abap_bool
       RETURNING
-        VALUE(rt_range) TYPE zif_sec_access_source=>tt_selopt
+        VALUE(rt_range) TYPE zcl_sec_query_util=>tt_range
       RAISING
         zcx_sec_access.
-
-    METHODS selopt_from
-      IMPORTING
-        it_range         TYPE zcl_sec_query_util=>tt_range
-      RETURNING
-        VALUE(rt_selopt) TYPE zif_sec_access_source=>tt_selopt.
 ENDCLASS.
 
 
@@ -72,16 +66,6 @@ CLASS zcl_sec_usr_chg_query IMPLEMENTATION.
     IF mo_auth IS NOT BOUND.
       mo_auth = NEW zcl_sec_access_auth( ).
     ENDIF.
-  ENDMETHOD.
-
-  METHOD selopt_from.
-    LOOP AT it_range INTO DATA(ls_named).
-      APPEND VALUE #(
-        sign   = ls_named-sign
-        option = ls_named-option
-        low    = ls_named-low
-        high   = ls_named-high ) TO rt_selopt.
-    ENDLOOP.
   ENDMETHOD.
 
   METHOD selection_for.
@@ -137,9 +121,9 @@ CLASS zcl_sec_usr_chg_query IMPLEMENTATION.
   METHOD if_rap_query_provider~select.
     mo_auth->check_user_display( ).
     DATA(lt_rows) = read_rows(
-      it_userid     = selopt_from( zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'USERID' ) )
-      it_changedate = selopt_from( zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'CHANGEDATE' ) )
-      it_changedby  = selopt_from( zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'CHANGEDBY' ) ) ).
+      it_userid     = zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'USERID' )
+      it_changedate = zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'CHANGEDATE' )
+      it_changedby  = zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'CHANGEDBY' ) ).
 
     TRY.
         zcl_sec_query_util=>filter_rows( EXPORTING io_request = io_request CHANGING ct_rows = lt_rows ).

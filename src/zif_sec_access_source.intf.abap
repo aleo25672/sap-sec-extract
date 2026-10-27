@@ -130,13 +130,6 @@ INTERFACE zif_sec_access_source
       authorizationid TYPE usrvarid-auth_id,
     END OF ty_critical_variant,
     tt_critical_variant TYPE STANDARD TABLE OF ty_critical_variant WITH EMPTY KEY,
-    BEGIN OF ty_selopt,
-      sign   TYPE c LENGTH 1,
-      option TYPE c LENGTH 2,
-      low    TYPE string,
-      high   TYPE string,
-    END OF ty_selopt,
-    tt_selopt TYPE STANDARD TABLE OF ty_selopt WITH EMPTY KEY,
     BEGIN OF ty_user_change,
       userid          TYPE cdhdr-objectid,
       changenumber    TYPE cdhdr-changenr,
@@ -195,9 +188,9 @@ INTERFACE zif_sec_access_source
 
   METHODS read_user_changes
     IMPORTING
-      it_userid     TYPE tt_selopt
-      it_changedate TYPE tt_selopt
-      it_changedby  TYPE tt_selopt
+      it_userid     TYPE zcl_sec_query_util=>tt_range
+      it_changedate TYPE zcl_sec_query_util=>tt_range
+      it_changedby  TYPE zcl_sec_query_util=>tt_range
     RETURNING
       VALUE(rt_rows) TYPE tt_user_change
     RAISING
