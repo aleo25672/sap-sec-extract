@@ -135,7 +135,7 @@ One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch 
 5. On a system where an earlier pull left `ZAPI_SEC_ACCESS` as a header with no source, delete `R3TR SRVD ZAPI_SEC_ACCESS` before pulling. Delete it in ABAP Development Tools or SE80 when the object opens. When it does not open, delete that directory entry in SE03, Change Object Directory Entries. A new system has no such object. A definition that already has its source is updated by the pull.
 6. Pull, then activate the imported objects.
 
-The interface views `ZI_SEC_USER`, `ZI_SEC_ROLE_ASSIGN`, `ZI_SEC_PROF_ASSIGN`, `ZI_SEC_ROLE`, `ZI_SEC_ROLE_HIER`, and `ZI_SEC_ROLE_PROFILE` activate with a warning. Their tables (`USR02`, `UST04`, `AGR_USERS`, `AGR_DEFINE`, `AGR_AGRS`, `AGR_1016`) are client-dependent, and the logon client is applied by the session. The warning leaves the views active.
+The interface views `ZI_SEC_USER`, `ZI_SEC_ROLE_ASSIGN`, `ZI_SEC_PROF_ASSIGN`, `ZI_SEC_ROLE`, `ZI_SEC_ROLE_HIER`, `ZI_SEC_ROLE_PROFILE`, `ZI_SEC_ROLE_AUTH`, `ZI_SEC_ROLE_ORG`, `ZI_SEC_PROFILE`, `ZI_SEC_PROF_AUTH`, `ZI_SEC_AUTH_VALUE`, `ZI_SEC_CRIT_AUTH`, and `ZI_SEC_CRIT_VAR` activate with a warning. Their tables (`USR02`, `UST04`, `AGR_USERS`, `AGR_DEFINE`, `AGR_AGRS`, `AGR_1016`, `AGR_1251`, `AGR_1252`, `USR10`, `USR11`, `UST10S`, `UST12`, `USCRAUTH`, `USCRAUTHID`, `USCRAUIDT`, `USRVARID`) are client-dependent, and the logon client is applied by the session. The warning leaves the views active.
 
 The pull imports both service definitions. `ZAPI_SEC_ACCESS` is stored the same way as `ZAPI_SEC_SETTINGS`: a header file and the CDS source in `zapi_sec_access.srvd.srvdsrv`. abapGit writes that definition after the views and classes it exposes, which is the create that produced `ZAPI_SEC_SETTINGS`. The source is:
 
@@ -148,6 +148,13 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_ROLE         as Roles;
   expose ZC_SEC_ROLE_HIER    as RoleHierarchy;
   expose ZC_SEC_ROLE_PROFILE as RoleProfiles;
+  expose ZC_SEC_ROLE_AUTH    as RoleAuthorizations;
+  expose ZC_SEC_ROLE_ORG     as RoleOrgLevels;
+  expose ZC_SEC_PROFILE      as Profiles;
+  expose ZC_SEC_PROF_AUTH    as ProfileAuthorizations;
+  expose ZC_SEC_AUTH_VALUE   as AuthorizationValues;
+  expose ZC_SEC_CRIT_AUTH    as CriticalAuthorizations;
+  expose ZC_SEC_CRIT_VAR     as CriticalAuthorizationVariants;
 }
 ```
 
@@ -169,7 +176,7 @@ Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classificat
 
 ## Security access extract
 
-Read-only OData V4 service for the accounts in the logon client and for the roles and profiles assigned to them. The caller decides which accounts are in scope for an access review. The service returns the stored assignment, including a role the user received through a composite role or through HR organizational management.
+Read-only OData V4 service for the accounts in the logon client, the roles and profiles assigned to them, and the authorization values stored on those roles and profiles. The caller decides which accounts, objects, and profiles are in scope. The service returns the stored rows. It does not classify an object or a profile as critical.
 
 Published service:
 
@@ -183,6 +190,13 @@ Published service:
 | `Roles` | `AGR_DEFINE`, `AGR_TEXTS` line `00000` | The role header and its first description line |
 | `RoleHierarchy` | `AGR_AGRS` | One composite role and one single role |
 | `RoleProfiles` | `AGR_1016` | One generated profile of one single role |
+| `RoleAuthorizations` | `AGR_1251` | One authorization field value of one role |
+| `RoleOrgLevels` | `AGR_1252` | One organizational value of one role |
+| `Profiles` | `USR10`, `USR11` | One profile header, active or maintenance |
+| `ProfileAuthorizations` | `UST10S` | One authorization object inside one single profile |
+| `AuthorizationValues` | `UST12` | One field value of one authorization |
+| `CriticalAuthorizations` | `USCRAUTH`, `USCRAUTHID`, `USCRAUIDT` | One SUIM critical-authorization rule |
+| `CriticalAuthorizationVariants` | `USRVARID` | One critical authorization assigned to one SUIM variant |
 
 `Users` carries the user type, user group, validity, the raw `USR02-UFLAG`, the three lock bits, the password state, the password-hash version, the last logon, who created the user, the security policy, and the reference user. `SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service. `Client` is the logon client on every row and joins to `ClientSettings`.
 
@@ -200,6 +214,14 @@ The password hash is not in the extract. The person name and the email address a
 
 `RoleProfiles` reads `AGR_1016`. `RoleName` and `Counter` are the key. `Counter` is a 6-character numeric string, such as `000001`. `ProfileName` is 12 characters. `Variant` is the profile-generator variant. `Generated` is `X` when generation wrote the row. `Version` is `AGR_1016-PSTATE`: `A` is the active profile, and `P` is the maintenance copy.
 
+`RoleAuthorizations` is every field value stored on the role in PFCG. `Counter` is the line key. `Object`, `Authorization`, `Field`, `Low`, and `High` are the stored authorization. `Modified`, `Deleted`, `Copied`, and `NewEntry` are the PFCG status flags. A composite role has no rows. `RoleOrgLevels` is the organizational value stored for the same role. `Variable` is the organizational field, such as `$BUKRS`.
+
+`Profiles` is the profile header. `Version` is `USR10-AKTPS`: `A` is active and `P` is the maintenance copy. `ProfileType` is `USR10-TYP`: `C` is a composite profile, `G` is a profile generated from a role, and `S` is a single profile maintained outside the profile generator. `SAP_ALL` and `SAP_NEW` are stored with the type the system gave them. The service does not add a further flag. `Description` is `USR11` in the logon language, or the English text when that language is missing. The authorization blob on `USR10` is not returned.
+
+`ProfileAuthorizations` is `UST10S`: which authorization object and authorization name a single profile contains. `AuthorizationValues` is `UST12`: the field values of that authorization. The caller joins `Object`, `Authorization`, and `Version`. A generated profile and a single profile use the same two sets.
+
+`CriticalAuthorizations` is the SUIM rule table `USCRAUTH`, with the color and transaction from `USCRAUTHID` and the text from `USCRAUIDT`. `SearchType` is the stored `AND` or `OR`. `CriticalGroup` is `USCRAUTH-CR_AUTH`. `CriticalAuthorizationVariants` is which rule id belongs to which variant in `USRVARID`. An empty SUIM customizing returns no rows. The service does not compare these rules with roles or profiles.
+
 ### Access to programs and data
 
 A reviewer authorizes roles. The kernel checks profiles. A generated profile is the collection of authorizations of one single role. The profile name is 12 characters and the role name is 30, so `RoleProfiles` is the match between them. The service returns the populations. The caller applies the test.
@@ -209,6 +231,8 @@ A reviewer authorizes roles. The kernel checks profiles. A generated profile is 
 | Accounts and their roles | `Users`, `RoleAssignments`, `RoleHierarchy` | Which roles does this account have, including a role received through a composite or through organizational management? |
 | Profiles on the account | `ProfileAssignments` | Which profiles will the kernel check, including a profile typed directly on the user and a profile inherited from a reference user? |
 | Generated profile of a single role | `RoleProfiles` | Was each of those profiles generated by a role the account still has? |
+| Values inside a role or a profile | `RoleAuthorizations`, `RoleOrgLevels`, `Profiles`, `ProfileAuthorizations`, `AuthorizationValues` | Which authorization objects and values are stored, and which profiles were not generated from a role? |
+| SUIM rules | `CriticalAuthorizations`, `CriticalAuthorizationVariants` | Which object, field, and value rules are maintained for report `RSUSR008_009_NEW`? |
 
 `RoleAssignments` is the review population. `ValidFrom` and `ValidTo` are the interval stored on `AGR_USERS`. `Excluded` means the role was removed from the composite for this user. `FromCompositeRole` means the single role arrived through a composite, and `RoleHierarchy` names that composite. `FromOrgManagement` means HR organizational management assigned the role. `Users.SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service for the password and logon rules that apply to the account.
 
@@ -244,7 +268,8 @@ A failed check is an OData error. The response is not an empty list. Each check 
 | `Users` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
 | `RoleAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
 | `ProfileAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_PRO` field `PROFILE` = `*` activity 03 |
-| `Roles`, `RoleHierarchy`, `RoleProfiles` | `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
+| `Roles`, `RoleHierarchy`, `RoleProfiles`, `RoleAuthorizations`, `RoleOrgLevels`, `CriticalAuthorizations`, `CriticalAuthorizationVariants` | `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
+| `Profiles`, `ProfileAuthorizations`, `AuthorizationValues` | `S_USER_PRO` field `PROFILE` = `*` activity 03 |
 
 `S_USER_AGR` stores the role name in `ACT_GROUP`. `AGR_NAME` is the column on `AGR_USERS` and `AGR_DEFINE`. SU53 lists `ACTVT` and `ACT_GROUP` for this object. Profile `SAP_ALL` grants both fields as `*`.
 
@@ -259,6 +284,11 @@ GET .../ProfileAssignments?$filter=ProfileSource eq 'ReferenceUser'
 GET .../Roles?$filter=ParentRole eq 'Z_FI_TEMPLATE'
 GET .../RoleHierarchy?$filter=CompositeRole eq 'Z_FI_COMPOSITE'
 GET .../RoleProfiles?$filter=RoleName eq 'Z_FI_DISPLAY' and Version eq 'A'
+GET .../RoleAuthorizations?$filter=Object eq 'S_TCODE' and Low eq 'FB03'
+GET .../Profiles?$filter=ProfileType eq 'S' and Version eq 'A'
+GET .../ProfileAuthorizations?$filter=ProfileName eq 'SAP_ALL'
+GET .../AuthorizationValues?$filter=Object eq 'S_TCODE' and Authorization eq '&_SAP_ALL'
+GET .../CriticalAuthorizations?$filter=AuthorizationId eq 'ZTCD'
 ```
 
 A read is the logon client. There is no RFC to other clients or other application servers.

@@ -67,4 +67,49 @@ CLASS zcl_sec_access_db IMPLEMENTATION.
       FROM zi_sec_role_profile
       INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
   ENDMETHOD.
+
+  METHOD zif_sec_access_source~read_role_authorizations.
+    SELECT rolename, counter, object, authorization, variant, field, low, high,
+           modified, deleted, copied, newentry
+      FROM zi_sec_role_auth
+      INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
+  ENDMETHOD.
+
+  METHOD zif_sec_access_source~read_role_org_levels.
+    SELECT rolename, counter, variable, low, high
+      FROM zi_sec_role_org
+      INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
+  ENDMETHOD.
+
+  METHOD zif_sec_access_source~read_profiles.
+    SELECT profilename, version, profiletype, changedby, changedon, changedat,
+           department, authorizationcount, description
+      FROM zi_sec_profile
+      INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
+  ENDMETHOD.
+
+  METHOD zif_sec_access_source~read_profile_authorizations.
+    SELECT profilename, version, object, authorization
+      FROM zi_sec_prof_auth
+      INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
+  ENDMETHOD.
+
+  METHOD zif_sec_access_source~read_authorization_values.
+    SELECT object, authorization, version, field, low, high
+      FROM zi_sec_auth_value
+      INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
+  ENDMETHOD.
+
+  METHOD zif_sec_access_source~read_critical_authorizations.
+    SELECT authorizationid, criticalgroup, object, field, low, high, searchtype,
+           color, transactioncode, description
+      FROM zi_sec_crit_auth
+      INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
+  ENDMETHOD.
+
+  METHOD zif_sec_access_source~read_critical_variants.
+    SELECT variantname, authorizationid
+      FROM zi_sec_crit_var
+      INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
+  ENDMETHOD.
 ENDCLASS.

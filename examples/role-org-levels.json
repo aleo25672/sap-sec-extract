@@ -1,0 +1,13 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "RoleName": "Z_FI_DISPLAY",
+      "Counter": "000010",
+      "Client": "100",
+      "Variable": "$BUKRS",
+      "Low": "1000",
+      "High": ""
+    }
+  ]
+}

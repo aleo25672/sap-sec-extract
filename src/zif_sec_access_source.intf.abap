@@ -60,7 +60,76 @@ INTERFACE zif_sec_access_source
       generated   TYPE agr_1016-generated,
       version     TYPE agr_1016-pstate,
     END OF ty_role_profile,
-    tt_role_profile TYPE STANDARD TABLE OF ty_role_profile WITH EMPTY KEY.
+    tt_role_profile TYPE STANDARD TABLE OF ty_role_profile WITH EMPTY KEY,
+    BEGIN OF ty_role_authorization,
+      rolename      TYPE agr_1251-agr_name,
+      counter       TYPE agr_1251-counter,
+      object        TYPE agr_1251-object,
+      authorization TYPE agr_1251-auth,
+      variant       TYPE agr_1251-variant,
+      field         TYPE agr_1251-field,
+      low           TYPE agr_1251-low,
+      high          TYPE agr_1251-high,
+      modified      TYPE agr_1251-modified,
+      deleted       TYPE agr_1251-deleted,
+      copied        TYPE agr_1251-copied,
+      newentry      TYPE agr_1251-neu,
+    END OF ty_role_authorization,
+    tt_role_authorization TYPE STANDARD TABLE OF ty_role_authorization WITH EMPTY KEY,
+    BEGIN OF ty_role_org_level,
+      rolename TYPE agr_1252-agr_name,
+      counter  TYPE agr_1252-counter,
+      variable TYPE agr_1252-varbl,
+      low      TYPE agr_1252-low,
+      high     TYPE agr_1252-high,
+    END OF ty_role_org_level,
+    tt_role_org_level TYPE STANDARD TABLE OF ty_role_org_level WITH EMPTY KEY,
+    BEGIN OF ty_profile,
+      profilename          TYPE usr10-profn,
+      version              TYPE usr10-aktps,
+      profiletype          TYPE usr10-typ,
+      changedby            TYPE usr10-modbe,
+      changedon            TYPE usr10-modda,
+      changedat            TYPE usr10-modti,
+      department           TYPE usr10-divis,
+      authorizationcount   TYPE usr10-nraut,
+      description          TYPE usr11-ptext,
+    END OF ty_profile,
+    tt_profile TYPE STANDARD TABLE OF ty_profile WITH EMPTY KEY,
+    BEGIN OF ty_profile_authorization,
+      profilename   TYPE ust10s-profn,
+      version       TYPE ust10s-aktps,
+      object        TYPE ust10s-objct,
+      authorization TYPE ust10s-auth,
+    END OF ty_profile_authorization,
+    tt_profile_authorization TYPE STANDARD TABLE OF ty_profile_authorization WITH EMPTY KEY,
+    BEGIN OF ty_authorization_value,
+      object        TYPE ust12-objct,
+      authorization TYPE ust12-auth,
+      version       TYPE ust12-aktps,
+      field         TYPE ust12-field,
+      low           TYPE ust12-von,
+      high          TYPE ust12-bis,
+    END OF ty_authorization_value,
+    tt_authorization_value TYPE STANDARD TABLE OF ty_authorization_value WITH EMPTY KEY,
+    BEGIN OF ty_critical_authorization,
+      authorizationid TYPE uscrauth-auth_id,
+      criticalgroup   TYPE uscrauth-cr_auth,
+      object          TYPE uscrauth-objct,
+      field           TYPE uscrauth-field,
+      low             TYPE uscrauth-low,
+      high            TYPE uscrauth-high,
+      searchtype      TYPE uscrauth-searchtype,
+      color           TYPE uscrauthid-auth_color,
+      transactioncode TYPE uscrauthid-tcode,
+      description     TYPE uscrauidt-text,
+    END OF ty_critical_authorization,
+    tt_critical_authorization TYPE STANDARD TABLE OF ty_critical_authorization WITH EMPTY KEY,
+    BEGIN OF ty_critical_variant,
+      variantname     TYPE usrvarid-varname,
+      authorizationid TYPE usrvarid-auth_id,
+    END OF ty_critical_variant,
+    tt_critical_variant TYPE STANDARD TABLE OF ty_critical_variant WITH EMPTY KEY.
 
   METHODS read_users
     RETURNING VALUE(rt_rows) TYPE tt_user.
@@ -79,4 +148,25 @@ INTERFACE zif_sec_access_source
 
   METHODS read_role_profiles
     RETURNING VALUE(rt_rows) TYPE tt_role_profile.
+
+  METHODS read_role_authorizations
+    RETURNING VALUE(rt_rows) TYPE tt_role_authorization.
+
+  METHODS read_role_org_levels
+    RETURNING VALUE(rt_rows) TYPE tt_role_org_level.
+
+  METHODS read_profiles
+    RETURNING VALUE(rt_rows) TYPE tt_profile.
+
+  METHODS read_profile_authorizations
+    RETURNING VALUE(rt_rows) TYPE tt_profile_authorization.
+
+  METHODS read_authorization_values
+    RETURNING VALUE(rt_rows) TYPE tt_authorization_value.
+
+  METHODS read_critical_authorizations
+    RETURNING VALUE(rt_rows) TYPE tt_critical_authorization.
+
+  METHODS read_critical_variants
+    RETURNING VALUE(rt_rows) TYPE tt_critical_variant.
 ENDINTERFACE.

@@ -1,0 +1,14 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "Object": "S_TCODE",
+      "Authorization": "&_SAP_ALL",
+      "Version": "A",
+      "Field": "TCD",
+      "Low": "*",
+      "High": "",
+      "Client": "100"
+    }
+  ]
+}

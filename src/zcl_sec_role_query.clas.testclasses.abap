@@ -24,6 +24,28 @@ CLASS ltcl_source IMPLEMENTATION.
   METHOD zif_sec_access_source~read_role_profiles.
     RETURN.
   ENDMETHOD.
+
+  METHOD zif_sec_access_source~read_role_authorizations.
+    RETURN.
+  ENDMETHOD.
+  METHOD zif_sec_access_source~read_role_org_levels.
+    RETURN.
+  ENDMETHOD.
+  METHOD zif_sec_access_source~read_profiles.
+    RETURN.
+  ENDMETHOD.
+  METHOD zif_sec_access_source~read_profile_authorizations.
+    RETURN.
+  ENDMETHOD.
+  METHOD zif_sec_access_source~read_authorization_values.
+    RETURN.
+  ENDMETHOD.
+  METHOD zif_sec_access_source~read_critical_authorizations.
+    RETURN.
+  ENDMETHOD.
+  METHOD zif_sec_access_source~read_critical_variants.
+    RETURN.
+  ENDMETHOD.
 ENDCLASS.
 
 

@@ -1,0 +1,10 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "VariantName": "Z_ACCESS",
+      "AuthorizationId": "ZTCD",
+      "Client": "100"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "AuthorizationId": "ZTCD",
+      "CriticalGroup": "0001",
+      "Object": "S_TCODE",
+      "Field": "TCD",
+      "Low": "*",
+      "High": "",
+      "Client": "100",
+      "SearchType": "OR",
+      "Color": "6",
+      "TransactionCode": "",
+      "Description": "Transaction authorization"
+    }
+  ]
+}

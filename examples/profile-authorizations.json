@@ -1,0 +1,12 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "ProfileName": "SAP_ALL",
+      "Version": "A",
+      "Object": "S_TCODE",
+      "Authorization": "&_SAP_ALL",
+      "Client": "100"
+    }
+  ]
+}

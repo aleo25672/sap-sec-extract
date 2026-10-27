@@ -6,4 +6,11 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_ROLE         as Roles;
   expose ZC_SEC_ROLE_HIER    as RoleHierarchy;
   expose ZC_SEC_ROLE_PROFILE as RoleProfiles;
+  expose ZC_SEC_ROLE_AUTH    as RoleAuthorizations;
+  expose ZC_SEC_ROLE_ORG     as RoleOrgLevels;
+  expose ZC_SEC_PROFILE      as Profiles;
+  expose ZC_SEC_PROF_AUTH    as ProfileAuthorizations;
+  expose ZC_SEC_AUTH_VALUE   as AuthorizationValues;
+  expose ZC_SEC_CRIT_AUTH    as CriticalAuthorizations;
+  expose ZC_SEC_CRIT_VAR     as CriticalAuthorizationVariants;
 }

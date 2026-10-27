@@ -1,0 +1,17 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "ProfileName": "SAP_ALL",
+      "Version": "A",
+      "Client": "100",
+      "ProfileType": "S",
+      "ChangedBy": "SAP",
+      "ChangedOn": "2026-01-15",
+      "ChangedAt": "08:00:00",
+      "Department": "",
+      "AuthorizationCount": 1,
+      "Description": "All authorizations"
+    }
+  ]
+}
