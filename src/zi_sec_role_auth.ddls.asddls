@@ -8,7 +8,7 @@ define view ZI_SEC_ROLE_AUTH
   key agr_1251.agr_name as RoleName,
   key agr_1251.counter  as Counter,
       agr_1251.object   as Object,
-      agr_1251.auth     as Authorization,
+      agr_1251.auth     as AuthName,
       agr_1251.variant  as Variant,
       agr_1251.field    as Field,
       agr_1251.low      as Low,

@@ -5,7 +5,7 @@
       "RoleName": "Z_FI_DISPLAY",
       "Counter": "000010",
       "Client": "100",
-      "Variable": "$BUKRS",
+      "OrgLevel": "$BUKRS",
       "Low": "1000",
       "High": ""
     }

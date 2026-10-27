@@ -11,7 +11,7 @@ CLASS zcl_sec_role_org_query DEFINITION
         rolename             TYPE c LENGTH 30,
         counter              TYPE n LENGTH 6,
         client               TYPE c LENGTH 3,
-        variable             TYPE c LENGTH 40,
+        orglevel             TYPE c LENGTH 40,
         low                  TYPE c LENGTH 40,
         high                 TYPE c LENGTH 40,
       END OF ty_row,
@@ -54,7 +54,7 @@ CLASS zcl_sec_role_org_query IMPLEMENTATION.
         rolename             = ls_raw-rolename
         counter              = ls_raw-counter
         client               = sy-mandt
-        variable             = ls_raw-variable
+        orglevel             = ls_raw-orglevel
         low                  = ls_raw-low
         high                 = ls_raw-high ) TO rt_rows.
     ENDLOOP.

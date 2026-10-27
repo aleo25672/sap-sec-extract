@@ -214,11 +214,11 @@ The password hash is not in the extract. The person name and the email address a
 
 `RoleProfiles` reads `AGR_1016`. `RoleName` and `Counter` are the key. `Counter` is a 6-character numeric string, such as `000001`. `ProfileName` is 12 characters. `Variant` is the profile-generator variant. `Generated` is `X` when generation wrote the row. `Version` is `AGR_1016-PSTATE`: `A` is the active profile, and `P` is the maintenance copy.
 
-`RoleAuthorizations` is every field value stored on the role in PFCG. `Counter` is the line key. `Object`, `Authorization`, `Field`, `Low`, and `High` are the stored authorization. `Modified`, `Deleted`, `Copied`, and `NewEntry` are the PFCG status flags. A composite role has no rows. `RoleOrgLevels` is the organizational value stored for the same role. `Variable` is the organizational field, such as `$BUKRS`.
+`RoleAuthorizations` is every field value stored on the role in PFCG. `Counter` is the line key. `Object`, `AuthName`, `Field`, `Low`, and `High` are the stored authorization. `AuthName` is the authorization name because `Authorization` is a reserved CDS word. `Modified`, `Deleted`, `Copied`, and `NewEntry` are the PFCG status flags. A composite role has no rows. `RoleOrgLevels` is the organizational value stored for the same role. `OrgLevel` is the organizational field, such as `$BUKRS`.
 
 `Profiles` is the profile header. `Version` is `USR10-AKTPS`: `A` is active and `P` is the maintenance copy. `ProfileType` is `USR10-TYP`: `C` is a composite profile, `G` is a profile generated from a role, and `S` is a single profile maintained outside the profile generator. `SAP_ALL` and `SAP_NEW` are stored with the type the system gave them. The service does not add a further flag. `Description` is `USR11` in the logon language, or the English text when that language is missing. The authorization blob on `USR10` is not returned.
 
-`ProfileAuthorizations` is `UST10S`: which authorization object and authorization name a single profile contains. `AuthorizationValues` is `UST12`: the field values of that authorization. The caller joins `Object`, `Authorization`, and `Version`. A generated profile and a single profile use the same two sets.
+`ProfileAuthorizations` is `UST10S`: which authorization object and authorization name a single profile contains. `AuthorizationValues` is `UST12`: the field values of that authorization. The caller joins `Object`, `AuthName`, and `Version`. A generated profile and a single profile use the same two sets.
 
 `CriticalAuthorizations` is the SUIM rule table `USCRAUTH`, with the color and transaction from `USCRAUTHID` and the text from `USCRAUIDT`. `SearchType` is the stored `AND` or `OR`. `CriticalGroup` is `USCRAUTH-CR_AUTH`. `CriticalAuthorizationVariants` is which rule id belongs to which variant in `USRVARID`. An empty SUIM customizing returns no rows. The service does not compare these rules with roles or profiles.
 
@@ -287,7 +287,7 @@ GET .../RoleProfiles?$filter=RoleName eq 'Z_FI_DISPLAY' and Version eq 'A'
 GET .../RoleAuthorizations?$filter=Object eq 'S_TCODE' and Low eq 'FB03'
 GET .../Profiles?$filter=ProfileType eq 'S' and Version eq 'A'
 GET .../ProfileAuthorizations?$filter=ProfileName eq 'SAP_ALL'
-GET .../AuthorizationValues?$filter=Object eq 'S_TCODE' and Authorization eq '&_SAP_ALL'
+GET .../AuthorizationValues?$filter=Object eq 'S_TCODE' and AuthName eq '&_SAP_ALL'
 GET .../CriticalAuthorizations?$filter=AuthorizationId eq 'ZTCD'
 ```
 

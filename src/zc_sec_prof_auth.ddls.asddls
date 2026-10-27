@@ -5,6 +5,6 @@ define custom entity ZC_SEC_PROF_AUTH
   key ProfileName   : abap.char(12);
   key Version       : abap.char(1);
   key Object        : abap.char(10);
-  key Authorization : abap.char(12);
+  key AuthName      : abap.char(12);
       Client        : abap.char(3);
 }

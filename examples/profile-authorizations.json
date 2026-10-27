@@ -5,7 +5,7 @@
       "ProfileName": "SAP_ALL",
       "Version": "A",
       "Object": "S_TCODE",
-      "Authorization": "&_SAP_ALL",
+      "AuthName": "&_SAP_ALL",
       "Client": "100"
     }
   ]

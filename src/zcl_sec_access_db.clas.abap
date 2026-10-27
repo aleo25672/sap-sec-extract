@@ -69,14 +69,14 @@ CLASS zcl_sec_access_db IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_sec_access_source~read_role_authorizations.
-    SELECT rolename, counter, object, authorization, variant, field, low, high,
+    SELECT rolename, counter, object, authname, variant, field, low, high,
            modified, deleted, copied, newentry
       FROM zi_sec_role_auth
       INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
   ENDMETHOD.
 
   METHOD zif_sec_access_source~read_role_org_levels.
-    SELECT rolename, counter, variable, low, high
+    SELECT rolename, counter, orglevel, low, high
       FROM zi_sec_role_org
       INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
   ENDMETHOD.
@@ -89,13 +89,13 @@ CLASS zcl_sec_access_db IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_sec_access_source~read_profile_authorizations.
-    SELECT profilename, version, object, authorization
+    SELECT profilename, version, object, authname
       FROM zi_sec_prof_auth
       INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
   ENDMETHOD.
 
   METHOD zif_sec_access_source~read_authorization_values.
-    SELECT object, authorization, version, field, low, high
+    SELECT object, authname, version, field, low, high
       FROM zi_sec_auth_value
       INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
   ENDMETHOD.

@@ -11,7 +11,7 @@ CLASS zcl_sec_prof_auth_query DEFINITION
         profilename          TYPE c LENGTH 12,
         version              TYPE c LENGTH 1,
         object               TYPE c LENGTH 10,
-        authorization        TYPE c LENGTH 12,
+        authname        TYPE c LENGTH 12,
         client               TYPE c LENGTH 3,
       END OF ty_row,
       tt_row TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
@@ -53,7 +53,7 @@ CLASS zcl_sec_prof_auth_query IMPLEMENTATION.
         profilename          = ls_raw-profilename
         version              = ls_raw-version
         object               = ls_raw-object
-        authorization        = ls_raw-authorization
+        authname        = ls_raw-authname
         client               = sy-mandt ) TO rt_rows.
     ENDLOOP.
   ENDMETHOD.

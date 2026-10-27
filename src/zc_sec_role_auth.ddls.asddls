@@ -6,7 +6,7 @@ define custom entity ZC_SEC_ROLE_AUTH
   key Counter       : abap.numc(6);
       Client        : abap.char(3);
       Object        : abap.char(10);
-      Authorization : abap.char(12);
+      AuthName      : abap.char(12);
       Variant       : abap.char(4);
       Field         : abap.char(10);
       Low           : abap.char(40);

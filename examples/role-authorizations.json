@@ -6,7 +6,7 @@
       "Counter": "000001",
       "Client": "100",
       "Object": "S_TCODE",
-      "Authorization": "T-FI000001",
+      "AuthName": "T-FI000001",
       "Variant": "",
       "Field": "TCD",
       "Low": "FB03",

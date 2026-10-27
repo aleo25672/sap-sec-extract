@@ -12,7 +12,7 @@ CLASS zcl_sec_role_auth_query DEFINITION
         counter              TYPE n LENGTH 6,
         client               TYPE c LENGTH 3,
         object               TYPE c LENGTH 10,
-        authorization        TYPE c LENGTH 12,
+        authname        TYPE c LENGTH 12,
         variant              TYPE c LENGTH 4,
         field                TYPE c LENGTH 10,
         low                  TYPE c LENGTH 40,
@@ -62,7 +62,7 @@ CLASS zcl_sec_role_auth_query IMPLEMENTATION.
         counter              = ls_raw-counter
         client               = sy-mandt
         object               = ls_raw-object
-        authorization        = ls_raw-authorization
+        authname        = ls_raw-authname
         variant              = ls_raw-variant
         field                = ls_raw-field
         low                  = ls_raw-low

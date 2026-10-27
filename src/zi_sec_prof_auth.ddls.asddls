@@ -8,5 +8,5 @@ define view ZI_SEC_PROF_AUTH
   key ust10s.profn as ProfileName,
   key ust10s.aktps as Version,
   key ust10s.objct as Object,
-  key ust10s.auth  as Authorization
+  key ust10s.auth  as AuthName
 }

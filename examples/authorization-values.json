@@ -3,7 +3,7 @@
   "value": [
     {
       "Object": "S_TCODE",
-      "Authorization": "&_SAP_ALL",
+      "AuthName": "&_SAP_ALL",
       "Version": "A",
       "Field": "TCD",
       "Low": "*",

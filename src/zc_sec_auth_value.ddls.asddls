@@ -3,7 +3,7 @@
 define custom entity ZC_SEC_AUTH_VALUE
 {
   key Object        : abap.char(10);
-  key Authorization : abap.char(12);
+  key AuthName      : abap.char(12);
   key Version       : abap.char(1);
   key Field         : abap.char(10);
   key Low           : abap.char(40);

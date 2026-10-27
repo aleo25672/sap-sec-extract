@@ -9,7 +9,7 @@ CLASS zcl_sec_auth_value_query DEFINITION
     TYPES:
       BEGIN OF ty_row,
         object               TYPE c LENGTH 10,
-        authorization        TYPE c LENGTH 12,
+        authname        TYPE c LENGTH 12,
         version              TYPE c LENGTH 1,
         field                TYPE c LENGTH 10,
         low                  TYPE c LENGTH 40,
@@ -53,7 +53,7 @@ CLASS zcl_sec_auth_value_query IMPLEMENTATION.
     LOOP AT lt_raw INTO DATA(ls_raw).
       APPEND VALUE ty_row(
         object               = ls_raw-object
-        authorization        = ls_raw-authorization
+        authname        = ls_raw-authname
         version              = ls_raw-version
         field                = ls_raw-field
         low                  = ls_raw-low

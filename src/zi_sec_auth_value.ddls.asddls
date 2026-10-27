@@ -6,7 +6,7 @@ define view ZI_SEC_AUTH_VALUE
   as select from ust12
 {
   key ust12.objct as Object,
-  key ust12.auth  as Authorization,
+  key ust12.auth  as AuthName,
   key ust12.aktps as Version,
   key ust12.field as Field,
   key ust12.von   as Low,

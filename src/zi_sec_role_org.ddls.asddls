@@ -7,7 +7,7 @@ define view ZI_SEC_ROLE_ORG
 {
   key agr_1252.agr_name as RoleName,
   key agr_1252.counter  as Counter,
-      agr_1252.varbl    as Variable,
+      agr_1252.varbl    as OrgLevel,
       agr_1252.low      as Low,
       agr_1252.high     as High
 }
