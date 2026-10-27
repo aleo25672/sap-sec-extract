@@ -50,10 +50,6 @@ CLASS ltcl_source IMPLEMENTATION.
     RETURN.
   ENDMETHOD.
 
-  METHOD zif_sec_access_source~read_role_changes.
-    RETURN.
-  ENDMETHOD.
-
 ENDCLASS.
 
 

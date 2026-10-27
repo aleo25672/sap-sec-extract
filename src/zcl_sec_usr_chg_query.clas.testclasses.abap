@@ -102,9 +102,6 @@ CLASS ltcl_source IMPLEMENTATION.
       valueold        = 'old@example.com'
       valuenew        = 'new@example.com' ) TO rt_rows.
   ENDMETHOD.
-  METHOD zif_sec_access_source~read_role_changes.
-    RETURN.
-  ENDMETHOD.
 ENDCLASS.
 
 

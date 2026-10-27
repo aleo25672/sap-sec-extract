@@ -1,6 +1,6 @@
 CLASS ltcl_source DEFINITION FOR TESTING.
   PUBLIC SECTION.
-    INTERFACES zif_sec_access_source.
+    INTERFACES zif_sec_role_chg_source.
     DATA called TYPE abap_bool.
     DATA rolename_low TYPE string.
     DATA date_low TYPE string.
@@ -9,49 +9,7 @@ ENDCLASS.
 
 
 CLASS ltcl_source IMPLEMENTATION.
-  METHOD zif_sec_access_source~read_users.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_role_assignments.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_profile_assignments.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_roles.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_role_hierarchy.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_role_profiles.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_role_authorizations.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_role_org_levels.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_profiles.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_profile_authorizations.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_authorization_values.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_critical_authorizations.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_critical_variants.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_user_changes.
-    RETURN.
-  ENDMETHOD.
-  METHOD zif_sec_access_source~read_role_changes.
+  METHOD zif_sec_role_chg_source~read_role_changes.
     called = abap_true.
     IF lines( it_rolename ) > 0.
       rolename_low = it_rolename[ 1 ]-low.

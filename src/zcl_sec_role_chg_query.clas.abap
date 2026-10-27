@@ -27,7 +27,7 @@ CLASS zcl_sec_role_chg_query DEFINITION
 
     METHODS constructor
       IMPORTING
-        io_source TYPE REF TO zif_sec_access_source OPTIONAL
+        io_source TYPE REF TO zif_sec_role_chg_source OPTIONAL
         io_auth   TYPE REF TO zif_sec_access_auth OPTIONAL.
 
     METHODS read_rows
@@ -41,7 +41,7 @@ CLASS zcl_sec_role_chg_query DEFINITION
         zcx_sec_access.
 
   PRIVATE SECTION.
-    DATA mo_source TYPE REF TO zif_sec_access_source.
+    DATA mo_source TYPE REF TO zif_sec_role_chg_source.
     DATA mo_auth TYPE REF TO zif_sec_access_auth.
 
     METHODS selection_for
@@ -61,7 +61,7 @@ CLASS zcl_sec_role_chg_query IMPLEMENTATION.
     mo_source = io_source.
     mo_auth = io_auth.
     IF mo_source IS NOT BOUND.
-      mo_source = NEW zcl_sec_access_db( ).
+      mo_source = NEW zcl_sec_role_chg_db( ).
     ENDIF.
     IF mo_auth IS NOT BOUND.
       mo_auth = NEW zcl_sec_access_auth( ).
