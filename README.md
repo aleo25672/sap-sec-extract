@@ -8,6 +8,68 @@ Activate this package on S/4HANA 2025 (ABAP Platform 2025), on-premise or privat
 
 The same repository contains a second service, `ZAPI_SEC_ACCESS`, for the account and assignment population. That service is documented under [Security access extract](#security-access-extract).
 
+## Pull and activate
+
+### Prerequisite
+
+Pull this repository with abapGit v1.133.0 (17 February 2026) or later. v1.134.0 (10 July 2026) is the current release. From that release on, the pull publishes the service bindings. An older abapGit creates the bindings and leaves them unpublished. Open the repository list and read the version under About. Upgrade abapGit before the pull when the version is older.
+
+Standalone abapGit is report `ZABAPGIT_STANDALONE`. Copy it, keep the copy, and run the copy for the upgrade. Pull [https://github.com/abapGit/build.git](https://github.com/abapGit/build) into a local package that already exists. The build repository contains `PROG ZABAPGIT_STANDALONE`. When that program already lives in another package, move it into the pull package (SE38, Goto, Object Directory Entry) and pull again. Activate the report. About shows v1.133.0 or later.
+
+The report is about 37,000 lines. Loading that source through the SAP GUI editor, or pasting it into ABAP Development Tools, fails. The pull writes the report on the server. The [abapGit upgrade page](https://docs.abapgit.org/user-guide/getting-started/upgrade.html) describes an SE38 upload of `zabapgit_standalone.prog.abap`. Use that upload only when no abapGit program runs, and switch the editor to the back-end editor first (SE38, Utilities, Settings, ABAP Editor; on newer systems the label is Text-Based Editor).
+
+The developer version is the package of classes started with transaction `ZABAPGIT`. Pull [https://github.com/abapGit/abapGit](https://github.com/abapGit/abapGit) into that package.
+
+### Pull
+
+One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch `main`. The master language is English. The package object stored in the repository is `ZSEC_SETTINGS`; this installation assigns the pulled objects to `$ZEVOLVER_SEC2F`.
+
+1. Open abapGit (transaction `ZABAPGIT`, or report `ZABAPGIT_STANDALONE`).
+2. Add the GitHub repository `https://github.com/aleo25672/sap-sec-extract.git` as an online repository, or open it if it is already linked. The same commits are on the Cursor remote `evolver/sap-sec-extract`.
+3. Select branch `main`.
+4. Set the package to `$ZEVOLVER_SEC2F` and the master language to English.
+5. On a system where an earlier pull left `ZAPI_SEC_ACCESS` as a header with no source, delete `R3TR SRVD ZAPI_SEC_ACCESS` before pulling. Delete it in ABAP Development Tools or SE80 when the object opens. When it does not open, delete that directory entry in SE03, Change Object Directory Entries. A new system has no such object. A definition that already has its source is updated by the pull.
+6. Pull, then activate the imported objects.
+
+The interface views `ZI_SEC_USER`, `ZI_SEC_ROLE_ASSIGN`, `ZI_SEC_PROF_ASSIGN`, `ZI_SEC_ROLE`, `ZI_SEC_ROLE_HIER`, `ZI_SEC_ROLE_PROFILE`, `ZI_SEC_ROLE_AUTH`, `ZI_SEC_ROLE_ORG`, `ZI_SEC_PROFILE`, `ZI_SEC_PROF_AUTH`, `ZI_SEC_AUTH_VALUE`, `ZI_SEC_CRIT_AUTH`, and `ZI_SEC_CRIT_VAR` activate with a warning. Their tables (`USR02`, `UST04`, `AGR_USERS`, `AGR_DEFINE`, `AGR_AGRS`, `AGR_1016`, `AGR_1251`, `AGR_1252`, `USR10`, `USR11`, `UST10S`, `UST12`, `USCRAUTH`, `USCRAUTHID`, `USCRAUIDT`, `USRVARID`) are client-dependent, and the logon client is applied by the session. The warning leaves the views active.
+
+The pull imports both service definitions. `ZAPI_SEC_ACCESS` is stored the same way as `ZAPI_SEC_SETTINGS`: a header file and the CDS source in `zapi_sec_access.srvd.srvdsrv`. abapGit writes that definition after the views and classes it exposes, which is the create that produced `ZAPI_SEC_SETTINGS`. The source is:
+
+```cds
+@EndUserText.label: 'Security access'
+define service ZAPI_SEC_ACCESS {
+  expose ZC_SEC_USER         as Users;
+  expose ZC_SEC_ROLE_ASSIGN  as RoleAssignments;
+  expose ZC_SEC_PROF_ASSIGN  as ProfileAssignments;
+  expose ZC_SEC_ROLE         as Roles;
+  expose ZC_SEC_ROLE_HIER    as RoleHierarchy;
+  expose ZC_SEC_ROLE_PROFILE as RoleProfiles;
+  expose ZC_SEC_ROLE_AUTH    as RoleAuthorizations;
+  expose ZC_SEC_ROLE_ORG     as RoleOrgLevels;
+  expose ZC_SEC_PROFILE      as Profiles;
+  expose ZC_SEC_PROF_AUTH    as ProfileAuthorizations;
+  expose ZC_SEC_AUTH_VALUE   as AuthorizationValues;
+  expose ZC_SEC_CRIT_AUTH    as CriticalAuthorizations;
+  expose ZC_SEC_CRIT_VAR     as CriticalAuthorizationVariants;
+}
+```
+
+`Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key.
+
+The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. The version that publishes during the pull is in [Prerequisite](#prerequisite). The published paths are:
+
+`/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`
+
+`/sap/opu/odata4/sap/zapi_sec_access/srvd_a2x/sap/zapi_sec_access/0001/`
+
+A binding that is already published is unpublished, updated, and published again. The path stays the same. Reload `$metadata` after the pull. When `RoleProfiles` is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again.
+
+The service definitions and the bindings are in the repository, so a later pull updates them.
+
+Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, and an authorization failure that does not read profile parameters or access rows. They do not read the kernel or the database.
+
+`examples/` holds one contract sample per entity set. The values are illustrative.
+
 ## Entity sets
 
 Published service:
@@ -111,68 +173,6 @@ GET .../ProfileParameterChanges?$filter=ChangeDate ge 2026-01-01 and ParameterNa
 `ParameterStatus` and `StatusText` repeat the raw `SPFL_PARAMETER_LIST-STATE`. The numeric legend is release-specific, so the service does not translate it.
 
 The gateway returns 100 rows in one response. `@odata.count` is the size of the filtered set when the request includes `$count=true`. `@odata.nextLink` is the following page, relative to the service root. Call that URL as the server wrote it, including `top` without a `$`. The last page has no `@odata.nextLink`. The header `Prefer: odata.maxpagesize=1683` asks for a larger page, and the response header `Preference-Applied` shows the size the server used. The same paging applies to both services.
-
-## Pull and activate
-
-### Prerequisite
-
-Pull this repository with abapGit v1.133.0 (17 February 2026) or later. v1.134.0 (10 July 2026) is the current release. From that release on, the pull publishes the service bindings. An older abapGit creates the bindings and leaves them unpublished. Open the repository list and read the version under About. Upgrade abapGit before the pull when the version is older.
-
-Standalone abapGit is report `ZABAPGIT_STANDALONE`. Copy it, keep the copy, and run the copy for the upgrade. Pull [https://github.com/abapGit/build.git](https://github.com/abapGit/build) into a local package that already exists. The build repository contains `PROG ZABAPGIT_STANDALONE`. When that program already lives in another package, move it into the pull package (SE38, Goto, Object Directory Entry) and pull again. Activate the report. About shows v1.133.0 or later.
-
-The report is about 37,000 lines. Loading that source through the SAP GUI editor, or pasting it into ABAP Development Tools, fails. The pull writes the report on the server. The [abapGit upgrade page](https://docs.abapgit.org/user-guide/getting-started/upgrade.html) describes an SE38 upload of `zabapgit_standalone.prog.abap`. Use that upload only when no abapGit program runs, and switch the editor to the back-end editor first (SE38, Utilities, Settings, ABAP Editor; on newer systems the label is Text-Based Editor).
-
-The developer version is the package of classes started with transaction `ZABAPGIT`. Pull [https://github.com/abapGit/abapGit](https://github.com/abapGit/abapGit) into that package.
-
-### Pull
-
-One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch `main`. The master language is English. The package object stored in the repository is `ZSEC_SETTINGS`; this installation assigns the pulled objects to `$ZEVOLVER_SEC2F`.
-
-1. Open abapGit (transaction `ZABAPGIT`, or report `ZABAPGIT_STANDALONE`).
-2. Add the GitHub repository `https://github.com/aleo25672/sap-sec-extract.git` as an online repository, or open it if it is already linked. The same commits are on the Cursor remote `evolver/sap-sec-extract`.
-3. Select branch `main`.
-4. Set the package to `$ZEVOLVER_SEC2F` and the master language to English.
-5. On a system where an earlier pull left `ZAPI_SEC_ACCESS` as a header with no source, delete `R3TR SRVD ZAPI_SEC_ACCESS` before pulling. Delete it in ABAP Development Tools or SE80 when the object opens. When it does not open, delete that directory entry in SE03, Change Object Directory Entries. A new system has no such object. A definition that already has its source is updated by the pull.
-6. Pull, then activate the imported objects.
-
-The interface views `ZI_SEC_USER`, `ZI_SEC_ROLE_ASSIGN`, `ZI_SEC_PROF_ASSIGN`, `ZI_SEC_ROLE`, `ZI_SEC_ROLE_HIER`, `ZI_SEC_ROLE_PROFILE`, `ZI_SEC_ROLE_AUTH`, `ZI_SEC_ROLE_ORG`, `ZI_SEC_PROFILE`, `ZI_SEC_PROF_AUTH`, `ZI_SEC_AUTH_VALUE`, `ZI_SEC_CRIT_AUTH`, and `ZI_SEC_CRIT_VAR` activate with a warning. Their tables (`USR02`, `UST04`, `AGR_USERS`, `AGR_DEFINE`, `AGR_AGRS`, `AGR_1016`, `AGR_1251`, `AGR_1252`, `USR10`, `USR11`, `UST10S`, `UST12`, `USCRAUTH`, `USCRAUTHID`, `USCRAUIDT`, `USRVARID`) are client-dependent, and the logon client is applied by the session. The warning leaves the views active.
-
-The pull imports both service definitions. `ZAPI_SEC_ACCESS` is stored the same way as `ZAPI_SEC_SETTINGS`: a header file and the CDS source in `zapi_sec_access.srvd.srvdsrv`. abapGit writes that definition after the views and classes it exposes, which is the create that produced `ZAPI_SEC_SETTINGS`. The source is:
-
-```cds
-@EndUserText.label: 'Security access'
-define service ZAPI_SEC_ACCESS {
-  expose ZC_SEC_USER         as Users;
-  expose ZC_SEC_ROLE_ASSIGN  as RoleAssignments;
-  expose ZC_SEC_PROF_ASSIGN  as ProfileAssignments;
-  expose ZC_SEC_ROLE         as Roles;
-  expose ZC_SEC_ROLE_HIER    as RoleHierarchy;
-  expose ZC_SEC_ROLE_PROFILE as RoleProfiles;
-  expose ZC_SEC_ROLE_AUTH    as RoleAuthorizations;
-  expose ZC_SEC_ROLE_ORG     as RoleOrgLevels;
-  expose ZC_SEC_PROFILE      as Profiles;
-  expose ZC_SEC_PROF_AUTH    as ProfileAuthorizations;
-  expose ZC_SEC_AUTH_VALUE   as AuthorizationValues;
-  expose ZC_SEC_CRIT_AUTH    as CriticalAuthorizations;
-  expose ZC_SEC_CRIT_VAR     as CriticalAuthorizationVariants;
-}
-```
-
-`Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key.
-
-The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. The version that publishes during the pull is in [Prerequisite](#prerequisite). The published paths are:
-
-`/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`
-
-`/sap/opu/odata4/sap/zapi_sec_access/srvd_a2x/sap/zapi_sec_access/0001/`
-
-A binding that is already published is unpublished, updated, and published again. The path stays the same. Reload `$metadata` after the pull. When `RoleProfiles` is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again.
-
-The service definitions and the bindings are in the repository, so a later pull updates them.
-
-Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, and an authorization failure that does not read profile parameters or access rows. They do not read the kernel or the database.
-
-`examples/` holds one contract sample per entity set. The values are illustrative.
 
 ## Security access extract
 
