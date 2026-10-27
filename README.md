@@ -222,6 +222,50 @@ The password hash is not in the extract. The person name and the email address a
 
 `CriticalAuthorizations` is the SUIM rule table `USCRAUTH`, with the color and transaction from `USCRAUTHID` and the text from `USCRAUIDT`. `SearchType` is the stored `AND` or `OR`. `CriticalGroup` is `USCRAUTH-CR_AUTH`. `CriticalAuthorizationVariants` is which rule id belongs to which variant in `USRVARID`. An empty SUIM customizing returns no rows. The service does not compare these rules with roles or profiles.
 
+### How the caller uses the rows
+
+The service returns every stored value. The caller chooses the objects and the profiles that matter for a review. Those names are not constants in the extract. `RoleAuthorizations` and `AuthorizationValues` are large. Request `$count=true` and `$top`, and follow `@odata.nextLink`. The service reads the whole table before it returns the page.
+
+**Objects of interest.** Filter `RoleAuthorizations` on `Object`. The same filter on `AuthorizationValues` reads the value inside a profile. A prefix such as `S_USER_` is several object names. The caller lists the names it cares about.
+
+```http
+GET .../RoleAuthorizations?$count=true&$top=5&$filter=Object eq 'S_TCODE' and Field eq 'TCD'
+GET .../RoleAuthorizations?$count=true&$top=5&$filter=Object eq 'S_DEVELOP'
+GET .../RoleAuthorizations?$count=true&$top=5&$filter=Object eq 'S_USER_AGR'
+GET .../RoleAuthorizations?$count=true&$top=5&$filter=Object eq 'S_TABU_DIS'
+GET .../RoleAuthorizations?$count=true&$top=5&$filter=Object eq 'S_TABU_NAM'
+GET .../RoleAuthorizations?$count=true&$top=5&$filter=Object eq 'S_RZL_ADM'
+```
+
+`Low` and `High` are the stored range. `AuthName` is the authorization name on that role. Join `RoleName` to `RoleAssignments.RoleName` for the accounts that have the role, and to `RoleOrgLevels.RoleName` for the organizational value. An empty `RoleOrgLevels` result means that role has no organizational level stored.
+
+**Profiles that were not generated.** `Profiles.ProfileType` is the stored code. `G` was generated from a role and is already matched through `RoleProfiles`. `C` is a composite profile. `S` is a single profile maintained outside the profile generator. `SAP_ALL` and `SAP_NEW` are in that single-profile set when the system stored them with type `S`. Any other single profile is in the same set. Join `ProfileName` to `ProfileAssignments.ProfileName` for the accounts that have it.
+
+```http
+GET .../Profiles?$count=true&$filter=ProfileType eq 'S' and Version eq 'A'&$select=ProfileName,ProfileType,Version,Description
+GET .../Profiles?$filter=ProfileName eq 'SAP_ALL' and Version eq 'A'
+GET .../Profiles?$filter=ProfileName eq 'SAP_NEW' and Version eq 'A'
+```
+
+The contents of one profile are two calls. The first returns `AuthName` for an object. The second returns the field values for that name.
+
+```http
+GET .../ProfileAuthorizations?$filter=ProfileName eq 'SAP_ALL' and Version eq 'A' and Object eq 'S_TCODE'
+GET .../AuthorizationValues?$filter=Object eq 'S_TCODE' and AuthName eq '<AuthName from the previous row>' and Version eq 'A'
+```
+
+A full-authorization value is `Low` `*` on field `TCD`. The same pair of calls works for `S_DEVELOP`, `S_USER_AGR`, `S_TABU_DIS`, `S_RZL_ADM`, or any other object, and for any other profile name.
+
+**SUIM rules.** `CriticalAuthorizations` is the rule list maintained for report `RSUSR008_009_NEW`. Maintain it with transaction `SU_VCUSRVAR_CHANGE` (view cluster `VCUSRVAR`), or from `SUIM`, Users, With Critical Authorizations. Each rule is an authorization id, an object, a field, and a from/to value. `SearchType` is `AND` or `OR` for the rows of that id. `CriticalAuthorizationVariants` says which ids belong to the variant the report runs. The delivered variant `SAP_RSUSR009` is not a usable rule set. When nothing has been saved, both entity sets are empty.
+
+The caller may use those rules as its list of objects of interest. The service does not apply them. A new object is a new row in `VCUSRVAR`, saved in a customizing request. The object name in the rule is the full name, so `S_USER_AGR` and `S_USER_GRP` are separate rows under one id, linked with `OR`. An asterisk in the from-value means full authorization for that field. A stored asterisk is entered as `#*`.
+
+```http
+GET .../CriticalAuthorizations?$count=true&$top=20
+GET .../CriticalAuthorizationVariants?$count=true
+GET .../RoleAuthorizations?$count=true&$top=5&$filter=Object eq '<Object from a CriticalAuthorizations row>'
+```
+
 ### Access to programs and data
 
 A reviewer authorizes roles. The kernel checks profiles. A generated profile is the collection of authorizations of one single role. The profile name is 12 characters and the role name is 30, so `RoleProfiles` is the match between them. The service returns the populations. The caller applies the test.
