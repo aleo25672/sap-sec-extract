@@ -143,7 +143,7 @@ define service ZAPI_SEC_ACCESS {
 
 `Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key.
 
-The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. The published paths are:
+The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. Publishing during the pull requires abapGit v1.133.0 (17 February 2026) or later. v1.134.0 (10 July 2026) is the current release. An older abapGit creates the binding and leaves it unpublished. The version is shown in the abapGit repository, under About. The published paths are:
 
 `/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`
 
