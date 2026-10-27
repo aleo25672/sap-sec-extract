@@ -121,22 +121,22 @@ CLASS zcl_sec_access_db IMPLEMENTATION.
 
     LOOP AT it_userid INTO DATA(ls_user).
       APPEND VALUE #(
-        sign   = to_upper( ls_user-sign )
-        option = to_upper( ls_user-option )
-        low    = to_upper( ls_user-low )
-        high   = to_upper( ls_user-high ) ) TO lr_user.
+        sign   = CONV #( to_upper( ls_user-sign ) )
+        option = CONV #( to_upper( ls_user-option ) )
+        low    = CONV #( to_upper( ls_user-low ) )
+        high   = CONV #( to_upper( ls_user-high ) ) ) TO lr_user.
     ENDLOOP.
     LOOP AT it_changedby INTO DATA(ls_by).
       APPEND VALUE #(
-        sign   = to_upper( ls_by-sign )
-        option = to_upper( ls_by-option )
-        low    = to_upper( ls_by-low )
-        high   = to_upper( ls_by-high ) ) TO lr_by.
+        sign   = CONV #( to_upper( ls_by-sign ) )
+        option = CONV #( to_upper( ls_by-option ) )
+        low    = CONV #( to_upper( ls_by-low ) )
+        high   = CONV #( to_upper( ls_by-high ) ) ) TO lr_by.
     ENDLOOP.
     LOOP AT it_changedate INTO DATA(ls_date).
       CLEAR ls_date_range.
-      ls_date_range-sign = to_upper( ls_date-sign ).
-      ls_date_range-option = to_upper( ls_date-option ).
+      ls_date_range-sign = CONV #( to_upper( ls_date-sign ) ).
+      ls_date_range-option = CONV #( to_upper( ls_date-option ) ).
       TRY.
           IF ls_date-low IS NOT INITIAL.
             ls_date_range-low = ls_date-low.
@@ -164,14 +164,14 @@ CLASS zcl_sec_access_db IMPLEMENTATION.
       INTO CORRESPONDING FIELDS OF TABLE @rt_rows.
 
     LOOP AT rt_rows ASSIGNING FIELD-SYMBOL(<ls_row>).
-      <ls_row>-valueold = zcl_sec_usr_chg_guard=>payload_value(
+      <ls_row>-valueold = CONV #( zcl_sec_usr_chg_guard=>payload_value(
         iv_table = <ls_row>-tablename
         iv_field = <ls_row>-fieldname
-        iv_value = <ls_row>-valueold ).
-      <ls_row>-valuenew = zcl_sec_usr_chg_guard=>payload_value(
+        iv_value = <ls_row>-valueold ) ).
+      <ls_row>-valuenew = CONV #( zcl_sec_usr_chg_guard=>payload_value(
         iv_table = <ls_row>-tablename
         iv_field = <ls_row>-fieldname
-        iv_value = <ls_row>-valuenew ).
+        iv_value = <ls_row>-valuenew ) ).
     ENDLOOP.
   ENDMETHOD.
 ENDCLASS.

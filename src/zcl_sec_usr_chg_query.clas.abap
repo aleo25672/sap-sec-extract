@@ -107,14 +107,14 @@ CLASS zcl_sec_usr_chg_query IMPLEMENTATION.
         changetime      = ls_raw-changetime
         transactioncode = ls_raw-transactioncode
         headerchange    = ls_raw-headerchange
-        valueold        = zcl_sec_usr_chg_guard=>payload_value(
+        valueold        = CONV #( zcl_sec_usr_chg_guard=>payload_value(
           iv_table = ls_raw-tablename
           iv_field = ls_raw-fieldname
-          iv_value = ls_raw-valueold )
-        valuenew        = zcl_sec_usr_chg_guard=>payload_value(
+          iv_value = ls_raw-valueold ) )
+        valuenew        = CONV #( zcl_sec_usr_chg_guard=>payload_value(
           iv_table = ls_raw-tablename
           iv_field = ls_raw-fieldname
-          iv_value = ls_raw-valuenew ) ) TO rt_rows.
+          iv_value = ls_raw-valuenew ) ) ) TO rt_rows.
     ENDLOOP.
   ENDMETHOD.
 
