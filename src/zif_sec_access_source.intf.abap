@@ -129,7 +129,30 @@ INTERFACE zif_sec_access_source
       variantname     TYPE usrvarid-varname,
       authorizationid TYPE usrvarid-auth_id,
     END OF ty_critical_variant,
-    tt_critical_variant TYPE STANDARD TABLE OF ty_critical_variant WITH EMPTY KEY.
+    tt_critical_variant TYPE STANDARD TABLE OF ty_critical_variant WITH EMPTY KEY,
+    BEGIN OF ty_selopt,
+      sign   TYPE c LENGTH 1,
+      option TYPE c LENGTH 2,
+      low    TYPE string,
+      high   TYPE string,
+    END OF ty_selopt,
+    tt_selopt TYPE STANDARD TABLE OF ty_selopt WITH EMPTY KEY,
+    BEGIN OF ty_user_change,
+      userid          TYPE cdhdr-objectid,
+      changenumber    TYPE cdhdr-changenr,
+      changedby       TYPE cdhdr-username,
+      changedate      TYPE cdhdr-udate,
+      changetime      TYPE cdhdr-utime,
+      transactioncode TYPE cdhdr-tcode,
+      headerchange    TYPE cdhdr-change_ind,
+      tablename       TYPE cdpos-tabname,
+      tablekey        TYPE cdpos-tabkey,
+      fieldname       TYPE cdpos-fname,
+      itemchange      TYPE cdpos-chngind,
+      valueold        TYPE cdpos-value_old,
+      valuenew        TYPE cdpos-value_new,
+    END OF ty_user_change,
+    tt_user_change TYPE STANDARD TABLE OF ty_user_change WITH EMPTY KEY.
 
   METHODS read_users
     RETURNING VALUE(rt_rows) TYPE tt_user.
@@ -169,4 +192,14 @@ INTERFACE zif_sec_access_source
 
   METHODS read_critical_variants
     RETURNING VALUE(rt_rows) TYPE tt_critical_variant.
+
+  METHODS read_user_changes
+    IMPORTING
+      it_userid     TYPE tt_selopt
+      it_changedate TYPE tt_selopt
+      it_changedby  TYPE tt_selopt
+    RETURNING
+      VALUE(rt_rows) TYPE tt_user_change
+    RAISING
+      zcx_sec_access.
 ENDINTERFACE.

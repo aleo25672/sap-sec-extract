@@ -1,0 +1,53 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. Password hashes and address values are empty. The field name stays.",
+  "value": [
+    {
+      "UserId": "JSMITH",
+      "ChangeNumber": "0000000001",
+      "TableName": "USR02",
+      "TableKey": "100JSMITH",
+      "FieldName": "UFLAG",
+      "ItemChange": "U",
+      "Client": "100",
+      "ChangedBy": "ADMIN",
+      "ChangeDate": "2026-10-27",
+      "ChangeTime": "10:15:00",
+      "TransactionCode": "SU01",
+      "HeaderChange": "U",
+      "ValueOld": "0",
+      "ValueNew": "64"
+    },
+    {
+      "UserId": "JSMITH",
+      "ChangeNumber": "0000000001",
+      "TableName": "USR02",
+      "TableKey": "100JSMITH",
+      "FieldName": "PWDSALTEDHASH",
+      "ItemChange": "U",
+      "Client": "100",
+      "ChangedBy": "ADMIN",
+      "ChangeDate": "2026-10-27",
+      "ChangeTime": "10:15:00",
+      "TransactionCode": "SU01",
+      "HeaderChange": "U",
+      "ValueOld": "",
+      "ValueNew": ""
+    },
+    {
+      "UserId": "JSMITH",
+      "ChangeNumber": "0000000002",
+      "TableName": "ADR6",
+      "TableKey": "1000000000001",
+      "FieldName": "SMTP_ADDR",
+      "ItemChange": "U",
+      "Client": "100",
+      "ChangedBy": "ADMIN",
+      "ChangeDate": "2026-10-27",
+      "ChangeTime": "10:16:00",
+      "TransactionCode": "SU01",
+      "HeaderChange": "U",
+      "ValueOld": "",
+      "ValueNew": ""
+    }
+  ]
+}

@@ -45,6 +45,10 @@ CLASS ltcl_source IMPLEMENTATION.
   METHOD zif_sec_access_source~read_critical_variants.
     crit_var_called = abap_true.
   ENDMETHOD.
+  METHOD zif_sec_access_source~read_user_changes.
+    RETURN.
+  ENDMETHOD.
+
 ENDCLASS.
 
 

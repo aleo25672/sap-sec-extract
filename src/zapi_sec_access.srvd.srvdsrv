@@ -13,4 +13,5 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_AUTH_VALUE   as AuthorizationValues;
   expose ZC_SEC_CRIT_AUTH    as CriticalAuthorizations;
   expose ZC_SEC_CRIT_VAR     as CriticalAuthorizationVariants;
+  expose ZC_SEC_USR_CHG      as UserChangeDocuments;
 }
