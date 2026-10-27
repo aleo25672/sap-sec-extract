@@ -114,29 +114,19 @@ The gateway returns 100 rows in one response. `@odata.count` is the size of the 
 
 ## Pull and activate
 
+### Prerequisite
+
+Pull this repository with abapGit v1.133.0 (17 February 2026) or later. v1.134.0 (10 July 2026) is the current release. From that release on, the pull publishes the service bindings. An older abapGit creates the bindings and leaves them unpublished. Open the repository list and read the version under About. Upgrade abapGit before the pull when the version is older.
+
+Standalone abapGit is report `ZABAPGIT_STANDALONE`. Copy it, keep the copy, and run the copy for the upgrade. Pull [https://github.com/abapGit/build.git](https://github.com/abapGit/build) into a local package that already exists. The build repository contains `PROG ZABAPGIT_STANDALONE`. When that program already lives in another package, move it into the pull package (SE38, Goto, Object Directory Entry) and pull again. Activate the report. About shows v1.133.0 or later.
+
+The report is about 37,000 lines. Loading that source through the SAP GUI editor, or pasting it into ABAP Development Tools, fails. The pull writes the report on the server. The [abapGit upgrade page](https://docs.abapgit.org/user-guide/getting-started/upgrade.html) describes an SE38 upload of `zabapgit_standalone.prog.abap`. Use that upload only when no abapGit program runs, and switch the editor to the back-end editor first (SE38, Utilities, Settings, ABAP Editor; on newer systems the label is Text-Based Editor).
+
+The developer version is the package of classes started with transaction `ZABAPGIT`. Pull [https://github.com/abapGit/abapGit](https://github.com/abapGit/abapGit) into that package.
+
+### Pull
+
 One abapGit pull loads both services into package `$ZEVOLVER_SEC2F` from branch `main`. The master language is English. The package object stored in the repository is `ZSEC_SETTINGS`; this installation assigns the pulled objects to `$ZEVOLVER_SEC2F`.
-
-### Standalone abapGit
-
-The pull publishes both service bindings when the standalone program is abapGit v1.133.0 (17 February 2026) or later. v1.134.0 (10 July 2026) is the current release. Open the repository list and read the version under About.
-
-When that version is older, upgrade the standalone program before the pull of this repository. After the upgrade, the pull publishes the bindings. Publishing them in ABAP Development Tools is not required.
-
-The standalone program is report `ZABAPGIT_STANDALONE`, about 37,000 lines, in the [abapGit build repository](https://github.com/abapGit/build). Pasting that source into ABAP Development Tools sends one save request. The server answers `500 Internal Server Error` with a log id and a timestamp. The id is the entry in `ST22` at that timestamp, and the previous source stays in place. Uploading the same file in SE38 (Utilities, More Utilities, Upload/Download, Upload) loads it into the SAP GUI editor, and the editor closes the session. The [abapGit upgrade page](https://docs.abapgit.org/user-guide/getting-started/upgrade.html) describes that upload. On this system the upgrade is a pull of the build repository, which writes the report on the server.
-
-1. In SE38, open `ZABAPGIT_STANDALONE` and choose Program, Copy. Name the copy with the version it is running, for example `ZABAPGIT_STANDALONE_1_121_0`, and keep the copy in a local package. Run the copy for every later step. The copy stays on the old version.
-2. In SE80, create a local package that will hold only this program, for example `$STANDALONE_ABAPGIT`. Leave the transport empty. The package has to exist before the pull. A package name entered on New Online is not created when the pull stops.
-3. Run the copy. Choose New Online. Set the URL to `https://github.com/abapGit/build.git` and the package to `$STANDALONE_ABAPGIT`.
-4. The build repository contains `PROG ZABAPGIT_STANDALONE`. When that program already exists in another package, the pull stops with `PROG ZABAPGIT_STANDALONE already exists outside of $STANDALONE_ABAPGIT package hierarchy`. In SE38, open `ZABAPGIT_STANDALONE`, choose Goto, Object Directory Entry, switch to change mode, set the package to `$STANDALONE_ABAPGIT`, and save. A move between local packages does not ask for a transport. Pull again.
-5. Activate `ZABAPGIT_STANDALONE` when the pull leaves it inactive, and run it. About shows v1.133.0 or later.
-
-A repository link saved against a package that does not exist is removed from the copy. Open the build repository and choose Advanced, Danger, Remove Repository. On this release the entry can sit directly under Advanced. The popup removes the Git link. The package and its objects stay. Remove Objects and Uninstall delete every object in the package named on the repository, including its subpackages.
-
-When no abapGit program starts, switch SE38 to the back-end editor before uploading. Choose Utilities, Settings, ABAP Editor, Editor, and select Back-End Editor. On newer systems the label is Text-Based Editor. Open `ZABAPGIT_STANDALONE` in change mode and upload `zabapgit_standalone.prog.abap` from the build repository. The back-end editor does not use the frontend control that closes the session.
-
-The developer version is a package of classes started with transaction `ZABAPGIT`. Update it by pulling `https://github.com/abapGit/abapGit` into that package. The standalone source stays in `ZABAPGIT_STANDALONE`.
-
-### abapGit
 
 1. Open abapGit (transaction `ZABAPGIT`, or report `ZABAPGIT_STANDALONE`).
 2. Add the GitHub repository `https://github.com/aleo25672/sap-sec-extract.git` as an online repository, or open it if it is already linked. The same commits are on the Cursor remote `evolver/sap-sec-extract`.
@@ -163,7 +153,7 @@ define service ZAPI_SEC_ACCESS {
 
 `Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key.
 
-The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. The version that publishes during the pull is in [Standalone abapGit](#standalone-abapgit). The published paths are:
+The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. The version that publishes during the pull is in [Prerequisite](#prerequisite). The published paths are:
 
 `/sap/opu/odata4/sap/zapi_sec_settings/srvd_a2x/sap/zapi_sec_settings/0001/`
 
