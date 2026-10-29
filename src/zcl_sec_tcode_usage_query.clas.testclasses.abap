@@ -39,7 +39,7 @@ CLASS ltcl_deny IMPLEMENTATION.
   METHOD zif_sec_tcode_usage_auth~check_workload_display.
     RAISE EXCEPTION TYPE zcx_sec_access
       EXPORTING
-        textid = zcx_sec_access=>workload_not_authorized.
+        textid = zcx_sec_access=>not_authorized.
   ENDMETHOD.
 ENDCLASS.
 

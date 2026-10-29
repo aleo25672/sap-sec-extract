@@ -12,10 +12,11 @@ CLASS zcl_sec_tcode_usage_db IMPLEMENTATION.
   METHOD zif_sec_tcode_usage_source~read_transaction_usage.
     DATA lv_periodtype TYPE swncperitype.
     DATA lv_component TYPE swnchostname.
+    DATA ls_text TYPE if_t100_message=>t100key.
     DATA lt_aggregate TYPE STANDARD TABLE OF swncaggusertcode WITH EMPTY KEY.
 
-    lv_periodtype = CONV #( to_upper( condense( CONV string( iv_periodtype ) ) ) ).
-    lv_component = CONV #( |TOTAL| ).
+    lv_periodtype = iv_periodtype.
+    lv_component = 'TOTAL'.
 
     LOOP AT it_periodstart INTO DATA(lv_period).
       CLEAR lt_aggregate.
@@ -32,9 +33,12 @@ CLASS zcl_sec_tcode_usage_db IMPLEMENTATION.
       IF sy-subrc = 1.
         CONTINUE.
       ELSEIF sy-subrc <> 0.
+        " Message 003. The text id is local so this class activates against the current exception.
+        ls_text-msgid = |ZSEC_ACCESS|.
+        ls_text-msgno = |003|.
         RAISE EXCEPTION TYPE zcx_sec_access
           EXPORTING
-            textid = zcx_sec_access=>workload_not_read.
+            textid = ls_text.
       ENDIF.
 
       LOOP AT lt_aggregate INTO DATA(ls_aggregate).
