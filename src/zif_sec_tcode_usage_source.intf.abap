@@ -2,7 +2,7 @@ INTERFACE zif_sec_tcode_usage_source
   PUBLIC.
 
   TYPES:
-    tt_date TYPE STANDARD TABLE OF dats WITH EMPTY KEY,
+    tt_date TYPE STANDARD TABLE OF swncdatum WITH EMPTY KEY,
     BEGIN OF ty_usage,
       userid                 TYPE swncuname,
       entryid                TYPE swncentryid,

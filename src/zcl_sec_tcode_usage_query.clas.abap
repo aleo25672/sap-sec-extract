@@ -18,7 +18,8 @@ CLASS zcl_sec_tcode_usage_query DEFINITION
         dialogstepcount      TYPE swnccntagg,
         transactioncallcount TYPE swnccntagg,
       END OF ty_row,
-      tt_row TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
+      tt_row TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY,
+      ty_tasktype TYPE c LENGTH 2.
 
     METHODS constructor
       IMPORTING
@@ -60,7 +61,7 @@ CLASS zcl_sec_tcode_usage_query DEFINITION
       IMPORTING
         iv_value       TYPE csequence
       RETURNING
-        VALUE(rv_date) TYPE dats
+        VALUE(rv_date) TYPE swncdatum
       RAISING
         zcx_sec_access.
 
@@ -69,7 +70,7 @@ CLASS zcl_sec_tcode_usage_query DEFINITION
         iv_periodtype  TYPE swncperitype
         iv_date        TYPE dats
       RETURNING
-        VALUE(rv_date) TYPE dats
+        VALUE(rv_date) TYPE swncdatum
       RAISING
         zcx_sec_access.
 
@@ -78,14 +79,14 @@ CLASS zcl_sec_tcode_usage_query DEFINITION
         iv_periodtype  TYPE swncperitype
         iv_date        TYPE dats
       RETURNING
-        VALUE(rv_date) TYPE dats.
+        VALUE(rv_date) TYPE swncdatum.
 
     METHODS previous_period
       IMPORTING
         iv_periodtype  TYPE swncperitype
         iv_date        TYPE dats
       RETURNING
-        VALUE(rv_date) TYPE dats.
+        VALUE(rv_date) TYPE swncdatum.
 
     METHODS raise_period
       RAISING
@@ -95,7 +96,7 @@ CLASS zcl_sec_tcode_usage_query DEFINITION
       IMPORTING
         iv_raw          TYPE swnctasktyperaw
       RETURNING
-        VALUE(rv_type)  TYPE c LENGTH 2.
+        VALUE(rv_type)  TYPE ty_tasktype.
 ENDCLASS.
 
 

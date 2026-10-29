@@ -12,7 +12,7 @@ CLASS zcl_sec_tcode_usage_db IMPLEMENTATION.
   METHOD zif_sec_tcode_usage_source~read_transaction_usage.
     DATA lv_periodtype TYPE swncperitype.
     DATA lv_component TYPE swnchostname.
-    DATA ls_text TYPE if_t100_message=>t100key.
+    DATA ls_text LIKE if_t100_message=>t100key.
     DATA lt_aggregate TYPE STANDARD TABLE OF swncaggusertcode WITH EMPTY KEY.
 
     lv_periodtype = iv_periodtype.
