@@ -97,6 +97,14 @@ CLASS zcl_sec_tcode_usage_query DEFINITION
         iv_raw          TYPE swnctasktyperaw
       RETURNING
         VALUE(rv_type)  TYPE ty_tasktype.
+
+    METHODS filter_kept_rows
+      IMPORTING
+        io_request TYPE REF TO if_rap_query_request
+      CHANGING
+        ct_rows    TYPE tt_row
+      RAISING
+        zcx_sec_access.
 ENDCLASS.
 
 
@@ -380,14 +388,7 @@ CLASS zcl_sec_tcode_usage_query IMPLEMENTATION.
       it_periodstart = zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'PERIODSTART' )
       it_userid      = zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'USERID' ) ).
 
-    TRY.
-        zcl_sec_query_util=>filter_rows( EXPORTING io_request = io_request CHANGING ct_rows = lt_rows ).
-      CATCH zcx_sec_settings INTO DATA(lx_settings).
-        RAISE EXCEPTION TYPE zcx_sec_access
-          EXPORTING
-            textid      = zcx_sec_access=>filter_not_supported
-            filter_name = lx_settings->filter_name.
-    ENDTRY.
+    filter_kept_rows( EXPORTING io_request = io_request CHANGING ct_rows = lt_rows ).
 
     DATA(lt_sort) = zcl_sec_query_util=>sort_from_request( io_request ).
     zcl_sec_query_util=>sort_by( EXPORTING it_sort = lt_sort CHANGING ct_data = lt_rows ).
@@ -414,5 +415,58 @@ CLASS zcl_sec_tcode_usage_query IMPLEMENTATION.
     IF io_request->is_total_numb_of_rec_requested( ) = abap_true.
       io_response->set_total_number_of_records( lines( lt_rows ) ).
     ENDIF.
+  ENDMETHOD.
+
+  METHOD filter_kept_rows.
+    " PeriodStart is resolved in the read. A day inside a week is stored as that Monday,
+    " so the response date is not the date written in the filter.
+    DATA ls_probe TYPE ty_row.
+    DATA lt_keep TYPE tt_row.
+    DATA lt_range TYPE zcl_sec_query_util=>tt_range.
+    DATA lv_name TYPE string.
+    DATA lv_keep TYPE abap_bool.
+    FIELD-SYMBOLS <field> TYPE any.
+
+    DATA(lt_named) = io_request->get_filter( )->get_as_ranges( ).
+    LOOP AT lt_named INTO DATA(ls_named).
+      lv_name = to_upper( ls_named-name ).
+      IF lv_name = 'PERIODSTART'.
+        CONTINUE.
+      ENDIF.
+      ASSIGN COMPONENT lv_name OF STRUCTURE ls_probe TO <field>.
+      IF sy-subrc <> 0.
+        RAISE EXCEPTION TYPE zcx_sec_access
+          EXPORTING
+            textid      = zcx_sec_access=>filter_not_supported
+            filter_name = lv_name.
+      ENDIF.
+    ENDLOOP.
+
+    LOOP AT ct_rows INTO DATA(ls_row).
+      lv_keep = abap_true.
+      LOOP AT lt_named INTO ls_named.
+        lv_name = to_upper( ls_named-name ).
+        IF lv_name = 'PERIODSTART'.
+          CONTINUE.
+        ENDIF.
+        ASSIGN COMPONENT lv_name OF STRUCTURE ls_row TO <field>.
+        CLEAR lt_range.
+        LOOP AT ls_named-range INTO DATA(ls_option).
+          APPEND VALUE #(
+            sign   = ls_option-sign
+            option = ls_option-option
+            low    = |{ ls_option-low }|
+            high   = |{ ls_option-high }| ) TO lt_range.
+        ENDLOOP.
+        IF zcl_sec_query_util=>matches( iv_value = |{ <field> }| it_range = lt_range ) = abap_false.
+          lv_keep = abap_false.
+          EXIT.
+        ENDIF.
+      ENDLOOP.
+      IF lv_keep = abap_true.
+        APPEND ls_row TO lt_keep.
+      ENDIF.
+    ENDLOOP.
+    ct_rows = lt_keep.
   ENDMETHOD.
 ENDCLASS.

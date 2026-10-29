@@ -306,7 +306,9 @@ GET .../RoleChangeDocuments?$filter=ChangedBy eq 'ADMIN' and ChangeDate eq 2026-
 
 **Transaction usage.** `TransactionUsage` is one user and one workload entry for one task type and one period. The read calls function `SWNC_COLLECTOR_GET_AGGREGATES` for component `TOTAL` and table `USERTCODE`. `TOTAL` is every application server. `EntryId` is the value ST03 stored: a transaction code, a report, or a report and job name. `TaskType` is the collector task-type byte as two hexadecimal characters. `01` is dialog. The service does not keep a list of critical transactions. The caller filters `EntryId`.
 
-`PeriodType` is `D` day, `W` week, or `M` month. When the filter omits it, the read uses `M`. `PeriodStart` is required. Pass one date, or a start and an end (`ge` and `le`, or `bt`). A date inside a month names that month, and the stored period starts on the first day. A date inside a week names that week, and the stored period starts on Monday. The read asks for at most 31 days, 16 weeks, or 24 months. A wider range, or a range with no end, is an error. A period the collector has not stored adds no rows.
+`PeriodType` is `D` day, `W` week, or `M` month. When the filter omits it, the read uses `M`. `PeriodStart` is required. Pass one date, or a start and an end (`ge` and `le`, or `bt`). A date inside a month names that month, and the stored period starts on the first day. A date inside a week names that week, and the stored period starts on Monday. `2026-10-01` is a Thursday, so its week starts on `2026-09-28`. The returned `PeriodStart` is that Monday, or the first day of the month. The read asks for at most 31 days, 16 weeks, or 24 months. A wider range, or a range with no end, is an error.
+
+The collector often stores the month and does not store the week. When the weekly aggregate is missing, the service adds the daily aggregates from that Monday through Sunday. A day the collector has not stored is left out of the sum. When none of those days is stored either, the week adds no rows.
 
 `UserId` is the collector field `ACCOUNT`. `StepCount` is `COUNT`, the steps on that row. `DialogStepCount` is `DCOUNT`. `TransactionCallCount` is `LUW_COUNT`, the count of transaction calls. `UserId`, `PeriodType`, and `PeriodStart` are applied in the read. `EntryId` and `TaskType` then filter those rows.
 
@@ -316,6 +318,7 @@ Display requires authorization object `S_TOOLS_EX`, field `AUTH` = `S_TOOLS_EX_A
 
 ```http
 GET .../TransactionUsage?$count=true&$top=20&$filter=PeriodType eq 'M' and PeriodStart eq 2026-10-01 and UserId eq 'JSMITH'
+GET .../TransactionUsage?$count=true&$top=20&$filter=PeriodType eq 'W' and PeriodStart eq 2026-10-01
 GET .../TransactionUsage?$filter=PeriodType eq 'D' and PeriodStart ge 2026-10-01 and PeriodStart le 2026-10-07 and EntryId eq 'FB03'
 ```
 
