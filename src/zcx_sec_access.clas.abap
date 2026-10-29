@@ -24,7 +24,23 @@ CLASS zcx_sec_access DEFINITION
         attr2 TYPE scx_attrname VALUE '',
         attr3 TYPE scx_attrname VALUE '',
         attr4 TYPE scx_attrname VALUE '',
-      END OF filter_not_supported.
+      END OF filter_not_supported,
+      BEGIN OF workload_not_read,
+        msgid TYPE symsgid VALUE 'ZSEC_ACCESS',
+        msgno TYPE symsgno VALUE '003',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF workload_not_read,
+      BEGIN OF workload_not_authorized,
+        msgid TYPE symsgid VALUE 'ZSEC_ACCESS',
+        msgno TYPE symsgno VALUE '004',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF workload_not_authorized.
 
     METHODS constructor
       IMPORTING

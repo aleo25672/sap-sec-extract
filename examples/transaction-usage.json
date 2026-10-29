@@ -1,0 +1,27 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. EntryId is the transaction, report, or job name stored by ST03. TaskType 01 is the dialog byte. Client is the logon client; the aggregate itself is the system total.",
+  "value": [
+    {
+      "UserId": "JSMITH",
+      "EntryId": "FB03",
+      "TaskType": "01",
+      "PeriodType": "M",
+      "PeriodStart": "2026-10-01",
+      "Client": "100",
+      "StepCount": 15,
+      "DialogStepCount": 12,
+      "TransactionCallCount": 4
+    },
+    {
+      "UserId": "JSMITH",
+      "EntryId": "RSUSR003",
+      "TaskType": "04",
+      "PeriodType": "M",
+      "PeriodStart": "2026-10-01",
+      "Client": "100",
+      "StepCount": 2,
+      "DialogStepCount": 0,
+      "TransactionCallCount": 2
+    }
+  ]
+}

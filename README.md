@@ -53,6 +53,7 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_CRIT_VAR     as CriticalAuthorizationVariants;
   expose ZC_SEC_USR_CHG      as UserChangeDocuments;
   expose ZC_SEC_ROLE_CHG     as RoleChangeDocuments;
+  expose ZC_SEC_TCODE_USAGE  as TransactionUsage;
 }
 ```
 
@@ -68,7 +69,7 @@ A binding that is already published is unpublished, updated, and published again
 
 The service definitions and the bindings are in the repository, so a later pull updates them.
 
-Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, blanking of password and address values on a user or role change, role-change filters, and an authorization failure that does not read profile parameters or access rows. They do not read the kernel or the database.
+Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, blanking of password and address values on a user or role change, role-change filters, workload period bounds, and an authorization failure that does not read profile parameters, access rows, or workload aggregates. They do not read the kernel or the database.
 
 `examples/` holds one contract sample per entity set. The values are illustrative.
 
@@ -201,6 +202,7 @@ Published service:
 | `CriticalAuthorizationVariants` | `USRVARID` | One critical authorization assigned to one SUIM variant |
 | `UserChangeDocuments` | `CDHDR`, `CDPOS` object `IDENTITY` | One changed field of one user-master change document |
 | `RoleChangeDocuments` | `CDHDR`, `CDPOS` object `PFCG` | One changed field of one role change document |
+| `TransactionUsage` | ST03 aggregate `USERTCODE`, component `TOTAL` | One user and one workload entry for one task type and one period |
 
 `Users` carries the user type, user group, validity, the raw `USR02-UFLAG`, the three lock bits, the password state, the password-hash version, the last logon, who created the user, the security policy, and the reference user. `SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service. `Client` is the logon client on every row and joins to `ClientSettings`.
 
@@ -302,7 +304,22 @@ GET .../RoleChangeDocuments?$filter=RoleName eq 'Z_FI_DISPLAY' and TableName eq 
 GET .../RoleChangeDocuments?$filter=ChangedBy eq 'ADMIN' and ChangeDate eq 2026-10-27
 ```
 
-Transaction usage from ST03 and the security audit log from SM20 are the following populations.
+**Transaction usage.** `TransactionUsage` is one user and one workload entry for one task type and one period. The read calls function `SWNC_COLLECTOR_GET_AGGREGATES` for component `TOTAL` and table `USERTCODE`. `TOTAL` is every application server. `EntryId` is the value ST03 stored: a transaction code, a report, or a report and job name. `TaskType` is the collector task-type byte as two hexadecimal characters. `01` is dialog. The service does not keep a list of critical transactions. The caller filters `EntryId`.
+
+`PeriodType` is `D` day, `W` week, or `M` month. When the filter omits it, the read uses `M`. `PeriodStart` is required. Pass one date, or a start and an end (`ge` and `le`, or `bt`). A date inside a month names that month, and the stored period starts on the first day. A date inside a week names that week, and the stored period starts on Monday. The read asks for at most 31 days, 16 weeks, or 24 months. A wider range, or a range with no end, is an error. A period the collector has not stored adds no rows.
+
+`UserId` is the collector field `ACCOUNT`. `StepCount` is `COUNT`, the steps on that row. `DialogStepCount` is `DCOUNT`. `TransactionCallCount` is `LUW_COUNT`, the count of transaction calls. `UserId`, `PeriodType`, and `PeriodStart` are applied in the read. `EntryId` and `TaskType` then filter those rows.
+
+The aggregate has no client column. `Client` is the logon client, so the same system total is returned in every client.
+
+Display requires authorization object `S_TOOLS_EX`, field `AUTH` = `S_TOOLS_EX_A`. Without that value, ST03 replaces other users' names with a hash. The service rejects the call.
+
+```http
+GET .../TransactionUsage?$count=true&$top=20&$filter=PeriodType eq 'M' and PeriodStart eq 2026-10-01 and UserId eq 'JSMITH'
+GET .../TransactionUsage?$filter=PeriodType eq 'D' and PeriodStart ge 2026-10-01 and PeriodStart le 2026-10-07 and EntryId eq 'FB03'
+```
+
+The security audit log from SM20 is the following population.
 
 ### Access to programs and data
 
@@ -317,6 +334,7 @@ A reviewer authorizes roles. The kernel checks profiles. A generated profile is 
 | SUIM rules | `CriticalAuthorizations`, `CriticalAuthorizationVariants` | Which object, field, and value rules are maintained for report `RSUSR008_009_NEW`? |
 | User master changes | `UserChangeDocuments` | Who created, locked, or changed this user, and which field changed? |
 | Role changes | `RoleChangeDocuments` | Who created, changed, assigned, or removed this role, and which field changed? |
+| Transaction usage | `TransactionUsage` | Which transactions, reports, and jobs did this user run in this period, and how many steps? |
 
 `RoleAssignments` is the review population. `ValidFrom` and `ValidTo` are the interval stored on `AGR_USERS`. `Excluded` means the role was removed from the composite for this user. `FromCompositeRole` means the single role arrived through a composite, and `RoleHierarchy` names that composite. `FromOrgManagement` means HR organizational management assigned the role. `Users.SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service for the password and logon rules that apply to the account.
 
@@ -354,6 +372,7 @@ A failed check is an OData error. The response is not an empty list. Each check 
 | `ProfileAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_PRO` field `PROFILE` = `*` activity 03 |
 | `Roles`, `RoleHierarchy`, `RoleProfiles`, `RoleAuthorizations`, `RoleOrgLevels`, `RoleChangeDocuments`, `CriticalAuthorizations`, `CriticalAuthorizationVariants` | `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
 | `Profiles`, `ProfileAuthorizations`, `AuthorizationValues` | `S_USER_PRO` field `PROFILE` = `*` activity 03 |
+| `TransactionUsage` | `S_TOOLS_EX` field `AUTH` = `S_TOOLS_EX_A` |
 
 `S_USER_AGR` stores the role name in `ACT_GROUP`. `AGR_NAME` is the column on `AGR_USERS` and `AGR_DEFINE`. SU53 lists `ACTVT` and `ACT_GROUP` for this object. Profile `SAP_ALL` grants both fields as `*`.
 
@@ -375,6 +394,7 @@ GET .../AuthorizationValues?$filter=Object eq 'S_TCODE' and AuthName eq '&_SAP_A
 GET .../CriticalAuthorizations?$filter=AuthorizationId eq 'ZTCD'
 GET .../UserChangeDocuments?$filter=UserId eq 'JSMITH' and ChangeDate ge 2026-01-01 and FieldName eq 'UFLAG'
 GET .../RoleChangeDocuments?$filter=RoleName eq 'Z_FI_DISPLAY' and ChangeDate ge 2026-01-01 and TableName eq 'AGR_USERS'
+GET .../TransactionUsage?$filter=PeriodType eq 'M' and PeriodStart eq 2026-10-01 and UserId eq 'JSMITH' and EntryId eq 'FB03'
 ```
 
 A read is the logon client. There is no RFC to other clients or other application servers.

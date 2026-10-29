@@ -20,6 +20,18 @@
      <MSGNR>002</MSGNR>
      <TEXT>Filter field &amp;1 is not supported</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZSEC_ACCESS</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>Workload aggregate could not be read</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZSEC_ACCESS</ARBGB>
+     <MSGNR>004</MSGNR>
+     <TEXT>Not authorized to display workload statistics</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>
