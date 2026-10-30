@@ -1,0 +1,953 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  OData V4 $metadata for ZAPI_SEC_ACCESS version 0001.
+  Produced from the service definition and custom entities in src/.
+  Regenerate with: python3 metadata/build.py
+-->
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+    <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+    <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="com.sap.gateway.srvd.zapi_sec_access.v0001" Alias="SAP__self">
+      <Annotation Term="SAP__core.SchemaVersion" String="1.0.0"/>
+      <EntityContainer Name="Container">
+        <EntitySet Name="Users" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.UsersType"/>
+        <EntitySet Name="RoleAssignments" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.RoleAssignmentsType"/>
+        <EntitySet Name="ProfileAssignments" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.ProfileAssignmentsType"/>
+        <EntitySet Name="Roles" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.RolesType"/>
+        <EntitySet Name="RoleHierarchy" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.RoleHierarchyType"/>
+        <EntitySet Name="RoleProfiles" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.RoleProfilesType"/>
+        <EntitySet Name="RoleAuthorizations" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.RoleAuthorizationsType"/>
+        <EntitySet Name="RoleOrgLevels" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.RoleOrgLevelsType"/>
+        <EntitySet Name="Profiles" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.ProfilesType"/>
+        <EntitySet Name="ProfileAuthorizations" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.ProfileAuthorizationsType"/>
+        <EntitySet Name="AuthorizationValues" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.AuthorizationValuesType"/>
+        <EntitySet Name="CriticalAuthorizations" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.CriticalAuthorizationsType"/>
+        <EntitySet Name="CriticalAuthorizationVariants" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.CriticalAuthorizationVariantsType"/>
+        <EntitySet Name="UserChangeDocuments" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.UserChangeDocumentsType"/>
+        <EntitySet Name="RoleChangeDocuments" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.RoleChangeDocumentsType"/>
+        <EntitySet Name="TransactionUsage" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.TransactionUsageType"/>
+      </EntityContainer>
+      <EntityType Name="UsersType">
+        <Key>
+          <PropertyRef Name="UserId"/>
+        </Key>
+        <Property Name="UserId" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="UserType" Type="Edm.String" MaxLength="1"/>
+        <Property Name="UserTypeText" Type="Edm.String" MaxLength="60"/>
+        <Property Name="UserGroup" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ValidFrom" Type="Edm.Date"/>
+        <Property Name="ValidTo" Type="Edm.Date"/>
+        <Property Name="LockFlag" Type="Edm.Int32"/>
+        <Property Name="GloballyLocked" Type="Edm.String" MaxLength="1"/>
+        <Property Name="LocallyLocked" Type="Edm.String" MaxLength="1"/>
+        <Property Name="FailedLogonLocked" Type="Edm.String" MaxLength="1"/>
+        <Property Name="PasswordState" Type="Edm.Int32"/>
+        <Property Name="PasswordStateText" Type="Edm.String" MaxLength="80"/>
+        <Property Name="PasswordHashVersion" Type="Edm.String" MaxLength="1"/>
+        <Property Name="PasswordHashVersionText" Type="Edm.String" MaxLength="40"/>
+        <Property Name="LastLogonDate" Type="Edm.Date"/>
+        <Property Name="LastLogonTime" Type="Edm.TimeOfDay"/>
+        <Property Name="CreatedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="CreatedOn" Type="Edm.Date"/>
+        <Property Name="SecurityPolicy" Type="Edm.String" MaxLength="40"/>
+        <Property Name="ReferenceUser" Type="Edm.String" MaxLength="12"/>
+      </EntityType>
+      <EntityType Name="RoleAssignmentsType">
+        <Key>
+          <PropertyRef Name="UserId"/>
+          <PropertyRef Name="RoleName"/>
+        </Key>
+        <Property Name="UserId" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="RoleName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="ValidFrom" Type="Edm.Date"/>
+        <Property Name="ValidTo" Type="Edm.Date"/>
+        <Property Name="Excluded" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ChangedOn" Type="Edm.Date"/>
+        <Property Name="FromCompositeRole" Type="Edm.String" MaxLength="1"/>
+        <Property Name="FromOrgManagement" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="ProfileAssignmentsType">
+        <Key>
+          <PropertyRef Name="UserId"/>
+          <PropertyRef Name="ProfileName"/>
+          <PropertyRef Name="ProfileSource"/>
+        </Key>
+        <Property Name="UserId" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="ProfileName" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="ProfileSource" Type="Edm.String" MaxLength="13" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="ReferenceUser" Type="Edm.String" MaxLength="12"/>
+      </EntityType>
+      <EntityType Name="RolesType">
+        <Key>
+          <PropertyRef Name="RoleName"/>
+        </Key>
+        <Property Name="RoleName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="ParentRole" Type="Edm.String" MaxLength="30"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="80"/>
+        <Property Name="CreatedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="CreatedOn" Type="Edm.Date"/>
+        <Property Name="ChangedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangedOn" Type="Edm.Date"/>
+      </EntityType>
+      <EntityType Name="RoleHierarchyType">
+        <Key>
+          <PropertyRef Name="CompositeRole"/>
+          <PropertyRef Name="SingleRole"/>
+        </Key>
+        <Property Name="CompositeRole" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="SingleRole" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+      </EntityType>
+      <EntityType Name="RoleProfilesType">
+        <Key>
+          <PropertyRef Name="RoleName"/>
+          <PropertyRef Name="Counter"/>
+        </Key>
+        <Property Name="RoleName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="Counter" Type="Edm.String" MaxLength="6" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="ProfileName" Type="Edm.String" MaxLength="12"/>
+        <Property Name="Variant" Type="Edm.String" MaxLength="4"/>
+        <Property Name="Generated" Type="Edm.String" MaxLength="1"/>
+        <Property Name="Version" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="RoleAuthorizationsType">
+        <Key>
+          <PropertyRef Name="RoleName"/>
+          <PropertyRef Name="Counter"/>
+        </Key>
+        <Property Name="RoleName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="Counter" Type="Edm.String" MaxLength="6" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="Object" Type="Edm.String" MaxLength="10"/>
+        <Property Name="AuthName" Type="Edm.String" MaxLength="12"/>
+        <Property Name="Variant" Type="Edm.String" MaxLength="4"/>
+        <Property Name="Field" Type="Edm.String" MaxLength="10"/>
+        <Property Name="Low" Type="Edm.String" MaxLength="40"/>
+        <Property Name="High" Type="Edm.String" MaxLength="40"/>
+        <Property Name="Modified" Type="Edm.String" MaxLength="1"/>
+        <Property Name="Deleted" Type="Edm.String" MaxLength="1"/>
+        <Property Name="Copied" Type="Edm.String" MaxLength="1"/>
+        <Property Name="NewEntry" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="RoleOrgLevelsType">
+        <Key>
+          <PropertyRef Name="RoleName"/>
+          <PropertyRef Name="Counter"/>
+        </Key>
+        <Property Name="RoleName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="Counter" Type="Edm.String" MaxLength="6" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="OrgLevel" Type="Edm.String" MaxLength="40"/>
+        <Property Name="Low" Type="Edm.String" MaxLength="40"/>
+        <Property Name="High" Type="Edm.String" MaxLength="40"/>
+      </EntityType>
+      <EntityType Name="ProfilesType">
+        <Key>
+          <PropertyRef Name="ProfileName"/>
+          <PropertyRef Name="Version"/>
+        </Key>
+        <Property Name="ProfileName" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="Version" Type="Edm.String" MaxLength="1" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="ProfileType" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ChangedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangedOn" Type="Edm.Date"/>
+        <Property Name="ChangedAt" Type="Edm.TimeOfDay"/>
+        <Property Name="Department" Type="Edm.String" MaxLength="10"/>
+        <Property Name="AuthorizationCount" Type="Edm.Int16"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="60"/>
+      </EntityType>
+      <EntityType Name="ProfileAuthorizationsType">
+        <Key>
+          <PropertyRef Name="ProfileName"/>
+          <PropertyRef Name="Version"/>
+          <PropertyRef Name="Object"/>
+          <PropertyRef Name="AuthName"/>
+        </Key>
+        <Property Name="ProfileName" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="Version" Type="Edm.String" MaxLength="1" Nullable="false"/>
+        <Property Name="Object" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="AuthName" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+      </EntityType>
+      <EntityType Name="AuthorizationValuesType">
+        <Key>
+          <PropertyRef Name="Object"/>
+          <PropertyRef Name="AuthName"/>
+          <PropertyRef Name="Version"/>
+          <PropertyRef Name="Field"/>
+          <PropertyRef Name="Low"/>
+          <PropertyRef Name="High"/>
+        </Key>
+        <Property Name="Object" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="AuthName" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="Version" Type="Edm.String" MaxLength="1" Nullable="false"/>
+        <Property Name="Field" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="Low" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="High" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+      </EntityType>
+      <EntityType Name="CriticalAuthorizationsType">
+        <Key>
+          <PropertyRef Name="AuthorizationId"/>
+          <PropertyRef Name="CriticalGroup"/>
+          <PropertyRef Name="Object"/>
+          <PropertyRef Name="Field"/>
+          <PropertyRef Name="Low"/>
+          <PropertyRef Name="High"/>
+        </Key>
+        <Property Name="AuthorizationId" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="CriticalGroup" Type="Edm.String" MaxLength="4" Nullable="false"/>
+        <Property Name="Object" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="Field" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="Low" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="High" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="SearchType" Type="Edm.String" MaxLength="3"/>
+        <Property Name="Color" Type="Edm.String" MaxLength="1"/>
+        <Property Name="TransactionCode" Type="Edm.String" MaxLength="20"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="60"/>
+      </EntityType>
+      <EntityType Name="CriticalAuthorizationVariantsType">
+        <Key>
+          <PropertyRef Name="VariantName"/>
+          <PropertyRef Name="AuthorizationId"/>
+        </Key>
+        <Property Name="VariantName" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="AuthorizationId" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+      </EntityType>
+      <EntityType Name="UserChangeDocumentsType">
+        <Key>
+          <PropertyRef Name="UserId"/>
+          <PropertyRef Name="ChangeNumber"/>
+          <PropertyRef Name="TableName"/>
+          <PropertyRef Name="TableKey"/>
+          <PropertyRef Name="FieldName"/>
+          <PropertyRef Name="ItemChange"/>
+        </Key>
+        <Property Name="UserId" Type="Edm.String" MaxLength="90" Nullable="false"/>
+        <Property Name="ChangeNumber" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="TableName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="TableKey" Type="Edm.String" MaxLength="70" Nullable="false"/>
+        <Property Name="FieldName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="ItemChange" Type="Edm.String" MaxLength="1" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="ChangedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangeDate" Type="Edm.Date"/>
+        <Property Name="ChangeTime" Type="Edm.TimeOfDay"/>
+        <Property Name="TransactionCode" Type="Edm.String" MaxLength="20"/>
+        <Property Name="HeaderChange" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ValueOld" Type="Edm.String" MaxLength="254"/>
+        <Property Name="ValueNew" Type="Edm.String" MaxLength="254"/>
+      </EntityType>
+      <EntityType Name="RoleChangeDocumentsType">
+        <Key>
+          <PropertyRef Name="RoleName"/>
+          <PropertyRef Name="ChangeNumber"/>
+          <PropertyRef Name="TableName"/>
+          <PropertyRef Name="TableKey"/>
+          <PropertyRef Name="FieldName"/>
+          <PropertyRef Name="ItemChange"/>
+        </Key>
+        <Property Name="RoleName" Type="Edm.String" MaxLength="90" Nullable="false"/>
+        <Property Name="ChangeNumber" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="TableName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="TableKey" Type="Edm.String" MaxLength="70" Nullable="false"/>
+        <Property Name="FieldName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="ItemChange" Type="Edm.String" MaxLength="1" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="ChangedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangeDate" Type="Edm.Date"/>
+        <Property Name="ChangeTime" Type="Edm.TimeOfDay"/>
+        <Property Name="TransactionCode" Type="Edm.String" MaxLength="20"/>
+        <Property Name="HeaderChange" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ValueOld" Type="Edm.String" MaxLength="254"/>
+        <Property Name="ValueNew" Type="Edm.String" MaxLength="254"/>
+      </EntityType>
+      <EntityType Name="TransactionUsageType">
+        <Key>
+          <PropertyRef Name="UserId"/>
+          <PropertyRef Name="EntryId"/>
+          <PropertyRef Name="TaskType"/>
+          <PropertyRef Name="PeriodType"/>
+          <PropertyRef Name="PeriodStart"/>
+        </Key>
+        <Property Name="UserId" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="EntryId" Type="Edm.String" MaxLength="73" Nullable="false"/>
+        <Property Name="TaskType" Type="Edm.String" MaxLength="2" Nullable="false"/>
+        <Property Name="PeriodType" Type="Edm.String" MaxLength="1" Nullable="false"/>
+        <Property Name="PeriodStart" Type="Edm.Date" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="StepCount" Type="Edm.Decimal" Precision="24" Scale="0"/>
+        <Property Name="DialogStepCount" Type="Edm.Decimal" Precision="24" Scale="0"/>
+        <Property Name="TransactionCallCount" Type="Edm.Decimal" Precision="24" Scale="0"/>
+      </EntityType>
+      <Annotations Target="SAP__self.Container">
+        <Annotation Term="SAP__common.Label" String="Security access"/>
+      </Annotations>
+      <Annotations Target="SAP__self.UsersType">
+        <Annotation Term="SAP__common.Label" String="Security access user"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/Users">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleAssignmentsType">
+        <Annotation Term="SAP__common.Label" String="Security access role assignment"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/RoleAssignments">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.ProfileAssignmentsType">
+        <Annotation Term="SAP__common.Label" String="Security access profile assignment"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/ProfileAssignments">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.RolesType">
+        <Annotation Term="SAP__common.Label" String="Security access role"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/Roles">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleHierarchyType">
+        <Annotation Term="SAP__common.Label" String="Security access role hierarchy"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/RoleHierarchy">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleProfilesType">
+        <Annotation Term="SAP__common.Label" String="Security access role profile"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/RoleProfiles">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleAuthorizationsType">
+        <Annotation Term="SAP__common.Label" String="Security access role authorization"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/RoleAuthorizations">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleOrgLevelsType">
+        <Annotation Term="SAP__common.Label" String="Security access role org level"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/RoleOrgLevels">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.ProfilesType">
+        <Annotation Term="SAP__common.Label" String="Security access profile"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/Profiles">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.ProfileAuthorizationsType">
+        <Annotation Term="SAP__common.Label" String="Security access profile authorization"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/ProfileAuthorizations">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.AuthorizationValuesType">
+        <Annotation Term="SAP__common.Label" String="Security access authorization value"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/AuthorizationValues">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.CriticalAuthorizationsType">
+        <Annotation Term="SAP__common.Label" String="Security access critical authorization"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/CriticalAuthorizations">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.CriticalAuthorizationVariantsType">
+        <Annotation Term="SAP__common.Label" String="Security access critical variant"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/CriticalAuthorizationVariants">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.UserChangeDocumentsType">
+        <Annotation Term="SAP__common.Label" String="Security access user change"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/UserChangeDocuments">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleChangeDocumentsType">
+        <Annotation Term="SAP__common.Label" String="Security access role change"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/RoleChangeDocuments">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TransactionUsageType">
+        <Annotation Term="SAP__common.Label" String="Security access transaction usage"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/TransactionUsage">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleProfilesType/Counter">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleAuthorizationsType/Counter">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleOrgLevelsType/Counter">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  OData V4 $metadata for ZAPI_SEC_SETTINGS version 0001.
+  Produced from the service definition and custom entities in src/.
+  Regenerate with: python3 metadata/build.py
+-->
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+    <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+    <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="com.sap.gateway.srvd.zapi_sec_settings.v0001" Alias="SAP__self">
+      <Annotation Term="SAP__core.SchemaVersion" String="1.0.0"/>
+      <EntityContainer Name="Container">
+        <EntitySet Name="SecurityProfileParameters" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.SecurityProfileParametersType"/>
+        <EntitySet Name="SecurityPolicies" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.SecurityPoliciesType"/>
+        <EntitySet Name="SecurityPolicyAttributes" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.SecurityPolicyAttributesType"/>
+        <EntitySet Name="ClientSettings" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ClientSettingsType"/>
+        <EntitySet Name="SystemChangeOptions" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.SystemChangeOptionsType"/>
+        <EntitySet Name="ProfileParameterChanges" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ProfileParameterChangesType"/>
+      </EntityContainer>
+      <EntityType Name="SecurityProfileParametersType">
+        <Key>
+          <PropertyRef Name="ApplicationServer"/>
+          <PropertyRef Name="ParameterName"/>
+        </Key>
+        <Property Name="ApplicationServer" Type="Edm.String" MaxLength="64" Nullable="false"/>
+        <Property Name="ParameterName" Type="Edm.String" Nullable="false"/>
+        <Property Name="KernelDefaultValueRaw" Type="Edm.String"/>
+        <Property Name="KernelDefaultValue" Type="Edm.String"/>
+        <Property Name="InstanceProfileValue" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="ParameterType" Type="Edm.Int32"/>
+        <Property Name="Unit" Type="Edm.String"/>
+        <Property Name="RestrictionValues" Type="Edm.String"/>
+        <Property Name="DynamicallyChangeable" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ParameterStatus" Type="Edm.Int32"/>
+        <Property Name="StatusText" Type="Edm.String"/>
+        <Property Name="SecurityRelevant" Type="Edm.String" MaxLength="1"/>
+        <Property Name="SecurityArea" Type="Edm.String" MaxLength="20"/>
+        <Property Name="SystemId" Type="Edm.String" MaxLength="8"/>
+      </EntityType>
+      <EntityType Name="SecurityPoliciesType">
+        <Key>
+          <PropertyRef Name="PolicyName"/>
+        </Key>
+        <Property Name="PolicyName" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="60"/>
+        <Property Name="CreatedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="CreatedOn" Type="Edm.Decimal" Precision="15" Scale="0"/>
+        <Property Name="ChangedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangedOn" Type="Edm.Decimal" Precision="15" Scale="0"/>
+        <Property Name="AssignedUserCount" Type="Edm.Int32"/>
+        <Property Name="UsersCounted" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="SecurityPolicyAttributesType">
+        <Key>
+          <PropertyRef Name="PolicyName"/>
+          <PropertyRef Name="AttributeName"/>
+        </Key>
+        <Property Name="PolicyName" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="AttributeName" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="ValueOrigin" Type="Edm.String" MaxLength="13"/>
+        <Property Name="EffectiveValue" Type="Edm.Int32"/>
+        <Property Name="DefaultValue" Type="Edm.Int32"/>
+        <Property Name="ProfileParameter" Type="Edm.String" MaxLength="60"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="60"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+      </EntityType>
+      <EntityType Name="ClientSettingsType">
+        <Key>
+          <PropertyRef Name="Client"/>
+        </Key>
+        <Property Name="Client" Type="Edm.String" MaxLength="3" Nullable="false"/>
+        <Property Name="ClientName" Type="Edm.String" MaxLength="25"/>
+        <Property Name="ClientRole" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ClientRoleText" Type="Edm.String" MaxLength="60"/>
+        <Property Name="ClientSpecificChanges" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ClientSpecificChangesText" Type="Edm.String" MaxLength="80"/>
+        <Property Name="CrossClientChanges" Type="Edm.String" MaxLength="1"/>
+        <Property Name="CrossClientChangesText" Type="Edm.String" MaxLength="80"/>
+        <Property Name="ClientCopyProtection" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ClientCopyProtectionText" Type="Edm.String" MaxLength="80"/>
+        <Property Name="CattAllowed" Type="Edm.String" MaxLength="1"/>
+        <Property Name="CattAllowedText" Type="Edm.String" MaxLength="80"/>
+        <Property Name="UpgradeCascadeLocked" Type="Edm.String" MaxLength="1"/>
+        <Property Name="TemporarilyLocked" Type="Edm.String" MaxLength="1"/>
+        <Property Name="LogicalSystem" Type="Edm.String" MaxLength="10"/>
+        <Property Name="LastChangedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="LastChangedOn" Type="Edm.Date"/>
+        <Property Name="TableChangeLogging" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="SystemChangeOptionsType">
+        <Key>
+          <PropertyRef Name="SettingScope"/>
+          <PropertyRef Name="ObjectName"/>
+        </Key>
+        <Property Name="SettingScope" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="ObjectName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="ChangeOption" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ChangeOptionText" Type="Edm.String" MaxLength="60"/>
+      </EntityType>
+      <EntityType Name="ProfileParameterChangesType">
+        <Key>
+          <PropertyRef Name="HostName"/>
+          <PropertyRef Name="ParameterName"/>
+          <PropertyRef Name="ChangeDate"/>
+          <PropertyRef Name="ParameterType"/>
+          <PropertyRef Name="SystemId"/>
+        </Key>
+        <Property Name="HostName" Type="Edm.String" MaxLength="32" Nullable="false"/>
+        <Property Name="ParameterName" Type="Edm.String" MaxLength="64" Nullable="false"/>
+        <Property Name="ChangeDate" Type="Edm.Date" Nullable="false"/>
+        <Property Name="ParameterType" Type="Edm.String" MaxLength="1" Nullable="false"/>
+        <Property Name="SystemId" Type="Edm.String" MaxLength="8" Nullable="false"/>
+        <Property Name="ParameterState" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ParameterStateText" Type="Edm.String" MaxLength="60"/>
+        <Property Name="ParameterTypeText" Type="Edm.String" MaxLength="60"/>
+        <Property Name="ParameterValue" Type="Edm.String" MaxLength="64"/>
+        <Property Name="SecurityRelevant" Type="Edm.String" MaxLength="1"/>
+        <Property Name="SecurityArea" Type="Edm.String" MaxLength="20"/>
+      </EntityType>
+      <Annotations Target="SAP__self.Container">
+        <Annotation Term="SAP__common.Label" String="Security settings"/>
+      </Annotations>
+      <Annotations Target="SAP__self.SecurityProfileParametersType">
+        <Annotation Term="SAP__common.Label" String="Security profile parameter"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/SecurityProfileParameters">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.SecurityPoliciesType">
+        <Annotation Term="SAP__common.Label" String="Security policy"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/SecurityPolicies">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.SecurityPolicyAttributesType">
+        <Annotation Term="SAP__common.Label" String="Security policy attribute"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/SecurityPolicyAttributes">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.ClientSettingsType">
+        <Annotation Term="SAP__common.Label" String="Client settings"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/ClientSettings">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.SystemChangeOptionsType">
+        <Annotation Term="SAP__common.Label" String="System change option"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/SystemChangeOptions">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.ProfileParameterChangesType">
+        <Annotation Term="SAP__common.Label" String="Profile parameter change"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/ProfileParameterChanges">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

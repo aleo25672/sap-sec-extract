@@ -65,6 +65,8 @@ The pull also imports both service bindings. Each binding is OData V4, Web API, 
 
 `/sap/opu/odata4/sap/zapi_sec_access/srvd_a2x/sap/zapi_sec_access/0001/`
 
+The OData `$metadata` for those paths is in [metadata/zapi_sec_settings.xml](metadata/zapi_sec_settings.xml) and [metadata/zapi_sec_access.xml](metadata/zapi_sec_access.xml). Each file is produced from the service definition and the custom entities in this repository. An entity set uses the name from `expose ... as`. Its entity type is that name with the suffix `Type`. `python3 metadata/build.py` writes the files again after an entity changes. abapGit ignores `metadata/`, so the pull does not import these files into the package.
+
 A binding that is already published is unpublished, updated, and published again. The path stays the same. Reload `$metadata` after the pull. When an entity set from this repository is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again.
 
 The service definitions and the bindings are in the repository, so a later pull updates them.
