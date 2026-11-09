@@ -1,6 +1,6 @@
 # SAP security settings extract
 
-Read-only OData V4 service for the profile parameters shown by report RSPFPAR, plus the four settings that sit beside that report and change an IT general control conclusion: security policies, client settings, system change options, and parameter history.
+Read-only OData V4 service for the profile parameters shown by report RSPFPAR, plus the settings that sit beside that report and change an IT general control conclusion: security policies, client settings, system change options, and parameter history. The same service returns the system status, the kernel, the installed software components, and the customizing and catalog tables in [System identity](#system-identity) and [Customizing and catalogs](#customizing-and-catalogs).
 
 The service returns raw values and, where a value is derived, the derivation. The caller compares a policy with the application server and decides whether a production client is locked.
 
@@ -67,11 +67,11 @@ The pull also imports both service bindings. Each binding is OData V4, Web API, 
 
 The OData `$metadata` for those paths is in [metadata/zapi_sec_settings.xml](metadata/zapi_sec_settings.xml) and [metadata/zapi_sec_access.xml](metadata/zapi_sec_access.xml). Each file is produced from the service definition and the custom entities in this repository. An entity set uses the name from `expose ... as`. Its entity type is that name with the suffix `Type`. `python3 metadata/build.py` writes the files again after an entity changes. abapGit ignores `metadata/`, so the pull does not import these files into the package.
 
-A binding that is already published is unpublished, updated, and published again. The path stays the same. Reload `$metadata` after the pull. When an entity set from this repository is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again.
+A binding that is already published is unpublished, updated, and published again. The path stays the same. Reload `$metadata` after the pull. When an entity set from this repository is absent from the entity container, unpublish that binding at version `0001` and publish it again. Do this for `ZAPI_SEC_SETTINGS` after a pull that adds entity sets, and for `ZAPI_SEC_ACCESS` as well.
 
 The service definitions and the bindings are in the repository, so a later pull updates them.
 
-Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, blanking of password and address values on a user or role change, role-change filters, workload period bounds, and an authorization failure that does not read profile parameters, access rows, or workload aggregates. They do not read the kernel or the database.
+Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, blanking of password and address values on a user or role change, role-change filters, workload period bounds, component and program type texts, batch session status text, and an authorization failure that does not read profile parameters, system status, kernel information, access rows, or workload aggregates. They do not read the kernel or the database.
 
 `examples/` holds one contract sample per entity set. The values are illustrative.
 
@@ -89,6 +89,17 @@ Published service:
 | `ClientSettings` | SCC4 / `T000` | One row per client |
 | `SystemChangeOptions` | SE06 | Global row, software components, and namespaces |
 | `ProfileParameterChanges` | TU02 / `PAHI` | Parameter history for a host and a date |
+| `SystemStatus` | System, Status | One row for the application server that answered |
+| `KernelInformation` | System, Status, Shift+F5 | Kernel release, patch, and compilation of that server |
+| `SoftwareComponents` | `CVERS` | Installed component, release, and support package level |
+| `CompanyCodes` | `T001` | Company code, including the productive flag |
+| `TableLogging` | `DD09L` | Logging flag for the tables the caller names |
+| `Se16nChangeDocuments` | `SE16N_CD_KEY` | Header of an SE16N change, for a table or a date |
+| `RoleCustomizing` | `PRGN_CUST` | One PFCG customizing switch and its stored value |
+| `ForbiddenPasswords` | `USR40` | One forbidden password pattern |
+| `BatchInputSessions` | SM35 / `APQI` | Session header, without the queue password |
+| `Programs` | `TRDIR` | Change facts for the programs the caller names |
+| `ProgramIncludes` | `D010INC` | Includes of those programs |
 
 `SecurityProfileParameters` keeps three value fields:
 
@@ -102,7 +113,7 @@ The service does not choose which of those is in force.
 
 `DISABLE_PASSWORD_LOGON` also supersedes `login/password_logon_usergroup`. The payload carries the single profile parameter name stored on `SEC_POLICY_ATTR`.
 
-A landscape pull is one call per application server. Policy and client data are for the logon client (`sap-client`) or, for `T000`, every client. There is no RFC to other instances.
+A landscape pull is one call per application server. Policy and client data are for the logon client (`sap-client`) or, for `T000`, every client. `SystemStatus` and `KernelInformation` are the application server that answered the request. There is no RFC to other instances.
 
 ## IT general controls
 
@@ -114,6 +125,10 @@ RSPFPAR is the current profile of this application server. These four entity set
 | `ClientSettings` | Change management | Whether this client allows customizing, repository changes, a client copy, or eCATT |
 | `SystemChangeOptions` | Change management | Whether the system as a whole allows repository and cross-client changes |
 | `ProfileParameterChanges` | Change management, and access to programs and data | Which security parameters changed, on which host, and on which date |
+| `SystemStatus`, `KernelInformation`, `SoftwareComponents` | Change management | Which system, kernel, and component version the extract was taken from |
+| `CompanyCodes`, `TableLogging`, `Programs`, `ProgramIncludes` | Change management | Productive company codes, table logging, and the last change of named programs |
+| `Se16nChangeDocuments`, `RoleCustomizing`, `ForbiddenPasswords` | Access to programs and data | SE16N change headers, PFCG switches, and forbidden password patterns |
+| `BatchInputSessions` | Change management | Which batch input sessions are not finished |
 
 ### Security policies
 
@@ -147,6 +162,30 @@ A production client can be closed in SCC4 while this global row is still modifia
 
 This is the population of security-parameter changes in the audit period. The store keeps a day and a 64-character value. It does not keep the user or the time. The account that saved an RZ10 change is in the profile comment. A dynamic RZ11 change is system log message Q19. The newest day appears after the TU02 changelog update.
 
+### System identity
+
+`SystemStatus` is the System, Status screen for the application server that answered. `ApplicationServer` is `sy-host`. `DatabaseSystem`, `DatabaseHost`, `OperatingSystem`, `MachineType`, `IpAddress`, and `SapRelease` come from `RFC_SYSTEM_INFO`. `SapRelease` is the basis release, four characters. The product version is `SoftwareComponents`. `DatabaseRelease` is the first database line from `TH_SAPREL`. `InstallationNumber` comes from `SLIC_GET_LICENCE_NUMBER`. A blank installation number means that function returned nothing. `UnicodeSystem` is `X` when the character size is greater than one.
+
+`KernelInformation` is the same server, Shift+F5. `TH_SAPREL` supplies `KernelRelease`, `KernelPatchLevel`, `CompiledOn`, `CompiledAt`, and `DatabaseLibrary`. Join it to `SystemStatus` on `SystemId` and `ApplicationServer`.
+
+`SoftwareComponents` is `CVERS`, one row per installed component. `Release` is `CVERS-RELEASE`. `SupportPackageLevel` is `CVERS-EXTRELEASE`. The support package name is not on the row. `ComponentTypeText` is the `RELC_TYPE` text.
+
+### Customizing and catalogs
+
+`CompanyCodes` is `T001` for the logon client. `Productive` is `XPROD`. The row keeps the code, the name, the country, the currency, the chart of accounts, the fiscal-year variant, and the language. Address numbers and tax numbers stay out.
+
+`TableLogging` is the active `DD09L` row. `LogDataChanges` is `PROTOKOLL`. The caller passes `TableName`. A request without that filter is an error (message 005).
+
+`Se16nChangeDocuments` is the header in `SE16N_CD_KEY`: the table, the user, and the date of an SE16N change. The changed values stay in `SE16N_CD_DATA` and are not returned. Pass `TableName` or `ChangedOn`. A request with neither is an error.
+
+`RoleCustomizing` is `PRGN_CUST`. `CustomizingId` is `ID` and `CustomizingValue` is `PATH`. `CHECK_S_USER_SAS` is a filter the caller applies.
+
+`ForbiddenPasswords` is `USR40`. `PasswordPattern` is the forbidden pattern in `BCODE`, and `CaseSensitive` is the flag beside it. This is the password rule, not a user's password hash. User password hashes stay out of the extract.
+
+`BatchInputSessions` is the SM35 header in `APQI`. `QueueState` is the session status: blank is to be processed, `C` creating, `E` incorrect, `F` finished, `R` processing, and `S` in background. Failed and unfinished sessions are filters the caller applies. `ErrorCount` is `TRANSCNTE`. The queue password in `APQI-PASSWD` is not selected.
+
+`Programs` is `TRDIR` for the names in `ProgramName`. A request without that filter is an error. The row is the program type, the created and changed user and date, the version, and the authorization group. The source is not returned. `ProgramIncludes` is `D010INC` for the same program names.
+
 ## Authorization
 
 | Entity sets | Check |
@@ -155,6 +194,16 @@ This is the population of security-parameter changes in the audit period. The st
 | `SecurityPolicies`, `SecurityPolicyAttributes` | `S_SECPOL` activity 03 |
 | `ClientSettings` | `S_TABU_NAM` for `T000`, activity 03 |
 | `SystemChangeOptions` | `S_CTS_ADMI` function `TABL`. Report `RSWBO004` uses that function for the SE06 display. Confirm it on the target system. |
+| `SystemStatus`, `KernelInformation` | `S_RZL_ADM` activity 03 |
+| `SoftwareComponents` | `S_TABU_NAM` for `CVERS`, activity 03 |
+| `CompanyCodes` | `S_TABU_NAM` for `T001`, activity 03 |
+| `TableLogging` | `S_TABU_NAM` for `DD09L`, activity 03 |
+| `Se16nChangeDocuments` | `S_TABU_NAM` for `SE16N_CD_KEY`, activity 03 |
+| `RoleCustomizing` | `S_TABU_NAM` for `PRGN_CUST`, activity 03 |
+| `ForbiddenPasswords` | `S_TABU_NAM` for `USR40`, activity 03 |
+| `BatchInputSessions` | `S_BDC_MONI` activity `ANAL` for group `*` |
+| `Programs` | `S_TABU_NAM` for `TRDIR`, activity 03 |
+| `ProgramIncludes` | `S_TABU_NAM` for `D010INC`, activity 03 |
 
 A failed check is an OData error. The response is not an empty list.
 
@@ -162,7 +211,7 @@ A failed check is an OData error. The response is not an empty list.
 
 ## Filters
 
-Range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count`. Every property of an entity accepts a range filter. A filter on an unknown property is an error (message 004). Character comparisons are case-insensitive, and a blank flag matches an empty value. `gt`, `ge`, `lt`, `le`, and `bt` compare integers numerically when both sides are integers, so 10 is greater than 2.
+Range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count`. Every property of an entity accepts a range filter. A filter on an unknown property is an error (message 004). A missing filter on `TableLogging`, `Programs`, `ProgramIncludes`, or `Se16nChangeDocuments` is an error (message 005). Character comparisons are case-insensitive, and a blank flag matches an empty value. `gt`, `ge`, `lt`, `le`, and `bt` compare integers numerically when both sides are integers, so 10 is greater than 2.
 
 ```http
 GET .../SecurityProfileParameters?$filter=SecurityRelevant eq 'X'&$count=true
@@ -171,6 +220,17 @@ GET .../SecurityPolicyAttributes?$filter=ValueOrigin eq 'KernelDefault'
 GET .../ClientSettings?$filter=ClientRole eq 'P'
 GET .../SystemChangeOptions?$filter=SettingScope eq 'Global'
 GET .../ProfileParameterChanges?$filter=ChangeDate ge 2026-01-01 and ParameterName eq 'login/min_password_lng'
+GET .../SystemStatus
+GET .../KernelInformation
+GET .../SoftwareComponents?$filter=Component eq 'S4CORE'
+GET .../CompanyCodes?$filter=Productive eq 'X'
+GET .../TableLogging?$filter=TableName eq 'T000'
+GET .../Se16nChangeDocuments?$filter=TableName eq 'T000' and ChangedOn ge 2026-01-01
+GET .../RoleCustomizing?$filter=CustomizingId eq 'CHECK_S_USER_SAS'
+GET .../ForbiddenPasswords
+GET .../BatchInputSessions?$filter=QueueState eq 'E'
+GET .../Programs?$filter=ProgramName eq 'ZFI_POST'
+GET .../ProgramIncludes?$filter=ProgramName eq 'ZFI_POST'
 ```
 
 `ProfileParameterChanges` pushes the host, parameter name, date, and parameter type filters into the `PAHI` select. Character filters are applied with `upper`, so the name match is case-insensitive. An empty range does not restrict the select. Pass a date or name filter. The table also holds database and operating-system parameters. The entity key is host, parameter name, date, parameter type, and system id, which is the `PAHI` key. `PAHI-SYSTEMID` is CHAR 2; the property is 8 characters so the value is not clipped. `ParameterValue` is 64 characters. The row has a date and no time, and it has no user. The newest day appears only after the TU02 changelog update.

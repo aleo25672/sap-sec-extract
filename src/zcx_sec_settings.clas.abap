@@ -40,7 +40,23 @@ CLASS zcx_sec_settings DEFINITION
         attr2 TYPE scx_attrname VALUE '',
         attr3 TYPE scx_attrname VALUE '',
         attr4 TYPE scx_attrname VALUE '',
-      END OF filter_not_supported.
+      END OF filter_not_supported,
+      BEGIN OF filter_required,
+        msgid TYPE symsgid VALUE 'ZSEC_SETTINGS',
+        msgno TYPE symsgno VALUE '005',
+        attr1 TYPE scx_attrname VALUE 'FILTER_NAME',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF filter_required,
+      BEGIN OF system_read_failed,
+        msgid TYPE symsgid VALUE 'ZSEC_SETTINGS',
+        msgno TYPE symsgno VALUE '006',
+        attr1 TYPE scx_attrname VALUE '',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF system_read_failed.
 
     METHODS constructor
       IMPORTING

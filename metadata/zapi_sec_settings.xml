@@ -24,6 +24,17 @@
         <EntitySet Name="ClientSettings" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ClientSettingsType"/>
         <EntitySet Name="SystemChangeOptions" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.SystemChangeOptionsType"/>
         <EntitySet Name="ProfileParameterChanges" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ProfileParameterChangesType"/>
+        <EntitySet Name="SystemStatus" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.SystemStatusType"/>
+        <EntitySet Name="KernelInformation" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.KernelInformationType"/>
+        <EntitySet Name="SoftwareComponents" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.SoftwareComponentsType"/>
+        <EntitySet Name="CompanyCodes" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.CompanyCodesType"/>
+        <EntitySet Name="TableLogging" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.TableLoggingType"/>
+        <EntitySet Name="Se16nChangeDocuments" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.Se16nChangeDocumentsType"/>
+        <EntitySet Name="RoleCustomizing" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.RoleCustomizingType"/>
+        <EntitySet Name="ForbiddenPasswords" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ForbiddenPasswordsType"/>
+        <EntitySet Name="BatchInputSessions" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.BatchInputSessionsType"/>
+        <EntitySet Name="Programs" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ProgramsType"/>
+        <EntitySet Name="ProgramIncludes" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ProgramIncludesType"/>
       </EntityContainer>
       <EntityType Name="SecurityProfileParametersType">
         <Key>
@@ -126,6 +137,135 @@
         <Property Name="ParameterValue" Type="Edm.String" MaxLength="64"/>
         <Property Name="SecurityRelevant" Type="Edm.String" MaxLength="1"/>
         <Property Name="SecurityArea" Type="Edm.String" MaxLength="20"/>
+      </EntityType>
+      <EntityType Name="SystemStatusType">
+        <Key>
+          <PropertyRef Name="SystemId"/>
+          <PropertyRef Name="ApplicationServer"/>
+        </Key>
+        <Property Name="SystemId" Type="Edm.String" MaxLength="8" Nullable="false"/>
+        <Property Name="ApplicationServer" Type="Edm.String" MaxLength="32" Nullable="false"/>
+        <Property Name="DatabaseSystem" Type="Edm.String" MaxLength="10"/>
+        <Property Name="DatabaseHost" Type="Edm.String" MaxLength="32"/>
+        <Property Name="DatabaseRelease" Type="Edm.String"/>
+        <Property Name="OperatingSystem" Type="Edm.String" MaxLength="10"/>
+        <Property Name="MachineType" Type="Edm.String" MaxLength="5"/>
+        <Property Name="IpAddress" Type="Edm.String" MaxLength="45"/>
+        <Property Name="SapRelease" Type="Edm.String" MaxLength="4"/>
+        <Property Name="UnicodeSystem" Type="Edm.String" MaxLength="1"/>
+        <Property Name="InstallationNumber" Type="Edm.String" MaxLength="10"/>
+      </EntityType>
+      <EntityType Name="KernelInformationType">
+        <Key>
+          <PropertyRef Name="SystemId"/>
+          <PropertyRef Name="ApplicationServer"/>
+        </Key>
+        <Property Name="SystemId" Type="Edm.String" MaxLength="8" Nullable="false"/>
+        <Property Name="ApplicationServer" Type="Edm.String" MaxLength="32" Nullable="false"/>
+        <Property Name="KernelRelease" Type="Edm.String"/>
+        <Property Name="KernelPatchLevel" Type="Edm.String"/>
+        <Property Name="CompiledOn" Type="Edm.String"/>
+        <Property Name="CompiledAt" Type="Edm.String"/>
+        <Property Name="DatabaseLibrary" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="SoftwareComponentsType">
+        <Key>
+          <PropertyRef Name="Component"/>
+        </Key>
+        <Property Name="Component" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="Release" Type="Edm.String" MaxLength="10"/>
+        <Property Name="SupportPackageLevel" Type="Edm.String" MaxLength="10"/>
+        <Property Name="ComponentType" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ComponentTypeText" Type="Edm.String" MaxLength="60"/>
+      </EntityType>
+      <EntityType Name="CompanyCodesType">
+        <Key>
+          <PropertyRef Name="CompanyCode"/>
+        </Key>
+        <Property Name="CompanyCode" Type="Edm.String" MaxLength="4" Nullable="false"/>
+        <Property Name="CompanyName" Type="Edm.String" MaxLength="25"/>
+        <Property Name="Country" Type="Edm.String" MaxLength="3"/>
+        <Property Name="Currency" Type="Edm.String" MaxLength="5"/>
+        <Property Name="ChartOfAccounts" Type="Edm.String" MaxLength="4"/>
+        <Property Name="FiscalYearVariant" Type="Edm.String" MaxLength="2"/>
+        <Property Name="Productive" Type="Edm.String" MaxLength="1"/>
+        <Property Name="Language" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="TableLoggingType">
+        <Key>
+          <PropertyRef Name="TableName"/>
+        </Key>
+        <Property Name="TableName" Type="Edm.String" MaxLength="30" Nullable="false"/>
+        <Property Name="LogDataChanges" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="Se16nChangeDocumentsType">
+        <Key>
+          <PropertyRef Name="DocumentId"/>
+        </Key>
+        <Property Name="DocumentId" Type="Edm.Decimal" Precision="21" Scale="7" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="TableName" Type="Edm.String" MaxLength="30"/>
+        <Property Name="UserName" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangedOn" Type="Edm.Date"/>
+        <Property Name="ChangedAt" Type="Edm.TimeOfDay"/>
+        <Property Name="ClientDependent" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="RoleCustomizingType">
+        <Key>
+          <PropertyRef Name="CustomizingId"/>
+        </Key>
+        <Property Name="CustomizingId" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="CustomizingValue" Type="Edm.String" MaxLength="10"/>
+      </EntityType>
+      <EntityType Name="ForbiddenPasswordsType">
+        <Key>
+          <PropertyRef Name="PasswordPattern"/>
+        </Key>
+        <Property Name="PasswordPattern" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="CaseSensitive" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="BatchInputSessionsType">
+        <Key>
+          <PropertyRef Name="Client"/>
+          <PropertyRef Name="QueueId"/>
+        </Key>
+        <Property Name="Client" Type="Edm.String" MaxLength="3" Nullable="false"/>
+        <Property Name="QueueId" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="SessionName" Type="Edm.String" MaxLength="12"/>
+        <Property Name="Creator" Type="Edm.String" MaxLength="12"/>
+        <Property Name="CreatedOn" Type="Edm.Date"/>
+        <Property Name="CreatedAt" Type="Edm.TimeOfDay"/>
+        <Property Name="QueueState" Type="Edm.String" MaxLength="1"/>
+        <Property Name="QueueStateText" Type="Edm.String" MaxLength="40"/>
+        <Property Name="TransactionCount" Type="Edm.Int32"/>
+        <Property Name="ErrorCount" Type="Edm.Int32"/>
+        <Property Name="DeletedCount" Type="Edm.Int32"/>
+        <Property Name="StartedOn" Type="Edm.Date"/>
+        <Property Name="StartedAt" Type="Edm.TimeOfDay"/>
+        <Property Name="UserName" Type="Edm.String" MaxLength="12"/>
+      </EntityType>
+      <EntityType Name="ProgramsType">
+        <Key>
+          <PropertyRef Name="ProgramName"/>
+        </Key>
+        <Property Name="ProgramName" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="ProgramType" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ProgramTypeText" Type="Edm.String" MaxLength="60"/>
+        <Property Name="CreatedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="CreatedOn" Type="Edm.Date"/>
+        <Property Name="ChangedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangedOn" Type="Edm.Date"/>
+        <Property Name="Version" Type="Edm.String" MaxLength="10"/>
+        <Property Name="AuthorizationGroup" Type="Edm.String" MaxLength="8"/>
+        <Property Name="UnicodeCheck" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="ProgramIncludesType">
+        <Key>
+          <PropertyRef Name="ProgramName"/>
+          <PropertyRef Name="IncludeName"/>
+        </Key>
+        <Property Name="ProgramName" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="IncludeName" Type="Edm.String" MaxLength="40" Nullable="false"/>
       </EntityType>
       <Annotations Target="SAP__self.Container">
         <Annotation Term="SAP__common.Label" String="Security settings"/>
@@ -334,6 +474,446 @@
         <Annotation Term="SAP__common.Label" String="Profile parameter change"/>
       </Annotations>
       <Annotations Target="SAP__self.Container/ProfileParameterChanges">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.SystemStatusType">
+        <Annotation Term="SAP__common.Label" String="System status"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/SystemStatus">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.KernelInformationType">
+        <Annotation Term="SAP__common.Label" String="Kernel information"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/KernelInformation">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.SoftwareComponentsType">
+        <Annotation Term="SAP__common.Label" String="Software component"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/SoftwareComponents">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.CompanyCodesType">
+        <Annotation Term="SAP__common.Label" String="Company code"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/CompanyCodes">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TableLoggingType">
+        <Annotation Term="SAP__common.Label" String="Table logging flag"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/TableLogging">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.Se16nChangeDocumentsType">
+        <Annotation Term="SAP__common.Label" String="SE16N change document"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/Se16nChangeDocuments">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.RoleCustomizingType">
+        <Annotation Term="SAP__common.Label" String="Role customizing"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/RoleCustomizing">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.ForbiddenPasswordsType">
+        <Annotation Term="SAP__common.Label" String="Forbidden password"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/ForbiddenPasswords">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.BatchInputSessionsType">
+        <Annotation Term="SAP__common.Label" String="Batch input session"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/BatchInputSessions">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.ProgramsType">
+        <Annotation Term="SAP__common.Label" String="Program catalog"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/Programs">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.ProgramIncludesType">
+        <Annotation Term="SAP__common.Label" String="Program include"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/ProgramIncludes">
         <Annotation Term="SAP__capabilities.ReadRestrictions">
           <Record>
             <PropertyValue Property="Readable" Bool="true"/>

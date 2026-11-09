@@ -1,0 +1,12 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "Component": "S4CORE",
+      "Release": "108",
+      "SupportPackageLevel": "0003",
+      "ComponentType": "R",
+      "ComponentTypeText": "Application component"
+    }
+  ]
+}

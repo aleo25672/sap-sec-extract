@@ -52,6 +52,40 @@ CLASS zcl_sec_auth IMPLEMENTATION.
     ENDIF.
   ENDMETHOD.
 
+  METHOD zif_sec_auth~check_system_display.
+    " SM51 and the system status screens use this display activity.
+    AUTHORITY-CHECK OBJECT 'S_RZL_ADM'
+      ID 'ACTVT' FIELD '03'.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid = zcx_sec_settings=>not_authorized.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD zif_sec_auth~check_named_table.
+    AUTHORITY-CHECK OBJECT 'S_TABU_NAM'
+      ID 'TABLE' FIELD iv_table
+      ID 'ACTVT' FIELD '03'.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid = zcx_sec_settings=>not_authorized.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD zif_sec_auth~check_batch_input_display.
+    " SM35 analyze. Group * is the overview of every session.
+    AUTHORITY-CHECK OBJECT 'S_BDC_MONI'
+      ID 'BDCGROUPID' FIELD '*'
+      ID 'BDCAKTI'    FIELD 'ANAL'.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid = zcx_sec_settings=>not_authorized.
+    ENDIF.
+  ENDMETHOD.
+
   METHOD zif_sec_auth~can_count_users.
     AUTHORITY-CHECK OBJECT 'S_USER_GRP'
       ID 'CLASS' FIELD '*'

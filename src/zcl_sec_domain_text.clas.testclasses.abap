@@ -6,6 +6,7 @@ CLASS ltcl_domain_text DEFINITION FINAL FOR TESTING
     METHODS global_and_namespace FOR TESTING.
     METHODS client_role_fallback FOR TESTING.
     METHODS unknown_code_stays FOR TESTING.
+    METHODS component_program_and_batch FOR TESTING.
 ENDCLASS.
 
 CLASS ltcl_domain_text IMPLEMENTATION.
@@ -29,5 +30,19 @@ CLASS ltcl_domain_text IMPLEMENTATION.
       iv_code = 'Z'
       it_values = zcl_sec_domain_text=>component_fallbacks( ) ).
     cl_abap_unit_assert=>assert_equals( act = lv_text exp = 'Z' ).
+  ENDMETHOD.
+
+  METHOD component_program_and_batch.
+    DATA(lv_component) = zcl_sec_domain_text=>from_list(
+      iv_code = 'S'
+      it_values = zcl_sec_domain_text=>component_type_fallbacks( ) ).
+    cl_abap_unit_assert=>assert_equals( act = lv_component exp = 'NetWeaver basis component' ).
+    DATA(lv_program) = zcl_sec_domain_text=>from_list(
+      iv_code = '1'
+      it_values = zcl_sec_domain_text=>program_type_fallbacks( ) ).
+    cl_abap_unit_assert=>assert_equals( act = lv_program exp = 'Executable program' ).
+    cl_abap_unit_assert=>assert_equals( act = zcl_sec_domain_text=>batch_session_text( ' ' ) exp = 'To be processed' ).
+    cl_abap_unit_assert=>assert_equals( act = zcl_sec_domain_text=>batch_session_text( 'E' ) exp = 'Incorrect' ).
+    cl_abap_unit_assert=>assert_equals( act = zcl_sec_domain_text=>batch_session_text( 'F' ) exp = 'Finished' ).
   ENDMETHOD.
 ENDCLASS.

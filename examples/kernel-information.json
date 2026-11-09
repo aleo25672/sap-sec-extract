@@ -1,0 +1,14 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "SystemId": "S4Q",
+      "ApplicationServer": "s4qapp01",
+      "KernelRelease": "785",
+      "KernelPatchLevel": "200",
+      "CompiledOn": "Oct 9 2024",
+      "CompiledAt": "12:41:08",
+      "DatabaseLibrary": "753.02"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. The queue password is not returned.",
+  "value": [
+    {
+      "Client": "100",
+      "QueueId": "20260115000000000001",
+      "SessionName": "FI_POST",
+      "Creator": "BATCH",
+      "CreatedOn": "2026-01-15",
+      "CreatedAt": "08:00:00",
+      "QueueState": "E",
+      "QueueStateText": "Incorrect",
+      "TransactionCount": 12,
+      "ErrorCount": 1,
+      "DeletedCount": 0,
+      "StartedOn": "2026-01-15",
+      "StartedAt": "08:05:00",
+      "UserName": "BATCH"
+    }
+  ]
+}

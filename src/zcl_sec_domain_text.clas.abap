@@ -61,6 +61,20 @@ CLASS zcl_sec_domain_text DEFINITION
     CLASS-METHODS catt_fallbacks
       RETURNING
         VALUE(rt_values) TYPE tt_value.
+
+    CLASS-METHODS component_type_fallbacks
+      RETURNING
+        VALUE(rt_values) TYPE tt_value.
+
+    CLASS-METHODS program_type_fallbacks
+      RETURNING
+        VALUE(rt_values) TYPE tt_value.
+
+    CLASS-METHODS batch_session_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
 ENDCLASS.
 
 
@@ -175,5 +189,56 @@ CLASS zcl_sec_domain_text IMPLEMENTATION.
       ( code = 'T' text = 'eCATT and CATT allowed for trusted RFC only' )
       ( code = 'E' text = 'eCATT allowed, FUN/ABAP and CATT not allowed' )
       ( code = 'F' text = 'eCATT allowed, FUN/ABAP and CATT only for trusted RFC' ) ).
+  ENDMETHOD.
+
+  METHOD component_type_fallbacks.
+    rt_values = VALUE #(
+      ( code = '' text = 'Main component' )
+      ( code = 'A' text = 'Add-on component' )
+      ( code = 'S' text = 'NetWeaver basis component' )
+      ( code = 'X' text = 'NetWeaver plug-in' )
+      ( code = 'W' text = 'NetWeaver add-on' )
+      ( code = 'V' text = 'Application platform component' )
+      ( code = 'R' text = 'Application component' )
+      ( code = 'P' text = 'Application plug-in' )
+      ( code = 'O' text = 'Common application objects' )
+      ( code = 'N' text = 'Application extensions' )
+      ( code = 'I' text = 'Industry solution, layer 1' )
+      ( code = 'H' text = 'Industry solution, layer 2' )
+      ( code = 'G' text = 'Industry solution, layer 3' )
+      ( code = 'F' text = 'Industry solution, layer 4' )
+      ( code = 'E' text = 'Industry solution, layer 5' )
+      ( code = 'C' text = 'Project' ) ).
+  ENDMETHOD.
+
+  METHOD program_type_fallbacks.
+    rt_values = VALUE #(
+      ( code = '1' text = 'Executable program' )
+      ( code = 'I' text = 'Include' )
+      ( code = 'M' text = 'Module pool' )
+      ( code = 'F' text = 'Function group' )
+      ( code = 'S' text = 'Subroutine pool' )
+      ( code = 'J' text = 'Interface pool' )
+      ( code = 'K' text = 'Class pool' )
+      ( code = 'T' text = 'Type pool' ) ).
+  ENDMETHOD.
+
+  METHOD batch_session_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN ''.
+        rv_text = 'To be processed'.
+      WHEN 'C'.
+        rv_text = 'Creating'.
+      WHEN 'E'.
+        rv_text = 'Incorrect'.
+      WHEN 'F'.
+        rv_text = 'Finished'.
+      WHEN 'R'.
+        rv_text = 'Processing'.
+      WHEN 'S'.
+        rv_text = 'In background'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
   ENDMETHOD.
 ENDCLASS.

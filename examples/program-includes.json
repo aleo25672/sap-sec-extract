@@ -1,0 +1,9 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "ProgramName": "ZFI_POST",
+      "IncludeName": "ZFI_POST_TOP"
+    }
+  ]
+}

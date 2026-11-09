@@ -13,6 +13,18 @@ INTERFACE zif_sec_auth
   METHODS check_system_change_display
     RAISING zcx_sec_settings.
 
+  METHODS check_system_display
+    RAISING zcx_sec_settings.
+
+  METHODS check_named_table
+    IMPORTING
+      iv_table TYPE csequence
+    RAISING
+      zcx_sec_settings.
+
+  METHODS check_batch_input_display
+    RAISING zcx_sec_settings.
+
   METHODS can_count_users
     RETURNING VALUE(rv_yes) TYPE abap_bool.
 ENDINTERFACE.

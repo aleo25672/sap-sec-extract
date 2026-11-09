@@ -1,0 +1,14 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. The changed values stay in SE16N_CD_DATA.",
+  "value": [
+    {
+      "DocumentId": 20260115103000.0000000,
+      "Client": "100",
+      "TableName": "T000",
+      "UserName": "BASIS",
+      "ChangedOn": "2026-01-15",
+      "ChangedAt": "10:30:00",
+      "ClientDependent": "X"
+    }
+  ]
+}

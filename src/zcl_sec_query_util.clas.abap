@@ -68,6 +68,22 @@ CLASS zcl_sec_query_util DEFINITION
       RAISING
         cx_rap_query_provider.
 
+    CLASS-METHODS require_filter
+      IMPORTING
+        io_request TYPE REF TO if_rap_query_request
+        iv_name    TYPE string
+      RAISING
+        zcx_sec_settings.
+
+    CLASS-METHODS apply
+      IMPORTING
+        io_request  TYPE REF TO if_rap_query_request
+        io_response TYPE REF TO if_rap_query_response
+      CHANGING
+        ct_rows     TYPE STANDARD TABLE
+      RAISING
+        cx_rap_query_provider.
+
   PRIVATE SECTION.
     TYPES:
       BEGIN OF ty_named_range,
@@ -339,5 +355,48 @@ CLASS zcl_sec_query_util IMPLEMENTATION.
     LOOP AT <keep> ASSIGNING <kept>.
       APPEND <kept> TO ct_rows.
     ENDLOOP.
+  ENDMETHOD.
+
+  METHOD require_filter.
+    IF ranges_for( io_request = io_request iv_name = iv_name ) IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid      = zcx_sec_settings=>filter_required
+          filter_name = to_upper( iv_name ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD apply.
+    filter_rows( EXPORTING io_request = io_request CHANGING ct_rows = ct_rows ).
+
+    DATA(lt_sort) = sort_from_request( io_request ).
+    sort_by( EXPORTING it_sort = lt_sort CHANGING ct_data = ct_rows ).
+
+    DATA lv_skip TYPE i.
+    DATA lv_top TYPE i.
+    DATA lv_from TYPE i.
+    DATA lv_to TYPE i.
+    paging_from_request( EXPORTING io_request = io_request IMPORTING ev_skip = lv_skip ev_top = lv_top ).
+    page(
+      EXPORTING iv_lines = lines( ct_rows ) iv_skip = lv_skip iv_top = lv_top
+      IMPORTING ev_from = lv_from ev_to = lv_to ).
+
+    DATA lr_page TYPE REF TO data.
+    FIELD-SYMBOLS <page> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> TYPE any.
+    CREATE DATA lr_page LIKE ct_rows.
+    ASSIGN lr_page->* TO <page>.
+    IF lv_to >= lv_from.
+      LOOP AT ct_rows ASSIGNING <row> FROM lv_from TO lv_to.
+        APPEND <row> TO <page>.
+      ENDLOOP.
+    ENDIF.
+
+    IF io_request->is_data_requested( ) = abap_true.
+      io_response->set_data( <page> ).
+    ENDIF.
+    IF io_request->is_total_numb_of_rec_requested( ) = abap_true.
+      io_response->set_total_number_of_records( lines( ct_rows ) ).
+    ENDIF.
   ENDMETHOD.
 ENDCLASS.
