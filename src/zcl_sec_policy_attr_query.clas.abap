@@ -15,7 +15,7 @@ CLASS zcl_sec_policy_attr_query DEFINITION
         defaultvalue     TYPE i,
         profileparameter TYPE c LENGTH 60,
         description      TYPE c LENGTH 60,
-        client           TYPE mandt,
+        client           TYPE c LENGTH 3,
       END OF ty_row,
       tt_row TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
 

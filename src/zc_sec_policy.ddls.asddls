@@ -3,7 +3,7 @@
 define custom entity ZC_SEC_POLICY
 {
   key PolicyName        : abap.char(40);
-      Client            : abap.clnt;
+      Client            : abap.char(3);
       Description       : abap.char(60);
       CreatedBy         : abap.char(12);
       CreatedOn         : abap.dec(15,0);
