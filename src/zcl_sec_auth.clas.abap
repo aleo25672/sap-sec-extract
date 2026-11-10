@@ -64,8 +64,11 @@ CLASS zcl_sec_auth IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD zif_sec_auth~check_named_table.
+    " AUTHORITY-CHECK rejects a string. The table name is 30 characters.
+    DATA lv_table TYPE c LENGTH 30.
+    lv_table = to_upper( iv_table ).
     AUTHORITY-CHECK OBJECT 'S_TABU_NAM'
-      ID 'TABLE' FIELD iv_table
+      ID 'TABLE' FIELD lv_table
       ID 'ACTVT' FIELD '03'.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE zcx_sec_settings
