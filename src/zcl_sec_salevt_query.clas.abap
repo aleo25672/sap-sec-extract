@@ -97,7 +97,7 @@ CLASS zcl_sec_salevt_query IMPLEMENTATION.
         high   = lv_high ) TO lr_time.
     ENDLOOP.
 
-    DATA lr_client TYPE RANGE OF c LENGTH 3.
+    DATA lr_client TYPE RANGE OF rsau_buf_data-slgmand.
     LOOP AT zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'CLIENT' ) INTO DATA(ls_client).
       APPEND VALUE #(
         sign   = ls_client-sign
@@ -105,7 +105,7 @@ CLASS zcl_sec_salevt_query IMPLEMENTATION.
         low    = ls_client-low
         high   = ls_client-high ) TO lr_client.
     ENDLOOP.
-    DATA lr_user TYPE RANGE OF c LENGTH 12.
+    DATA lr_user TYPE RANGE OF rsau_buf_data-slguser.
     LOOP AT zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'USERNAME' ) INTO DATA(ls_user).
       APPEND VALUE #(
         sign   = ls_user-sign

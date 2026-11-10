@@ -75,7 +75,7 @@ CLASS zcl_sec_dblog_query IMPLEMENTATION.
 
     " RSTBHIST reads DBTABLOG for one table. The caller names that table.
     zcl_sec_query_util=>require_filter( io_request = io_request iv_name = 'TABLENAME' ).
-    DATA lr_table TYPE RANGE OF c LENGTH 30.
+    DATA lr_table TYPE RANGE OF dbtablog-tabname.
     LOOP AT zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'TABLENAME' ) INTO DATA(ls_name).
       IF ls_name-low IS NOT INITIAL.
         mo_auth->check_named_table( to_upper( ls_name-low ) ).
