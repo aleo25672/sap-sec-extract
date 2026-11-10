@@ -9,7 +9,7 @@ CLASS zcl_sec_e071_query DEFINITION
     TYPES:
       BEGIN OF ty_row,
         request       TYPE c LENGTH 20,
-        position      TYPE n LENGTH 6,
+        objectposition TYPE n LENGTH 6,
         programid     TYPE c LENGTH 4,
         objecttype    TYPE c LENGTH 4,
         objectname    TYPE c LENGTH 120,
@@ -111,7 +111,7 @@ CLASS zcl_sec_e071_query IMPLEMENTATION.
       ENDIF.
       APPEND VALUE ty_row(
         request        = ls_object-trkorr
-        position       = ls_object-as4pos
+        objectposition = ls_object-as4pos
         programid      = ls_object-pgmid
         objecttype     = ls_object-object
         objectname     = ls_object-obj_name

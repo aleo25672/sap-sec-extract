@@ -3,7 +3,7 @@
   "value": [
     {
       "Request": "DEVK900123",
-      "Position": "000001",
+      "ObjectPosition": "000001",
       "ProgramId": "R3TR",
       "ObjectType": "PROG",
       "ObjectName": "ZFI_POST",

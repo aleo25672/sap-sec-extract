@@ -209,7 +209,7 @@ This is the population of security-parameter changes in the audit period. The st
 
 `TransportRequests` is `E070` for requests and tasks in this system. It is not the import history. `ChangedOn` is `AS4DATE` and `ChangedAt` is `AS4TIME`, the last change stored on the request. `RequestFunction` is `TRFUNCTION`. `K` is a workbench request and `W` is a customizing request. `RequestStatus` is `TRSTATUS`. `D` is modifiable and `R` is released. `Category` is `KORRDEV`. `CUST` is customizing and `SYST` is workbench. `Owner` is `AS4USER`. `ParentRequest` is `STRKORR`. `Description` is `E07T-AS4TEXT`, with the same language fallback. The same closed `ChangedOn` filter is required.
 
-`TransportRequestObjects` is `E071` joined to that `E070` header, so the same `ChangedOn` filter selects the objects. `Position` is `AS4POS`. `ProgramId` is `PGMID`, `ObjectType` is `OBJECT`, and `ObjectName` is `OBJ_NAME`. `ObjectFunction` is `OBJFUNC`. `Owner`, `ChangedOn`, `TargetSystem`, `RequestStatus`, and `Description` come from the header.
+`TransportRequestObjects` is `E071` joined to that `E070` header, so the same `ChangedOn` filter selects the objects. `ObjectPosition` is `AS4POS`. `ProgramId` is `PGMID`, `ObjectType` is `OBJECT`, and `ObjectName` is `OBJ_NAME`. `ObjectFunction` is `OBJFUNC`. `Owner`, `ChangedOn`, `TargetSystem`, `RequestStatus`, and `Description` come from the header.
 
 ## Authorization
 

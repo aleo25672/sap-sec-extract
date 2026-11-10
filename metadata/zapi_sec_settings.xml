@@ -370,10 +370,10 @@
       <EntityType Name="TransportRequestObjectsType">
         <Key>
           <PropertyRef Name="Request"/>
-          <PropertyRef Name="Position"/>
+          <PropertyRef Name="ObjectPosition"/>
         </Key>
         <Property Name="Request" Type="Edm.String" MaxLength="20" Nullable="false"/>
-        <Property Name="Position" Type="Edm.String" MaxLength="6" Nullable="false"/>
+        <Property Name="ObjectPosition" Type="Edm.String" MaxLength="6" Nullable="false"/>
         <Property Name="ProgramId" Type="Edm.String" MaxLength="4"/>
         <Property Name="ObjectType" Type="Edm.String" MaxLength="4"/>
         <Property Name="ObjectName" Type="Edm.String" MaxLength="120"/>
@@ -1357,7 +1357,7 @@
       <Annotations Target="SAP__self.TpParametersType/ConfigVersion">
         <Annotation Term="SAP__common.IsDigitSequence"/>
       </Annotations>
-      <Annotations Target="SAP__self.TransportRequestObjectsType/Position">
+      <Annotations Target="SAP__self.TransportRequestObjectsType/ObjectPosition">
         <Annotation Term="SAP__common.IsDigitSequence"/>
       </Annotations>
     </Schema>

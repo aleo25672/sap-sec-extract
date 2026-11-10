@@ -3,7 +3,7 @@
 define custom entity ZC_SEC_E071
 {
   key Request       : abap.char(20);
-  key Position      : abap.numc(6);
+  key ObjectPosition : abap.numc(6);
       ProgramId     : abap.char(4);
       ObjectType    : abap.char(4);
       ObjectName    : abap.char(120);
