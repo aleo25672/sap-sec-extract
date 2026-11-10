@@ -1,0 +1,19 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. The object row is joined to the E070 header.",
+  "value": [
+    {
+      "Request": "DEVK900123",
+      "Position": "000001",
+      "ProgramId": "R3TR",
+      "ObjectType": "PROG",
+      "ObjectName": "ZFI_POST",
+      "ObjectFunction": "K",
+      "ObjectLanguage": "",
+      "Owner": "JDEVELOP",
+      "ChangedOn": "2026-01-15",
+      "TargetSystem": "QAS",
+      "RequestStatus": "R",
+      "Description": "Posting adjustment"
+    }
+  ]
+}

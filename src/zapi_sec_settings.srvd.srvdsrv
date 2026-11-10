@@ -17,4 +17,11 @@ define service ZAPI_SEC_SETTINGS {
   expose ZC_SEC_BATCH      as BatchInputSessions;
   expose ZC_SEC_PROGRAM    as Programs;
   expose ZC_SEC_PROGINC    as ProgramIncludes;
+  expose ZC_SEC_TMSDOM     as TransportDomains;
+  expose ZC_SEC_TMSSYS     as TransportSystems;
+  expose ZC_SEC_TMSROUTE   as TransportRoutes;
+  expose ZC_SEC_TPALOG     as ImportHistory;
+  expose ZC_SEC_TPPAR      as TpParameters;
+  expose ZC_SEC_E070       as TransportRequests;
+  expose ZC_SEC_E071       as TransportRequestObjects;
 }

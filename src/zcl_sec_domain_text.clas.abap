@@ -75,6 +75,36 @@ CLASS zcl_sec_domain_text DEFINITION
         iv_code        TYPE csequence
       RETURNING
         VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS transport_system_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS request_function_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS request_status_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS request_category_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS tp_return_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
 ENDCLASS.
 
 
@@ -237,6 +267,99 @@ CLASS zcl_sec_domain_text IMPLEMENTATION.
         rv_text = 'Processing'.
       WHEN 'S'.
         rv_text = 'In background'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD transport_system_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN 'S'.
+        rv_text = 'SAP system'.
+      WHEN 'V'.
+        rv_text = 'Virtual system'.
+      WHEN 'E'.
+        rv_text = 'External system'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD request_function_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN 'K'.
+        rv_text = 'Workbench request'.
+      WHEN 'W'.
+        rv_text = 'Customizing request'.
+      WHEN 'C'.
+        rv_text = 'Relocation of objects without package change'.
+      WHEN 'O'.
+        rv_text = 'Relocation of objects with package change'.
+      WHEN 'E'.
+        rv_text = 'Relocation of a complete package'.
+      WHEN 'T'.
+        rv_text = 'Transport of copies'.
+      WHEN 'S'.
+        rv_text = 'Development/correction'.
+      WHEN 'R'.
+        rv_text = 'Repair'.
+      WHEN 'X'.
+        rv_text = 'Unclassified task'.
+      WHEN 'Q'.
+        rv_text = 'Customizing task'.
+      WHEN 'G'.
+        rv_text = 'Piece list'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD request_status_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN 'D'.
+        rv_text = 'Modifiable'.
+      WHEN 'L'.
+        rv_text = 'Modifiable, protected'.
+      WHEN 'O'.
+        rv_text = 'Release started'.
+      WHEN 'R'.
+        rv_text = 'Released'.
+      WHEN 'N'.
+        rv_text = 'Released, protected'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD request_category_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN 'CUST'.
+        rv_text = 'Customizing'.
+      WHEN 'SYST'.
+        rv_text = 'Workbench'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD tp_return_text.
+    DATA(lv_code) = condense( CONV string( iv_code ) ).
+    IF lv_code IS INITIAL.
+      RETURN.
+    ENDIF.
+    SHIFT lv_code LEFT DELETING LEADING '0'.
+    IF lv_code IS INITIAL.
+      lv_code = '0'.
+    ENDIF.
+    CASE lv_code.
+      WHEN '0'.
+        rv_text = 'Success'.
+      WHEN '4'.
+        rv_text = 'Warning'.
+      WHEN '8'.
+        rv_text = 'Error'.
+      WHEN '12' OR '16'.
+        rv_text = 'Fatal error'.
       WHEN OTHERS.
         rv_text = iv_code.
     ENDCASE.

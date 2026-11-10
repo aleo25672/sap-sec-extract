@@ -24,7 +24,15 @@ CLASS zcx_sec_access DEFINITION
         attr2 TYPE scx_attrname VALUE '',
         attr3 TYPE scx_attrname VALUE '',
         attr4 TYPE scx_attrname VALUE '',
-      END OF filter_not_supported.
+      END OF filter_not_supported,
+      BEGIN OF filter_required,
+        msgid TYPE symsgid VALUE 'ZSEC_ACCESS',
+        msgno TYPE symsgno VALUE '005',
+        attr1 TYPE scx_attrname VALUE 'FILTER_NAME',
+        attr2 TYPE scx_attrname VALUE '',
+        attr3 TYPE scx_attrname VALUE '',
+        attr4 TYPE scx_attrname VALUE '',
+      END OF filter_required.
 
     METHODS constructor
       IMPORTING

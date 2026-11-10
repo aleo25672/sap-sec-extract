@@ -1,0 +1,21 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. RouteKind is Consolidation or Delivery.",
+  "value": [
+    {
+      "RouteKind": "Consolidation",
+      "ConfigVersion": "0001",
+      "TransportLayer": "ZDEV",
+      "SourceSystem": "DEV",
+      "TargetSystem": "QAS",
+      "ConsolidationSystem": "QAS"
+    },
+    {
+      "RouteKind": "Delivery",
+      "ConfigVersion": "0001",
+      "TransportLayer": "",
+      "SourceSystem": "QAS",
+      "TargetSystem": "PRD",
+      "ConsolidationSystem": ""
+    }
+  ]
+}

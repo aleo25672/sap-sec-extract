@@ -86,6 +86,29 @@ CLASS zcl_sec_auth IMPLEMENTATION.
     ENDIF.
   ENDMETHOD.
 
+  METHOD zif_sec_auth~check_transport_admin.
+    " STMS domain, systems, routes, and the tp parameter profile.
+    AUTHORITY-CHECK OBJECT 'S_CTS_ADMI'
+      ID 'CTS_ADMFCT' FIELD 'TADM'.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid = zcx_sec_settings=>not_authorized.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD zif_sec_auth~check_transport_display.
+    " SE09 and SE10 display of every request type.
+    AUTHORITY-CHECK OBJECT 'S_TRANSPRT'
+      ID 'TTYPE' FIELD '*'
+      ID 'ACTVT' FIELD '03'.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid = zcx_sec_settings=>not_authorized.
+    ENDIF.
+  ENDMETHOD.
+
   METHOD zif_sec_auth~can_count_users.
     AUTHORITY-CHECK OBJECT 'S_USER_GRP'
       ID 'CLASS' FIELD '*'

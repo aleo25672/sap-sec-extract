@@ -1,0 +1,10 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "DomainName": "DOMAIN_PRD",
+      "ControllerSystem": "PRD",
+      "Description": "Production domain"
+    }
+  ]
+}

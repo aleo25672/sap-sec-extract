@@ -1,0 +1,11 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "ProfileName": "Z_FI_COMPOSITE",
+      "Version": "A",
+      "SubProfile": "Z_FI_DISPLAY",
+      "Client": "100"
+    }
+  ]
+}

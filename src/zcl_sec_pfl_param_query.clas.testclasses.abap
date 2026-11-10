@@ -21,6 +21,10 @@ CLASS ltcl_deny_auth IMPLEMENTATION.
   ENDMETHOD.
   METHOD zif_sec_auth~check_batch_input_display.
   ENDMETHOD.
+  METHOD zif_sec_auth~check_transport_admin.
+  ENDMETHOD.
+  METHOD zif_sec_auth~check_transport_display.
+  ENDMETHOD.
   METHOD zif_sec_auth~can_count_users.
     rv_yes = abap_false.
   ENDMETHOD.

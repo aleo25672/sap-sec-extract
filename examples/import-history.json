@@ -1,0 +1,20 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. ImportOn is the first eight digits of ImportTimestamp.",
+  "value": [
+    {
+      "ImportTimestamp": "20260115140200",
+      "Request": "DEVK900123",
+      "TargetSystem": "PRD",
+      "SourceClient": "100",
+      "Step": "I",
+      "ImportOn": "2026-01-15",
+      "AllClients": "",
+      "Project": "",
+      "UserName": "TMSADM",
+      "ReturnCode": "0000",
+      "ReturnCodeText": "Success",
+      "HostName": "prdas01",
+      "Administrator": "ADMIN"
+    }
+  ]
+}

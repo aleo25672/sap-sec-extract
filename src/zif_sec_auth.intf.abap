@@ -25,6 +25,12 @@ INTERFACE zif_sec_auth
   METHODS check_batch_input_display
     RAISING zcx_sec_settings.
 
+  METHODS check_transport_admin
+    RAISING zcx_sec_settings.
+
+  METHODS check_transport_display
+    RAISING zcx_sec_settings.
+
   METHODS can_count_users
     RETURNING VALUE(rv_yes) TYPE abap_bool.
 ENDINTERFACE.

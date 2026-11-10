@@ -35,6 +35,13 @@
         <EntitySet Name="BatchInputSessions" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.BatchInputSessionsType"/>
         <EntitySet Name="Programs" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ProgramsType"/>
         <EntitySet Name="ProgramIncludes" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ProgramIncludesType"/>
+        <EntitySet Name="TransportDomains" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.TransportDomainsType"/>
+        <EntitySet Name="TransportSystems" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.TransportSystemsType"/>
+        <EntitySet Name="TransportRoutes" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.TransportRoutesType"/>
+        <EntitySet Name="ImportHistory" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ImportHistoryType"/>
+        <EntitySet Name="TpParameters" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.TpParametersType"/>
+        <EntitySet Name="TransportRequests" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.TransportRequestsType"/>
+        <EntitySet Name="TransportRequestObjects" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.TransportRequestObjectsType"/>
       </EntityContainer>
       <EntityType Name="SecurityProfileParametersType">
         <Key>
@@ -266,6 +273,117 @@
         </Key>
         <Property Name="ProgramName" Type="Edm.String" MaxLength="40" Nullable="false"/>
         <Property Name="IncludeName" Type="Edm.String" MaxLength="40" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="TransportDomainsType">
+        <Key>
+          <PropertyRef Name="DomainName"/>
+        </Key>
+        <Property Name="DomainName" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="ControllerSystem" Type="Edm.String" MaxLength="10"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="120"/>
+      </EntityType>
+      <EntityType Name="TransportSystemsType">
+        <Key>
+          <PropertyRef Name="DomainName"/>
+          <PropertyRef Name="SystemName"/>
+        </Key>
+        <Property Name="DomainName" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="SystemName" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="SystemType" Type="Edm.String" MaxLength="1"/>
+        <Property Name="SystemTypeText" Type="Edm.String" MaxLength="40"/>
+        <Property Name="TransportGroup" Type="Edm.String" MaxLength="10"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="120"/>
+      </EntityType>
+      <EntityType Name="TransportRoutesType">
+        <Key>
+          <PropertyRef Name="RouteKind"/>
+          <PropertyRef Name="ConfigVersion"/>
+          <PropertyRef Name="TransportLayer"/>
+          <PropertyRef Name="SourceSystem"/>
+          <PropertyRef Name="TargetSystem"/>
+          <PropertyRef Name="ConsolidationSystem"/>
+        </Key>
+        <Property Name="RouteKind" Type="Edm.String" MaxLength="15" Nullable="false"/>
+        <Property Name="ConfigVersion" Type="Edm.String" MaxLength="4" Nullable="false"/>
+        <Property Name="TransportLayer" Type="Edm.String" MaxLength="4" Nullable="false"/>
+        <Property Name="SourceSystem" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="TargetSystem" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="ConsolidationSystem" Type="Edm.String" MaxLength="10" Nullable="false"/>
+      </EntityType>
+      <EntityType Name="ImportHistoryType">
+        <Key>
+          <PropertyRef Name="ImportTimestamp"/>
+          <PropertyRef Name="Request"/>
+          <PropertyRef Name="TargetSystem"/>
+          <PropertyRef Name="SourceClient"/>
+          <PropertyRef Name="Step"/>
+        </Key>
+        <Property Name="ImportTimestamp" Type="Edm.String" MaxLength="14" Nullable="false"/>
+        <Property Name="Request" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="TargetSystem" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="SourceClient" Type="Edm.String" MaxLength="3" Nullable="false"/>
+        <Property Name="Step" Type="Edm.String" MaxLength="1" Nullable="false"/>
+        <Property Name="ImportOn" Type="Edm.Date"/>
+        <Property Name="AllClients" Type="Edm.String" MaxLength="1"/>
+        <Property Name="Project" Type="Edm.String" MaxLength="20"/>
+        <Property Name="UserName" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ReturnCode" Type="Edm.String" MaxLength="4"/>
+        <Property Name="ReturnCodeText" Type="Edm.String" MaxLength="20"/>
+        <Property Name="HostName" Type="Edm.String" MaxLength="32"/>
+        <Property Name="Administrator" Type="Edm.String" MaxLength="12"/>
+      </EntityType>
+      <EntityType Name="TpParametersType">
+        <Key>
+          <PropertyRef Name="DomainName"/>
+          <PropertyRef Name="ConfigVersion"/>
+          <PropertyRef Name="SystemName"/>
+          <PropertyRef Name="OperatingSystem"/>
+          <PropertyRef Name="DatabaseSystem"/>
+          <PropertyRef Name="ParameterName"/>
+        </Key>
+        <Property Name="DomainName" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="ConfigVersion" Type="Edm.String" MaxLength="4" Nullable="false"/>
+        <Property Name="SystemName" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="OperatingSystem" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="DatabaseSystem" Type="Edm.String" MaxLength="3" Nullable="false"/>
+        <Property Name="ParameterName" Type="Edm.String" MaxLength="60" Nullable="false"/>
+        <Property Name="ParameterValue" Type="Edm.String" MaxLength="200"/>
+      </EntityType>
+      <EntityType Name="TransportRequestsType">
+        <Key>
+          <PropertyRef Name="Request"/>
+        </Key>
+        <Property Name="Request" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="RequestFunction" Type="Edm.String" MaxLength="1"/>
+        <Property Name="RequestFunctionText" Type="Edm.String" MaxLength="60"/>
+        <Property Name="RequestStatus" Type="Edm.String" MaxLength="1"/>
+        <Property Name="RequestStatusText" Type="Edm.String" MaxLength="40"/>
+        <Property Name="TargetSystem" Type="Edm.String" MaxLength="10"/>
+        <Property Name="Category" Type="Edm.String" MaxLength="4"/>
+        <Property Name="CategoryText" Type="Edm.String" MaxLength="20"/>
+        <Property Name="Owner" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangedOn" Type="Edm.Date"/>
+        <Property Name="ChangedAt" Type="Edm.TimeOfDay"/>
+        <Property Name="ParentRequest" Type="Edm.String" MaxLength="20"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="60"/>
+      </EntityType>
+      <EntityType Name="TransportRequestObjectsType">
+        <Key>
+          <PropertyRef Name="Request"/>
+          <PropertyRef Name="Position"/>
+        </Key>
+        <Property Name="Request" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="Position" Type="Edm.String" MaxLength="6" Nullable="false"/>
+        <Property Name="ProgramId" Type="Edm.String" MaxLength="4"/>
+        <Property Name="ObjectType" Type="Edm.String" MaxLength="4"/>
+        <Property Name="ObjectName" Type="Edm.String" MaxLength="120"/>
+        <Property Name="ObjectFunction" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ObjectLanguage" Type="Edm.String" MaxLength="1"/>
+        <Property Name="Owner" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangedOn" Type="Edm.Date"/>
+        <Property Name="TargetSystem" Type="Edm.String" MaxLength="10"/>
+        <Property Name="RequestStatus" Type="Edm.String" MaxLength="1"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="60"/>
       </EntityType>
       <Annotations Target="SAP__self.Container">
         <Annotation Term="SAP__common.Label" String="Security settings"/>
@@ -949,6 +1067,298 @@
             <PropertyValue Property="Countable" Bool="true"/>
           </Record>
         </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TransportDomainsType">
+        <Annotation Term="SAP__common.Label" String="Transport domain"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/TransportDomains">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TransportSystemsType">
+        <Annotation Term="SAP__common.Label" String="Transport system"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/TransportSystems">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TransportRoutesType">
+        <Annotation Term="SAP__common.Label" String="Transport route"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/TransportRoutes">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.ImportHistoryType">
+        <Annotation Term="SAP__common.Label" String="Import history"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/ImportHistory">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TpParametersType">
+        <Annotation Term="SAP__common.Label" String="tp parameter"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/TpParameters">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TransportRequestsType">
+        <Annotation Term="SAP__common.Label" String="Transport request"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/TransportRequests">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TransportRequestObjectsType">
+        <Annotation Term="SAP__common.Label" String="Transport request object"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/TransportRequestObjects">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TransportRoutesType/ConfigVersion">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
+      </Annotations>
+      <Annotations Target="SAP__self.ImportHistoryType/ImportTimestamp">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
+      </Annotations>
+      <Annotations Target="SAP__self.TpParametersType/ConfigVersion">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
+      </Annotations>
+      <Annotations Target="SAP__self.TransportRequestObjectsType/Position">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
       </Annotations>
     </Schema>
   </edmx:DataServices>

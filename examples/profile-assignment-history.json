@@ -1,0 +1,14 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. ProfileList is the stored USH04 snapshot.",
+  "value": [
+    {
+      "UserName": "JSMITH",
+      "ChangedOn": "2026-01-15",
+      "ChangedAt": "14:02:00",
+      "ChangedBy": "ADMIN",
+      "Client": "100",
+      "ProfileCount": 1,
+      "ProfileList": "Z_FI_DISPLAY"
+    }
+  ]
+}
