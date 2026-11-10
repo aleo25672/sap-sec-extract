@@ -48,8 +48,9 @@ CLASS zcl_sec_tmssys_query IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    SELECT domnam, sysnam, systyp, transgrp
+    SELECT domnam, sysnam, systyp, nfsgrp
       FROM tmscsys
+      WHERE limbo = ''
       INTO TABLE @DATA(lt_system).
 
     TYPES:
@@ -89,7 +90,7 @@ CLASS zcl_sec_tmssys_query IMPLEMENTATION.
         systemname     = ls_system-sysnam
         systemtype     = ls_system-systyp
         systemtypetext = zcl_sec_domain_text=>transport_system_text( ls_system-systyp )
-        transportgroup = ls_system-transgrp
+        transportgroup = ls_system-nfsgrp
         description    = lv_text ) TO rt_rows.
     ENDLOOP.
   ENDMETHOD.

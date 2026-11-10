@@ -96,7 +96,8 @@ CLASS zcl_sec_tmsroute_query IMPLEMENTATION.
         consolidationsystem = ls_consolidation-oricon ) TO rt_rows.
     ENDLOOP.
 
-    SELECT version, intsys, consys
+    " TCEDELI: FROMSYSTEM is the source and TOSYSTEM the target. There is no transport layer.
+    SELECT version, fromsystem, tosystem
       FROM tcedeli
       WHERE version = @lv_version
       INTO TABLE @DATA(lt_delivery).
@@ -104,7 +105,7 @@ CLASS zcl_sec_tmsroute_query IMPLEMENTATION.
       DATA lv_delivery TYPE ty_version.
       SELECT MAX( version ) FROM tcedeli INTO @lv_delivery.
       IF lv_delivery IS NOT INITIAL.
-        SELECT version, intsys, consys
+        SELECT version, fromsystem, tosystem
           FROM tcedeli
           WHERE version = @lv_delivery
           INTO TABLE @lt_delivery.
@@ -115,8 +116,8 @@ CLASS zcl_sec_tmsroute_query IMPLEMENTATION.
       APPEND VALUE ty_row(
         routekind     = 'Delivery'
         configversion = ls_delivery-version
-        sourcesystem  = ls_delivery-intsys
-        targetsystem  = ls_delivery-consys ) TO rt_rows.
+        sourcesystem  = ls_delivery-fromsystem
+        targetsystem  = ls_delivery-tosystem ) TO rt_rows.
     ENDLOOP.
   ENDMETHOD.
 
