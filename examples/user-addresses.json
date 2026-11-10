@@ -1,0 +1,23 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. EmailAddress comes from ADR6. The other fields are the USER_ADDR view.",
+  "value": [
+    {
+      "UserName": "JSMITH",
+      "Client": "100",
+      "FirstName": "Jane",
+      "LastName": "Smith",
+      "FullName": "Jane Smith",
+      "EmailAddress": "jane.smith@example.com",
+      "Department": "Finance",
+      "PhoneExtension": "4102",
+      "Building": "A1",
+      "Room": "210",
+      "InternalMail": "F-210",
+      "CostCenter": "1000",
+      "CompanyName": "Example AG",
+      "City": "Amsterdam",
+      "PostalCode": "1012",
+      "Company": ""
+    }
+  ]
+}

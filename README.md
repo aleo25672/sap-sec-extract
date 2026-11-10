@@ -93,7 +93,7 @@ Published service:
 | `KernelInformation` | System, Status, Shift+F5 | Kernel release, patch, and compilation of that server |
 | `SoftwareComponents` | `CVERS` | Installed component, release, and support package level |
 | `CompanyCodes` | `T001` | Company code, including the productive flag |
-| `TableLogging` | `DD09L` | Logging flag for the tables the caller names |
+| `TableLogging` | `DD09L` | Logging flag for every active table, or for the tables the caller names |
 | `Se16nChangeDocuments` | `SE16N_CD_KEY` | Header of an SE16N change, for a table or a date |
 | `RoleCustomizing` | `PRGN_CUST` | One PFCG customizing switch and its stored value |
 | `ForbiddenPasswords` | `USR40` | One forbidden password pattern |
@@ -183,7 +183,7 @@ This is the population of security-parameter changes in the audit period. The st
 
 `CompanyCodes` is `T001` for the logon client. `Productive` is `XPROD`. The row keeps the code, the name, the country, the currency, the chart of accounts, the fiscal-year variant, and the language. Address numbers and tax numbers stay out.
 
-`TableLogging` is the active `DD09L` row. `LogDataChanges` is `PROTOKOLL`. The caller passes `TableName`. A request without that filter is an error (message 005).
+`TableLogging` is the active `DD09L` row. `LogDataChanges` is `PROTOKOLL`. A request with no `TableName` returns every active row. The caller follows `@odata.nextLink` for the full table. `TableName` still limits the read when it is passed.
 
 `Se16nChangeDocuments` is the header in `SE16N_CD_KEY`: the table, the user, and the date of an SE16N change. The changed values stay in `SE16N_CD_DATA` and are not returned. Pass `TableName` or `ChangedOn`. A request with neither is an error.
 
@@ -238,7 +238,7 @@ A failed check is an OData error. The response is not an empty list.
 
 ## Filters
 
-Range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count`. Every property of an entity accepts a range filter. A filter on an unknown property is an error (message 004). A missing filter on `TableLogging`, `Programs`, `ProgramIncludes`, or `Se16nChangeDocuments` is an error (message 005). `ImportHistory` requires `ImportOn`, and `TransportRequests` and `TransportRequestObjects` require `ChangedOn`. The date needs both a start and an end: `eq`, `bt`, or `ge` together with `le`. A missing date is message 005. A date with no end is message 004. Character comparisons are case-insensitive, and a blank flag matches an empty value. `gt`, `ge`, `lt`, `le`, and `bt` compare integers numerically when both sides are integers, so 10 is greater than 2.
+Range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count`. Every property of an entity accepts a range filter. A filter on an unknown property is an error (message 004). A missing filter on `Programs`, `ProgramIncludes`, or `Se16nChangeDocuments` is an error (message 005). `TableLogging` returns every active row when `TableName` is omitted. `ImportHistory` requires `ImportOn`, and `TransportRequests` and `TransportRequestObjects` require `ChangedOn`. The date needs both a start and an end: `eq`, `bt`, or `ge` together with `le`. A missing date is message 005. A date with no end is message 004. Character comparisons are case-insensitive, and a blank flag matches an empty value. `gt`, `ge`, `lt`, `le`, and `bt` compare integers numerically when both sides are integers, so 10 is greater than 2.
 
 ```http
 GET .../SecurityProfileParameters?$filter=SecurityRelevant eq 'X'&$count=true
@@ -251,6 +251,7 @@ GET .../SystemStatus
 GET .../KernelInformation
 GET .../SoftwareComponents?$filter=Component eq 'S4CORE'
 GET .../CompanyCodes?$filter=Productive eq 'X'
+GET .../TableLogging?$count=true&$top=1000
 GET .../TableLogging?$filter=TableName eq 'T000'
 GET .../Se16nChangeDocuments?$filter=TableName eq 'T000' and ChangedOn ge 2026-01-01
 GET .../RoleCustomizing?$filter=CustomizingId eq 'CHECK_S_USER_SAS'
@@ -284,6 +285,7 @@ Published service:
 | Entity set | Source | What a row is |
 | --- | --- | --- |
 | `Users` | `USR02`, `USREFUS` | One user in the logon client |
+| `UserAddresses` | `USER_ADDR`, `ADR6` | The current address and email of one user |
 | `RoleAssignments` | `AGR_USERS` | One role on one user, with validity dates |
 | `ProfileAssignments` | `UST04`, and the reference user's profiles | One profile on one user |
 | `Roles` | `AGR_DEFINE`, `AGR_TEXTS` line `00000` | The role header and its first description line |
@@ -308,7 +310,9 @@ Published service:
 
 `Users` carries the user type, user group, validity, the raw `USR02-UFLAG`, the three lock bits, the password state, the password-hash version, the last logon, who created the user, the security policy, and the reference user. `SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service. `Client` is the logon client on every row and joins to `ClientSettings`.
 
-The password hash is not in the extract. The person name and the email address are not in the extract. `I_User` is not a source: a normal read of that view returns no rows, and the account fields the review uses are on `USR02`.
+The password hash is not in the extract. The current name, email, and address are `UserAddresses`. `I_User` is not a source: a normal read of that view returns no rows, and the account fields the review uses are on `USR02`.
+
+`UserAddresses` is the SE16 view `USER_ADDR` for the logon client, one row per user. `FirstName`, `LastName`, and `FullName` are `NAME_FIRST`, `NAME_LAST`, and `NAME_TEXTC`. `Department`, `PhoneExtension`, `Building`, `Room`, `InternalMail`, `CostCenter`, `CompanyName`, `City`, `PostalCode`, and `Company` are the other address columns on that view. The uppercase search copies are omitted. `EmailAddress` is `ADR6-SMTP_ADDR`, joined through `USR21`. The standard address (`FLGDEFAULT` = `X`) is kept. When a user has no standard address, the newest current address is kept. A user with no `USER_ADDR` row is absent, which is the same population SE16 shows. Follow `@odata.nextLink` for the full list.
 
 `UserType` is `A` dialog, `B` system, `C` communications, `L` reference, or `S` service. `UserTypeText` is the domain text, with those English names when the domain text is missing.
 
@@ -396,7 +400,7 @@ GET .../UserChangeDocuments?$filter=ChangedBy eq 'ADMIN' and ChangeDate eq 2026-
 
 The service returns every changed field of that object. It does not keep a list of tables. `TableName` is whatever `CDPOS` stored. User assignment is often `AGR_USERS`. Authorization values are often `AGR_1251`. Organizational values are often `AGR_1252`. Composite membership is often `AGR_AGRS`. The generated profile is often `AGR_1016`. The role header and its text are often `AGR_DEFINE` and `AGR_TEXTS`. Menu and transaction changes are other stored structures. Read `TableName` from the result, the same way a profile assignment on a user change is `SUSR_UST04`.
 
-`ItemChange` `I` or `J` is a line inserted. That is how a user assignment and a new authorization are stored. `D` or `E` is a line removed. `U` is a changed field, with `ValueOld` and `ValueNew`. An inserted key often has empty values, and the user id or the authorization value is then in `TableKey`. `FieldName` `UNAME` and `KEY` keep their values. Password hashes, person names, and email addresses are blanked with the same rules as `UserChangeDocuments`.
+`ItemChange` `I` or `J` is a line inserted. That is how a user assignment and a new authorization are stored. `D` or `E` is a line removed. `U` is a changed field, with `ValueOld` and `ValueNew`. An inserted key often has empty values, and the user id or the authorization value is then in `TableKey`. `FieldName` `UNAME` and `KEY` keep their values. Password hashes are blanked with the same rules as `UserChangeDocuments`. The old and new values of a name or an email stay blank on the change document. The current address is `UserAddresses`.
 
 `RoleName`, `ChangeDate`, and `ChangedBy` are applied in the database read. A read with none of those filters returns the whole PFCG history before the page. Request `$count=true` and `$top`, and follow `@odata.nextLink`.
 
@@ -462,6 +466,7 @@ A reviewer authorizes roles. The kernel checks profiles. A generated profile is 
 | Population | Entity sets | Control question |
 | --- | --- | --- |
 | Accounts and their roles | `Users`, `RoleAssignments`, `RoleHierarchy` | Which roles does this account have, including a role received through a composite or through organizational management? |
+| User addresses | `UserAddresses` | What name, email, and address are stored for this user? |
 | Profiles on the account | `ProfileAssignments` | Which profiles will the kernel check, including a profile typed directly on the user and a profile inherited from a reference user? |
 | Generated profile of a single role | `RoleProfiles` | Was each of those profiles generated by a role the account still has? |
 | Values inside a role or a profile | `RoleAuthorizations`, `RoleOrgLevels`, `Profiles`, `ProfileAuthorizations`, `AuthorizationValues` | Which authorization objects and values are stored, and which profiles were not generated from a role? |
@@ -504,7 +509,7 @@ A failed check is an OData error. The response is not an empty list. Each check 
 
 | Entity sets | Check |
 | --- | --- |
-| `Users`, `UserChangeDocuments` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
+| `Users`, `UserAddresses`, `UserChangeDocuments` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
 | `RoleAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
 | `ProfileAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_PRO` field `PROFILE` = `*` activity 03 |
 | `Roles`, `RoleHierarchy`, `RoleProfiles`, `RoleAuthorizations`, `RoleOrgLevels`, `RoleChangeDocuments`, `CriticalAuthorizations`, `CriticalAuthorizationVariants` | `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
@@ -521,6 +526,7 @@ The same range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count` as 
 
 ```http
 GET .../Users?$filter=UserType eq 'A' and GloballyLocked eq 'X'
+GET .../UserAddresses?$count=true&$top=1000
 GET .../RoleAssignments?$filter=UserId eq 'JSMITH' and FromCompositeRole eq 'X'
 GET .../ProfileAssignments?$filter=ProfileSource eq 'ReferenceUser'
 GET .../Roles?$filter=ParentRole eq 'Z_FI_TEMPLATE'

@@ -19,6 +19,7 @@
       <Annotation Term="SAP__core.SchemaVersion" String="1.0.0"/>
       <EntityContainer Name="Container">
         <EntitySet Name="Users" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.UsersType"/>
+        <EntitySet Name="UserAddresses" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.UserAddressesType"/>
         <EntitySet Name="RoleAssignments" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.RoleAssignmentsType"/>
         <EntitySet Name="ProfileAssignments" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.ProfileAssignmentsType"/>
         <EntitySet Name="Roles" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.RolesType"/>
@@ -66,6 +67,27 @@
         <Property Name="CreatedOn" Type="Edm.Date"/>
         <Property Name="SecurityPolicy" Type="Edm.String" MaxLength="40"/>
         <Property Name="ReferenceUser" Type="Edm.String" MaxLength="12"/>
+      </EntityType>
+      <EntityType Name="UserAddressesType">
+        <Key>
+          <PropertyRef Name="UserName"/>
+        </Key>
+        <Property Name="UserName" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="FirstName" Type="Edm.String" MaxLength="40"/>
+        <Property Name="LastName" Type="Edm.String" MaxLength="40"/>
+        <Property Name="FullName" Type="Edm.String" MaxLength="80"/>
+        <Property Name="EmailAddress" Type="Edm.String" MaxLength="241"/>
+        <Property Name="Department" Type="Edm.String" MaxLength="40"/>
+        <Property Name="PhoneExtension" Type="Edm.String" MaxLength="10"/>
+        <Property Name="Building" Type="Edm.String" MaxLength="10"/>
+        <Property Name="Room" Type="Edm.String" MaxLength="10"/>
+        <Property Name="InternalMail" Type="Edm.String" MaxLength="10"/>
+        <Property Name="CostCenter" Type="Edm.String" MaxLength="8"/>
+        <Property Name="CompanyName" Type="Edm.String" MaxLength="40"/>
+        <Property Name="City" Type="Edm.String" MaxLength="40"/>
+        <Property Name="PostalCode" Type="Edm.String" MaxLength="10"/>
+        <Property Name="Company" Type="Edm.String" MaxLength="42"/>
       </EntityType>
       <EntityType Name="RoleAssignmentsType">
         <Key>
@@ -380,6 +402,46 @@
         <Annotation Term="SAP__common.Label" String="Security access user"/>
       </Annotations>
       <Annotations Target="SAP__self.Container/Users">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.UserAddressesType">
+        <Annotation Term="SAP__common.Label" String="User address"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/UserAddresses">
         <Annotation Term="SAP__capabilities.ReadRestrictions">
           <Record>
             <PropertyValue Property="Readable" Bool="true"/>

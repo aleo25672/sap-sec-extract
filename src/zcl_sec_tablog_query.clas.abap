@@ -32,7 +32,6 @@ CLASS zcl_sec_tablog_query IMPLEMENTATION.
 
   METHOD if_rap_query_provider~select.
     mo_auth->check_named_table( 'DD09L' ).
-    zcl_sec_query_util=>require_filter( io_request = io_request iv_name = 'TABLENAME' ).
 
     DATA lr_name TYPE RANGE OF dd09l-tabname.
     LOOP AT zcl_sec_query_util=>ranges_for( io_request = io_request iv_name = 'TABLENAME' ) INTO DATA(ls_name).
@@ -43,11 +42,24 @@ CLASS zcl_sec_tablog_query IMPLEMENTATION.
         high   = to_upper( ls_name-high ) ) TO lr_name.
     ENDLOOP.
 
-    SELECT tabname, protokoll
-      FROM dd09l
-      WHERE as4local = 'A'
-        AND upper( tabname ) IN @lr_name
-      INTO TABLE @DATA(lt_table).
+    TYPES:
+      BEGIN OF ty_table,
+        tabname   TYPE c LENGTH 30,
+        protokoll TYPE c LENGTH 1,
+      END OF ty_table.
+    DATA lt_table TYPE STANDARD TABLE OF ty_table.
+    IF lr_name IS INITIAL.
+      SELECT tabname, protokoll
+        FROM dd09l
+        WHERE as4local = 'A'
+        INTO TABLE @lt_table.
+    ELSE.
+      SELECT tabname, protokoll
+        FROM dd09l
+        WHERE as4local = 'A'
+          AND upper( tabname ) IN @lr_name
+        INTO TABLE @lt_table.
+    ENDIF.
 
     DATA lt_rows TYPE tt_row.
     LOOP AT lt_table INTO DATA(ls_table).
