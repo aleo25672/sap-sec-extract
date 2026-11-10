@@ -39,6 +39,7 @@ The pull imports both service definitions. `ZAPI_SEC_ACCESS` is stored the same 
 @EndUserText.label: 'Security access'
 define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_USER         as Users;
+  expose ZC_SEC_USRADDR      as UserAddresses;
   expose ZC_SEC_ROLE_ASSIGN  as RoleAssignments;
   expose ZC_SEC_PROF_ASSIGN  as ProfileAssignments;
   expose ZC_SEC_ROLE         as Roles;
@@ -54,10 +55,19 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_USR_CHG      as UserChangeDocuments;
   expose ZC_SEC_ROLE_CHG     as RoleChangeDocuments;
   expose ZC_SEC_TCODE_USAGE  as TransactionUsage;
+  expose ZC_SEC_DEVKEY       as DeveloperKeys;
+  expose ZC_SEC_SNC          as SncNames;
+  expose ZC_SEC_OBJKEY       as ObjectAccessRegistrations;
+  expose ZC_SEC_USH04        as ProfileAssignmentHistory;
+  expose ZC_SEC_USH10        as ProfileChangeDocuments;
+  expose ZC_SEC_UST10C       as CompositeProfiles;
+  expose ZC_SEC_SALCFG       as AuditConfiguration;
+  expose ZC_SEC_SALEVT       as AuditEvents;
+  expose ZC_SEC_SYSLOG       as SystemLog;
 }
 ```
 
-`Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key.
+`Client` on these entities is a 3-character client id, including `ClientSettings`. A custom entity does not use `abap.clnt`.
 
 The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. The version that publishes during the pull is in [Prerequisite](#prerequisite). The published paths are:
 
@@ -71,7 +81,7 @@ A binding that is already published is unpublished, updated, and published again
 
 The service definitions and the bindings are in the repository, so a later pull updates them.
 
-Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, blanking of password and address values on a user or role change, role-change filters, workload period bounds, component and program type texts, batch session status text, closed date bounds, transport and request texts, and an authorization failure that does not read profile parameters, system status, kernel information, access rows, workload aggregates, developer keys, composite profiles, object registrations, transport domains, or transport requests. They do not read the kernel or the database.
+Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, blanking of password and address values on a user or role change, role-change filters, workload period bounds, component and program type texts, batch session status text, closed date bounds, transport and request texts, and an authorization failure that does not read profile parameters, system status, kernel information, access rows, workload aggregates, developer keys, composite profiles, object registrations, transport domains, transport requests, the audit configuration, or the system log. They do not read the kernel or the database.
 
 `examples/` holds one contract sample per entity set. The values are illustrative.
 
@@ -94,6 +104,7 @@ Published service:
 | `SoftwareComponents` | `CVERS` | Installed component, release, and support package level |
 | `CompanyCodes` | `T001` | Company code, including the productive flag |
 | `TableLogging` | `DD09L` | Logging flag for every active table, or for the tables the caller names |
+| `TableChangeLogs` | `DBTABLOG` | One logged change of a named table in a closed period |
 | `Se16nChangeDocuments` | `SE16N_CD_KEY` | Header of an SE16N change, for a table or a date |
 | `RoleCustomizing` | `PRGN_CUST` | One PFCG customizing switch and its stored value |
 | `ForbiddenPasswords` | `USR40` | One forbidden password pattern |
@@ -133,7 +144,7 @@ RSPFPAR is the current profile of this application server. These four entity set
 | `SystemChangeOptions` | Change management | Whether the system as a whole allows repository and cross-client changes |
 | `ProfileParameterChanges` | Change management, and access to programs and data | Which security parameters changed, on which host, and on which date |
 | `SystemStatus`, `KernelInformation`, `SoftwareComponents` | Change management | Which system, kernel, and component version the extract was taken from |
-| `CompanyCodes`, `TableLogging`, `Programs`, `ProgramIncludes` | Change management | Productive company codes, table logging, and the last change of named programs |
+| `CompanyCodes`, `TableLogging`, `TableChangeLogs`, `Programs`, `ProgramIncludes` | Change management | Productive company codes, table logging, the logged changes, and the last change of named programs |
 | `Se16nChangeDocuments`, `RoleCustomizing`, `ForbiddenPasswords` | Access to programs and data | SE16N change headers, PFCG switches, and forbidden password patterns |
 | `BatchInputSessions` | Change management | Which batch input sessions are not finished |
 | `TransportDomains`, `TransportSystems`, `TransportRoutes`, `TpParameters` | Change management | The transport landscape and the tp parameters in force |
@@ -185,6 +196,8 @@ This is the population of security-parameter changes in the audit period. The st
 
 `TableLogging` is the active `DD09L` row. `LogDataChanges` is `PROTOKOLL`. A request with no `TableName` returns every active row. The caller follows `@odata.nextLink` for the full table. `TableName` still limits the read when it is passed.
 
+`TableChangeLogs` is `DBTABLOG`, the same online log report RSTBHIST reads. `LogDate` is `LOGDATE`, `LogTime` is `LOGTIME`, and `LogId` is `LOGID`. `TableName` is `TABNAME` and `RecordKey` is `LOGKEY`. `Operation` is `OPTYPE`: `I` insert, `U` update, and `D` delete. `OperationText` is that word. `VersionNumber` is `VERSNO`. `LOGDATA` is the binary image of the changed row and is not selected. `DATALN` is not selected. Archived log records are not in this table, so they are not in the set. Pass `TableName` and a closed `LogDate` (`eq`, `bt`, or `ge` together with `le`). A missing table or a missing date is an error (message 005). A date with no end is an error (message 004). The authorization check is `S_TABU_NAM` activity 03 for each concrete table in the filter, such as `T000`.
+
 `Se16nChangeDocuments` is the header in `SE16N_CD_KEY`: the table, the user, and the date of an SE16N change. The changed values stay in `SE16N_CD_DATA` and are not returned. Pass `TableName` or `ChangedOn`. A request with neither is an error.
 
 `RoleCustomizing` is `PRGN_CUST`. `CustomizingId` is `ID` and `CustomizingValue` is `PATH`. `CHECK_S_USER_SAS` is a filter the caller applies.
@@ -223,6 +236,7 @@ This is the population of security-parameter changes in the audit period. The st
 | `SoftwareComponents` | `S_TABU_NAM` for `CVERS`, activity 03 |
 | `CompanyCodes` | `S_TABU_NAM` for `T001`, activity 03 |
 | `TableLogging` | `S_TABU_NAM` for `DD09L`, activity 03 |
+| `TableChangeLogs` | `S_TABU_NAM` activity 03 for each table named in `TableName` |
 | `Se16nChangeDocuments` | `S_TABU_NAM` for `SE16N_CD_KEY`, activity 03 |
 | `RoleCustomizing` | `S_TABU_NAM` for `PRGN_CUST`, activity 03 |
 | `ForbiddenPasswords` | `S_TABU_NAM` for `USR40`, activity 03 |
@@ -238,7 +252,7 @@ A failed check is an OData error. The response is not an empty list.
 
 ## Filters
 
-Range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count`. Every property of an entity accepts a range filter. A filter on an unknown property is an error (message 004). A missing filter on `Programs`, `ProgramIncludes`, or `Se16nChangeDocuments` is an error (message 005). `TableLogging` returns every active row when `TableName` is omitted. `ImportHistory` requires `ImportOn`, and `TransportRequests` and `TransportRequestObjects` require `ChangedOn`. The date needs both a start and an end: `eq`, `bt`, or `ge` together with `le`. A missing date is message 005. A date with no end is message 004. Character comparisons are case-insensitive, and a blank flag matches an empty value. `gt`, `ge`, `lt`, `le`, and `bt` compare integers numerically when both sides are integers, so 10 is greater than 2.
+Range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count`. Every property of an entity accepts a range filter. A filter on an unknown property is an error (message 004). A missing filter on `Programs`, `ProgramIncludes`, `Se16nChangeDocuments`, or `TableChangeLogs` is an error (message 005). `TableLogging` returns every active row when `TableName` is omitted. `TableChangeLogs` requires `TableName` and `LogDate`. `ImportHistory` requires `ImportOn`, and `TransportRequests` and `TransportRequestObjects` require `ChangedOn`. The date needs both a start and an end: `eq`, `bt`, or `ge` together with `le`. A missing date is message 005. A date with no end is message 004. Character comparisons are case-insensitive, and a blank flag matches an empty value. `gt`, `ge`, `lt`, `le`, and `bt` compare integers numerically when both sides are integers, so 10 is greater than 2.
 
 ```http
 GET .../SecurityProfileParameters?$filter=SecurityRelevant eq 'X'&$count=true
@@ -253,6 +267,7 @@ GET .../SoftwareComponents?$filter=Component eq 'S4CORE'
 GET .../CompanyCodes?$filter=Productive eq 'X'
 GET .../TableLogging?$count=true&$top=1000
 GET .../TableLogging?$filter=TableName eq 'T000'
+GET .../TableChangeLogs?$count=true&$top=1000&$filter=TableName eq 'T000' and LogDate ge 2026-01-01 and LogDate le 2026-12-31
 GET .../Se16nChangeDocuments?$filter=TableName eq 'T000' and ChangedOn ge 2026-01-01
 GET .../RoleCustomizing?$filter=CustomizingId eq 'CHECK_S_USER_SAS'
 GET .../ForbiddenPasswords
@@ -307,6 +322,9 @@ Published service:
 | `ProfileAssignmentHistory` | `USH04` | One saved list of profiles on one user |
 | `ProfileChangeDocuments` | `USH10` | One saved change of a profile header |
 | `CompositeProfiles` | `UST10C` | One single profile inside one composite profile |
+| `AuditConfiguration` | `RSAUPROF` | One static security-audit profile slot |
+| `AuditEvents` | `RSAU_BUF_DATA` | One security-audit event in the database buffer |
+| `SystemLog` | SM21 local file | One system-log record on this application server |
 
 `Users` carries the user type, user group, validity, the raw `USR02-UFLAG`, the three lock bits, the password state, the password-hash version, the last logon, who created the user, the security policy, and the reference user. `SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service. `Client` is the logon client on every row and joins to `ClientSettings`.
 
@@ -443,8 +461,6 @@ GET .../TransactionUsage?$count=true&$top=20&$filter=PeriodType eq 'D' and Perio
 GET .../TransactionUsage?$filter=PeriodType eq 'D' and PeriodStart ge 2026-10-26 and PeriodStart le 2026-10-28 and EntryId eq 'FB03'
 ```
 
-The security audit log from SM20 is the following population.
-
 ### Access records
 
 `DeveloperKeys` is `DEVACCESS`. `UserName` is `UNAME`. The table is client-independent, so the row is the user who holds a developer key in this system. `ACCESSKEY` is not selected.
@@ -458,6 +474,12 @@ The security audit log from SM20 is the following population.
 `ProfileChangeDocuments` is `USH10`, the profile history header that report `RSUSR101` reads. `ProfileName` is `PROFN` and `Version` is `AKTPS`. `ChangedOn`, `ChangedAt`, and `ChangedBy` are `MODDA`, `MODTI`, and `MODBE`. The same closed `ChangedOn` filter is required. The added and removed authorization values are `USH12` and are not on this row.
 
 `CompositeProfiles` is `UST10C`. `ProfileName` is the composite, `Version` is `AKTPS`, and `SubProfile` is the single profile inside it. `ProfileAuthorizations` stays `UST10S` and is not mixed into this set. `A` is the active version and `P` is the maintenance copy.
+
+`AuditConfiguration` is `RSAUPROF`, the static SM19 profile. `ProfileName` is `PROFNAME` and `SlotNumber` is `SLOTNO`. The row named `$CURPROF$` stores the profile the server loaded in `ActiveProfile` (`CURRPROF`). A slot number above `0000` on any other profile is one filter. `Client` is `CLIENT` and `UserName` is `UNAME`. `SlotStatus` is `STATUS`. `X` means the slot is active. `AuditClasses` is the class bitmask: `1` other, `2` logon, `4` transaction start, `8` report, `16` RFC logon, `32` user master, `64` system, and `128` RFC call. `AuditClassText` lists the bits that are set. `Severity` is `2` low, `5` medium, or `9` high. When both `AuditClasses` and `Severity` are `0`, the filter uses detailed events and `AuditClassText` is `Detailed events`. The event bit vector is `MSGVECT` and the selection variant is `SELVAR`. Both are raw and are not selected. Rows of profile `$KERNEL$` are recording parameters, not event filters, so the bitmask text is left blank. The dynamic filters SM19 keeps in memory are not a second table, and this set does not invent them.
+
+`AuditEvents` is `RSAU_BUF_DATA`, the database buffer behind SM20. `MessageId` is `AREA` and `SUBID` joined, three characters. `EventTimestamp` is `SLGDATTIM`, 16 characters. `EventOn` is the first eight digits of that stamp, so the caller filters a date. `ProcessId` is `SLGPROC`, `Client` is `SLGMAND`, `SystemId` is `SID`, `InstanceName` is `INSTANCE`, and `Counter` is the key counter. `Terminal` is `SLGLTRM2`, `UserName` is `SLGUSER`, `TransactionCode` is `SLGTC`, `ProgramName` is `SLGREPNA`, and `TerminalAddress` is `TERM_IPV6`. `EventData` is `SAL_DATA`, the message variables. Pass `EventOn` with both a start and an end. A missing date is an error (message 005 of `ZSEC_ACCESS`). A date with no end is an error (message 002). `Client` and `UserName` are optional. Omit them to read every client and every user. A system that records the audit log only in files has an empty buffer, and this set is then empty.
+
+`SystemLog` is the local SM21 file on the application server that answered. The read uses `RSLG_FILEINFO_INIT` and `RSLG_READ_FILE` for the local log. `InstanceName` is the sender. `FileNumber` and `FilePosition` are the file key. `MessageId` is `AREA` and `SUBID` joined, so the caller filters message ids such as `A14`, `A19`, and `A23`. The service does not hardcode those ids. `EventOn` and `EventAt` come from the log timestamp. `Client`, `UserName`, `TransactionCode`, `ProgramName`, `Terminal`, and `MessageData` come from the log entry. Pass a closed `EventOn`. The same messages apply: a missing date is message 005, and a date with no end is message 002. `Client`, `UserName`, and `MessageId` are optional filters applied after the file is read. The local file often does not keep a full fiscal year. There is no RFC to the logs of other application servers.
 
 ### Access to programs and data
 
@@ -477,6 +499,8 @@ A reviewer authorizes roles. The kernel checks profiles. A generated profile is 
 | Developer keys and SNC | `DeveloperKeys`, `SncNames` | Which users hold a developer key, and which SNC name is stored for this user? |
 | Object registrations | `ObjectAccessRegistrations` | Which repository objects have an access key registered? |
 | Profile history | `ProfileAssignmentHistory`, `ProfileChangeDocuments`, `CompositeProfiles` | Which profiles were assigned, which profiles changed, and which single profiles sit inside a composite? |
+| Audit log | `AuditConfiguration`, `AuditEvents` | Which static SM19 filters are stored, and which audit events were written in this period? |
+| System log | `SystemLog` | Which SM21 messages were written on this application server in this period? |
 
 `RoleAssignments` is the review population. `ValidFrom` and `ValidTo` are the interval stored on `AGR_USERS`. `Excluded` means the role was removed from the composite for this user. `FromCompositeRole` means the single role arrived through a composite, and `RoleHierarchy` names that composite. `FromOrgManagement` means HR organizational management assigned the role. `Users.SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service for the password and logon rules that apply to the account.
 
@@ -517,12 +541,14 @@ A failed check is an OData error. The response is not an empty list. Each check 
 | `DeveloperKeys`, `SncNames`, `ProfileAssignmentHistory` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
 | `ObjectAccessRegistrations` | `S_TABU_NAM` for `ADIRACCESS`, activity 03 |
 | `TransactionUsage` | `S_TOOLS_EX` field `AUTH` = `S_TOOLS_EX_A` |
+| `AuditConfiguration`, `AuditEvents` | `S_ADMI_FCD` value `AUDD` |
+| `SystemLog` | `S_ADMI_FCD` value `SM21` |
 
 `S_USER_AGR` stores the role name in `ACT_GROUP`. `AGR_NAME` is the column on `AGR_USERS` and `AGR_DEFINE`. SU53 lists `ACTVT` and `ACT_GROUP` for this object. Profile `SAP_ALL` grants both fields as `*`.
 
 ### Filters
 
-The same range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count` as the settings service. A filter on an unknown property is an error (message 002 of `ZSEC_ACCESS`). `ProfileAssignmentHistory` and `ProfileChangeDocuments` require `ChangedOn` with both a start and an end. A missing date is message 005. A date with no end is message 002.
+The same range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count` as the settings service. A filter on an unknown property is an error (message 002 of `ZSEC_ACCESS`). `ProfileAssignmentHistory` and `ProfileChangeDocuments` require `ChangedOn` with both a start and an end. `AuditEvents` and `SystemLog` require `EventOn` with both a start and an end. A missing date is message 005. A date with no end is message 002.
 
 ```http
 GET .../Users?$filter=UserType eq 'A' and GloballyLocked eq 'X'
@@ -546,6 +572,9 @@ GET .../ObjectAccessRegistrations?$filter=ObjectName eq 'ZFI_POST'
 GET .../ProfileAssignmentHistory?$filter=ChangedOn ge 2026-01-01 and ChangedOn le 2026-01-31 and UserName eq 'JSMITH'
 GET .../ProfileChangeDocuments?$filter=ChangedOn ge 2026-01-01 and ChangedOn le 2026-01-31 and ProfileName eq 'Z_FI_DISPLAY'
 GET .../CompositeProfiles?$filter=ProfileName eq 'Z_FI_COMPOSITE' and Version eq 'A'
+GET .../AuditConfiguration
+GET .../AuditEvents?$count=true&$top=1000&$filter=EventOn ge 2026-01-01 and EventOn le 2026-12-31
+GET .../SystemLog?$count=true&$top=1000&$filter=EventOn ge 2026-01-01 and EventOn le 2026-12-31 and MessageId eq 'A14'
 ```
 
 A read is the logon client. There is no RFC to other clients or other application servers.

@@ -1,0 +1,33 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. MSGVECT and SELVAR stay in RSAUPROF. The in-memory dynamic SM19 filters are not a table.",
+  "value": [
+    {
+      "ProfileName": "$CURPROF$",
+      "SlotNumber": "0000",
+      "ActiveProfile": "SAP_STD",
+      "AuditClasses": 0,
+      "AuditClassText": "",
+      "Severity": 0,
+      "SeverityText": "",
+      "Client": "",
+      "UserName": "",
+      "SlotStatus": "",
+      "ChangedBy": "JBASIS",
+      "ChangedOn": "2026-01-02"
+    },
+    {
+      "ProfileName": "SAP_STD",
+      "SlotNumber": "0001",
+      "ActiveProfile": "",
+      "AuditClasses": 2,
+      "AuditClassText": "Logon",
+      "Severity": 9,
+      "SeverityText": "High",
+      "Client": "*",
+      "UserName": "*",
+      "SlotStatus": "X",
+      "ChangedBy": "JBASIS",
+      "ChangedOn": "2026-01-02"
+    }
+  ]
+}

@@ -29,6 +29,7 @@
         <EntitySet Name="SoftwareComponents" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.SoftwareComponentsType"/>
         <EntitySet Name="CompanyCodes" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.CompanyCodesType"/>
         <EntitySet Name="TableLogging" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.TableLoggingType"/>
+        <EntitySet Name="TableChangeLogs" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.TableChangeLogsType"/>
         <EntitySet Name="Se16nChangeDocuments" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.Se16nChangeDocumentsType"/>
         <EntitySet Name="RoleCustomizing" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.RoleCustomizingType"/>
         <EntitySet Name="ForbiddenPasswords" EntityType="com.sap.gateway.srvd.zapi_sec_settings.v0001.ForbiddenPasswordsType"/>
@@ -204,6 +205,26 @@
         </Key>
         <Property Name="TableName" Type="Edm.String" MaxLength="30" Nullable="false"/>
         <Property Name="LogDataChanges" Type="Edm.String" MaxLength="1"/>
+      </EntityType>
+      <EntityType Name="TableChangeLogsType">
+        <Key>
+          <PropertyRef Name="LogDate"/>
+          <PropertyRef Name="LogTime"/>
+          <PropertyRef Name="LogId"/>
+        </Key>
+        <Property Name="LogDate" Type="Edm.Date" Nullable="false"/>
+        <Property Name="LogTime" Type="Edm.TimeOfDay" Nullable="false"/>
+        <Property Name="LogId" Type="Edm.String" MaxLength="18" Nullable="false"/>
+        <Property Name="TableName" Type="Edm.String" MaxLength="30"/>
+        <Property Name="RecordKey" Type="Edm.String" MaxLength="250"/>
+        <Property Name="HostName" Type="Edm.String" MaxLength="20"/>
+        <Property Name="UserName" Type="Edm.String" MaxLength="12"/>
+        <Property Name="TransactionCode" Type="Edm.String" MaxLength="20"/>
+        <Property Name="ProgramName" Type="Edm.String" MaxLength="40"/>
+        <Property Name="Operation" Type="Edm.String" MaxLength="1"/>
+        <Property Name="OperationText" Type="Edm.String" MaxLength="10"/>
+        <Property Name="VersionNumber" Type="Edm.String" MaxLength="2"/>
+        <Property Name="Language" Type="Edm.String" MaxLength="1"/>
       </EntityType>
       <EntityType Name="Se16nChangeDocumentsType">
         <Key>
@@ -792,6 +813,46 @@
         <Annotation Term="SAP__common.Label" String="Table logging flag"/>
       </Annotations>
       <Annotations Target="SAP__self.Container/TableLogging">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.TableChangeLogsType">
+        <Annotation Term="SAP__common.Label" String="Table change log"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/TableChangeLogs">
         <Annotation Term="SAP__capabilities.ReadRestrictions">
           <Record>
             <PropertyValue Property="Readable" Bool="true"/>

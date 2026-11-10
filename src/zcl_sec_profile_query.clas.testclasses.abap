@@ -74,6 +74,16 @@ CLASS ltcl_deny IMPLEMENTATION.
       EXPORTING
         textid = zcx_sec_access=>not_authorized.
   ENDMETHOD.
+  METHOD zif_sec_access_auth~check_audit_display.
+    RAISE EXCEPTION TYPE zcx_sec_access
+      EXPORTING
+        textid = zcx_sec_access=>not_authorized.
+  ENDMETHOD.
+  METHOD zif_sec_access_auth~check_system_log_display.
+    RAISE EXCEPTION TYPE zcx_sec_access
+      EXPORTING
+        textid = zcx_sec_access=>not_authorized.
+  ENDMETHOD.
 ENDCLASS.
 
 

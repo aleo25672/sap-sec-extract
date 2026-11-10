@@ -13,6 +13,10 @@ CLASS ltcl_deny_address IMPLEMENTATION.
   ENDMETHOD.
   METHOD zif_sec_access_auth~check_profile_display.
   ENDMETHOD.
+  METHOD zif_sec_access_auth~check_audit_display.
+  ENDMETHOD.
+  METHOD zif_sec_access_auth~check_system_log_display.
+  ENDMETHOD.
 ENDCLASS.
 
 CLASS ltcl_address_choice DEFINITION FINAL FOR TESTING

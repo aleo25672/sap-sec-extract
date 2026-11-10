@@ -41,6 +41,9 @@
         <EntitySet Name="ProfileAssignmentHistory" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.ProfileAssignmentHistoryType"/>
         <EntitySet Name="ProfileChangeDocuments" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.ProfileChangeDocumentsType"/>
         <EntitySet Name="CompositeProfiles" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.CompositeProfilesType"/>
+        <EntitySet Name="AuditConfiguration" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.AuditConfigurationType"/>
+        <EntitySet Name="AuditEvents" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.AuditEventsType"/>
+        <EntitySet Name="SystemLog" EntityType="com.sap.gateway.srvd.zapi_sec_access.v0001.SystemLogType"/>
       </EntityContainer>
       <EntityType Name="UsersType">
         <Key>
@@ -394,6 +397,71 @@
         <Property Name="Version" Type="Edm.String" MaxLength="1" Nullable="false"/>
         <Property Name="SubProfile" Type="Edm.String" MaxLength="12" Nullable="false"/>
         <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+      </EntityType>
+      <EntityType Name="AuditConfigurationType">
+        <Key>
+          <PropertyRef Name="ProfileName"/>
+          <PropertyRef Name="SlotNumber"/>
+        </Key>
+        <Property Name="ProfileName" Type="Edm.String" MaxLength="8" Nullable="false"/>
+        <Property Name="SlotNumber" Type="Edm.String" MaxLength="4" Nullable="false"/>
+        <Property Name="ActiveProfile" Type="Edm.String" MaxLength="8"/>
+        <Property Name="AuditClasses" Type="Edm.Int32"/>
+        <Property Name="AuditClassText" Type="Edm.String" MaxLength="120"/>
+        <Property Name="Severity" Type="Edm.Int32"/>
+        <Property Name="SeverityText" Type="Edm.String" MaxLength="10"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="UserName" Type="Edm.String" MaxLength="12"/>
+        <Property Name="SlotStatus" Type="Edm.String" MaxLength="1"/>
+        <Property Name="ChangedBy" Type="Edm.String" MaxLength="12"/>
+        <Property Name="ChangedOn" Type="Edm.Date"/>
+      </EntityType>
+      <EntityType Name="AuditEventsType">
+        <Key>
+          <PropertyRef Name="MessageArea"/>
+          <PropertyRef Name="MessageSubid"/>
+          <PropertyRef Name="EventTimestamp"/>
+          <PropertyRef Name="ProcessId"/>
+          <PropertyRef Name="Client"/>
+          <PropertyRef Name="SystemId"/>
+          <PropertyRef Name="InstanceName"/>
+          <PropertyRef Name="Counter"/>
+        </Key>
+        <Property Name="MessageArea" Type="Edm.String" MaxLength="2" Nullable="false"/>
+        <Property Name="MessageSubid" Type="Edm.String" MaxLength="1" Nullable="false"/>
+        <Property Name="EventTimestamp" Type="Edm.String" MaxLength="16" Nullable="false"/>
+        <Property Name="ProcessId" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3" Nullable="false"/>
+        <Property Name="SystemId" Type="Edm.String" MaxLength="8" Nullable="false"/>
+        <Property Name="InstanceName" Type="Edm.String" MaxLength="40" Nullable="false"/>
+        <Property Name="Counter" Type="Edm.Int16" Nullable="false"/>
+        <Property Name="MessageId" Type="Edm.String" MaxLength="3"/>
+        <Property Name="EventOn" Type="Edm.Date"/>
+        <Property Name="Terminal" Type="Edm.String" MaxLength="20"/>
+        <Property Name="UserName" Type="Edm.String" MaxLength="12"/>
+        <Property Name="TransactionCode" Type="Edm.String" MaxLength="20"/>
+        <Property Name="ProgramName" Type="Edm.String" MaxLength="40"/>
+        <Property Name="TerminalAddress" Type="Edm.String" MaxLength="45"/>
+        <Property Name="EventData" Type="Edm.String"/>
+      </EntityType>
+      <EntityType Name="SystemLogType">
+        <Key>
+          <PropertyRef Name="InstanceName"/>
+          <PropertyRef Name="FileNumber"/>
+          <PropertyRef Name="FilePosition"/>
+        </Key>
+        <Property Name="InstanceName" Type="Edm.String" MaxLength="20" Nullable="false"/>
+        <Property Name="FileNumber" Type="Edm.String" MaxLength="6" Nullable="false"/>
+        <Property Name="FilePosition" Type="Edm.String" MaxLength="10" Nullable="false"/>
+        <Property Name="EventOn" Type="Edm.Date"/>
+        <Property Name="EventAt" Type="Edm.TimeOfDay"/>
+        <Property Name="MessageId" Type="Edm.String" MaxLength="3"/>
+        <Property Name="Client" Type="Edm.String" MaxLength="3"/>
+        <Property Name="UserName" Type="Edm.String" MaxLength="12"/>
+        <Property Name="TransactionCode" Type="Edm.String" MaxLength="20"/>
+        <Property Name="ProgramName" Type="Edm.String" MaxLength="40"/>
+        <Property Name="Terminal" Type="Edm.String" MaxLength="8"/>
+        <Property Name="MessageData" Type="Edm.String" MaxLength="64"/>
       </EntityType>
       <Annotations Target="SAP__self.Container">
         <Annotation Term="SAP__common.Label" String="Security access"/>
@@ -1318,6 +1386,126 @@
           </Record>
         </Annotation>
       </Annotations>
+      <Annotations Target="SAP__self.AuditConfigurationType">
+        <Annotation Term="SAP__common.Label" String="Security audit configuration"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/AuditConfiguration">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.AuditEventsType">
+        <Annotation Term="SAP__common.Label" String="Security audit event"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/AuditEvents">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="SAP__self.SystemLogType">
+        <Annotation Term="SAP__common.Label" String="System log"/>
+      </Annotations>
+      <Annotations Target="SAP__self.Container/SystemLog">
+        <Annotation Term="SAP__capabilities.ReadRestrictions">
+          <Record>
+            <PropertyValue Property="Readable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.InsertRestrictions">
+          <Record>
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.UpdateRestrictions">
+          <Record>
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.DeleteRestrictions">
+          <Record>
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.FilterRestrictions">
+          <Record>
+            <PropertyValue Property="Filterable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.SortRestrictions">
+          <Record>
+            <PropertyValue Property="Sortable" Bool="true"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="SAP__capabilities.CountRestrictions">
+          <Record>
+            <PropertyValue Property="Countable" Bool="true"/>
+          </Record>
+        </Annotation>
+      </Annotations>
       <Annotations Target="SAP__self.RoleProfilesType/Counter">
         <Annotation Term="SAP__common.IsDigitSequence"/>
       </Annotations>
@@ -1325,6 +1513,15 @@
         <Annotation Term="SAP__common.IsDigitSequence"/>
       </Annotations>
       <Annotations Target="SAP__self.RoleOrgLevelsType/Counter">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
+      </Annotations>
+      <Annotations Target="SAP__self.AuditConfigurationType/SlotNumber">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
+      </Annotations>
+      <Annotations Target="SAP__self.SystemLogType/FileNumber">
+        <Annotation Term="SAP__common.IsDigitSequence"/>
+      </Annotations>
+      <Annotations Target="SAP__self.SystemLogType/FilePosition">
         <Annotation Term="SAP__common.IsDigitSequence"/>
       </Annotations>
     </Schema>

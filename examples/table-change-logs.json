@@ -1,0 +1,20 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. LOGDATA, the binary image of the changed row, is not in the row. Archived table logs are not in this set.",
+  "value": [
+    {
+      "LogDate": "2026-01-15",
+      "LogTime": "10:12:03",
+      "LogId": "000000000000000001",
+      "TableName": "T000",
+      "RecordKey": "100",
+      "HostName": "sapapp01",
+      "UserName": "JBASIS",
+      "TransactionCode": "SCC4",
+      "ProgramName": "SAPMSCC4",
+      "Operation": "U",
+      "OperationText": "Update",
+      "VersionNumber": "01",
+      "Language": "E"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. RSAU_BUF_DATA is the database buffer. A system that records the audit log only in files returns no rows.",
+  "value": [
+    {
+      "MessageArea": "AU",
+      "MessageSubid": "2",
+      "EventTimestamp": "2026011510120300",
+      "ProcessId": "00001",
+      "Client": "100",
+      "SystemId": "PRD",
+      "InstanceName": "sapapp01_PRD_00",
+      "Counter": 1,
+      "MessageId": "AU2",
+      "EventOn": "2026-01-15",
+      "Terminal": "WS0123",
+      "UserName": "JSMITH",
+      "TransactionCode": "SU01",
+      "ProgramName": "SAPMSUU0",
+      "TerminalAddress": "10.0.0.40",
+      "EventData": "User JSMITH locked"
+    }
+  ]
+}

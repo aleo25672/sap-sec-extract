@@ -9,4 +9,10 @@ INTERFACE zif_sec_access_auth
 
   METHODS check_profile_display
     RAISING zcx_sec_access.
+
+  METHODS check_audit_display
+    RAISING zcx_sec_access.
+
+  METHODS check_system_log_display
+    RAISING zcx_sec_access.
 ENDINTERFACE.
