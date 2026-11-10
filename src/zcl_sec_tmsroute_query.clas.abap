@@ -30,11 +30,13 @@ CLASS zcl_sec_tmsroute_query DEFINITION
         zcx_sec_settings.
 
   PRIVATE SECTION.
+    TYPES ty_version TYPE n LENGTH 4.
+
     DATA mo_auth TYPE REF TO zif_sec_auth.
 
     METHODS active_version
       RETURNING
-        VALUE(rv_version) TYPE n LENGTH 4.
+        VALUE(rv_version) TYPE ty_version.
 ENDCLASS.
 
 
@@ -99,7 +101,7 @@ CLASS zcl_sec_tmsroute_query IMPLEMENTATION.
       WHERE version = @lv_version
       INTO TABLE @DATA(lt_delivery).
     IF lt_delivery IS INITIAL.
-      DATA lv_delivery TYPE n LENGTH 4.
+      DATA lv_delivery TYPE ty_version.
       SELECT MAX( version ) FROM tcedeli INTO @lv_delivery.
       IF lv_delivery IS NOT INITIAL.
         SELECT version, intsys, consys
