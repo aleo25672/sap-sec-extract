@@ -173,7 +173,7 @@
           <PropertyRef Name="Component"/>
         </Key>
         <Property Name="Component" Type="Edm.String" MaxLength="30" Nullable="false"/>
-        <Property Name="Release" Type="Edm.String" MaxLength="10"/>
+        <Property Name="ComponentRelease" Type="Edm.String" MaxLength="10"/>
         <Property Name="SupportPackageLevel" Type="Edm.String" MaxLength="10"/>
         <Property Name="ComponentType" Type="Edm.String" MaxLength="1"/>
         <Property Name="ComponentTypeText" Type="Edm.String" MaxLength="60"/>

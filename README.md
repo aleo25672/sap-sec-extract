@@ -168,7 +168,7 @@ This is the population of security-parameter changes in the audit period. The st
 
 `KernelInformation` is the same server, Shift+F5. `TH_SAPREL` supplies `KernelRelease`, `KernelPatchLevel`, `CompiledOn`, `CompiledAt`, and `DatabaseLibrary`. Join it to `SystemStatus` on `SystemId` and `ApplicationServer`.
 
-`SoftwareComponents` is `CVERS`, one row per installed component. `Release` is `CVERS-RELEASE`. `SupportPackageLevel` is `CVERS-EXTRELEASE`. The support package name is not on the row. `ComponentTypeText` is the `RELC_TYPE` text.
+`SoftwareComponents` is `CVERS`, one row per installed component. `ComponentRelease` is `CVERS-RELEASE`. `SupportPackageLevel` is `CVERS-EXTRELEASE`. The support package name is not on the row. `ComponentTypeText` is the `RELC_TYPE` text.
 
 ### Customizing and catalogs
 

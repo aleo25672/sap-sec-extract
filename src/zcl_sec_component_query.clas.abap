@@ -9,7 +9,7 @@ CLASS zcl_sec_component_query DEFINITION
     TYPES:
       BEGIN OF ty_row,
         component           TYPE c LENGTH 30,
-        release             TYPE c LENGTH 10,
+        componentrelease    TYPE c LENGTH 10,
         supportpackagelevel TYPE c LENGTH 10,
         componenttype       TYPE c LENGTH 1,
         componenttypetext   TYPE c LENGTH 60,
@@ -44,7 +44,7 @@ CLASS zcl_sec_component_query IMPLEMENTATION.
     LOOP AT lt_component INTO DATA(ls_component).
       APPEND VALUE ty_row(
         component           = ls_component-component
-        release             = ls_component-release
+        componentrelease    = ls_component-release
         supportpackagelevel = ls_component-extrelease
         componenttype       = ls_component-comp_type
         componenttypetext   = zcl_sec_domain_text=>domain_text(

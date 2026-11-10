@@ -3,7 +3,7 @@
   "value": [
     {
       "Component": "S4CORE",
-      "Release": "108",
+      "ComponentRelease": "108",
       "SupportPackageLevel": "0003",
       "ComponentType": "R",
       "ComponentTypeText": "Application component"
