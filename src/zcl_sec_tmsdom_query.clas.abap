@@ -52,27 +52,27 @@ CLASS zcl_sec_tmsdom_query IMPLEMENTATION.
     TYPES:
       BEGIN OF ty_text,
         domnam TYPE c LENGTH 10,
-        langu  TYPE c LENGTH 1,
-        domtxt TYPE c LENGTH 120,
+        spras  TYPE c LENGTH 1,
+        domtxt TYPE c LENGTH 60,
       END OF ty_text.
     DATA lt_text TYPE STANDARD TABLE OF ty_text.
     IF lt_domain IS NOT INITIAL.
-      SELECT domnam, langu, domtxt
+      SELECT domnam, spras, domtxt
         FROM tmscdomt
         FOR ALL ENTRIES IN @lt_domain
         WHERE domnam = @lt_domain-domnam
-          AND ( langu = @sy-langu OR langu = 'E' )
+          AND ( spras = @sy-langu OR spras = 'E' )
         INTO TABLE @lt_text.
     ENDIF.
 
     LOOP AT lt_domain INTO DATA(ls_domain).
       DATA(lv_text) = ``.
-      LOOP AT lt_text INTO DATA(ls_text) WHERE domnam = ls_domain-domnam AND langu = sy-langu.
+      LOOP AT lt_text INTO DATA(ls_text) WHERE domnam = ls_domain-domnam AND spras = sy-langu.
         lv_text = ls_text-domtxt.
         EXIT.
       ENDLOOP.
       IF lv_text IS INITIAL.
-        LOOP AT lt_text INTO ls_text WHERE domnam = ls_domain-domnam AND langu = 'E'.
+        LOOP AT lt_text INTO ls_text WHERE domnam = ls_domain-domnam AND spras = 'E'.
           lv_text = ls_text-domtxt.
           EXIT.
         ENDLOOP.

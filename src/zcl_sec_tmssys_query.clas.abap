@@ -56,30 +56,30 @@ CLASS zcl_sec_tmssys_query IMPLEMENTATION.
       BEGIN OF ty_text,
         domnam TYPE c LENGTH 10,
         sysnam TYPE c LENGTH 10,
-        langu  TYPE c LENGTH 1,
-        systxt TYPE c LENGTH 120,
+        spras  TYPE c LENGTH 1,
+        systxt TYPE c LENGTH 60,
       END OF ty_text.
     DATA lt_text TYPE STANDARD TABLE OF ty_text.
     IF lt_system IS NOT INITIAL.
-      SELECT domnam, sysnam, langu, systxt
+      SELECT domnam, sysnam, spras, systxt
         FROM tmscsyst
         FOR ALL ENTRIES IN @lt_system
         WHERE domnam = @lt_system-domnam
           AND sysnam = @lt_system-sysnam
-          AND ( langu = @sy-langu OR langu = 'E' )
+          AND ( spras = @sy-langu OR spras = 'E' )
         INTO TABLE @lt_text.
     ENDIF.
 
     LOOP AT lt_system INTO DATA(ls_system).
       DATA(lv_text) = ``.
       LOOP AT lt_text INTO DATA(ls_text)
-        WHERE domnam = ls_system-domnam AND sysnam = ls_system-sysnam AND langu = sy-langu.
+        WHERE domnam = ls_system-domnam AND sysnam = ls_system-sysnam AND spras = sy-langu.
         lv_text = ls_text-systxt.
         EXIT.
       ENDLOOP.
       IF lv_text IS INITIAL.
         LOOP AT lt_text INTO ls_text
-          WHERE domnam = ls_system-domnam AND sysnam = ls_system-sysnam AND langu = 'E'.
+          WHERE domnam = ls_system-domnam AND sysnam = ls_system-sysnam AND spras = 'E'.
           lv_text = ls_text-systxt.
           EXIT.
         ENDLOOP.
