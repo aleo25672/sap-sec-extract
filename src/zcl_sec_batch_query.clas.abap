@@ -96,13 +96,15 @@ CLASS zcl_sec_batch_query IMPLEMENTATION.
     DATA lv_started_at TYPE c LENGTH 8.
     LOOP AT lt_session INTO DATA(ls_session_row).
       CLEAR: lv_started_on, lv_started_at.
-      " An initial start date is not a valid OData date. A session that has not started stays blank.
-      IF ls_session_row-startdate IS NOT INITIAL.
-        DATA(lv_day) = CONV string( ls_session_row-startdate ).
+      " A session that has not started stores spaces or 00000000. Neither is a date.
+      DATA(lv_day) = condense( CONV string( ls_session_row-startdate ) ).
+      IF strlen( lv_day ) = 8 AND lv_day CO '0123456789' AND lv_day <> '00000000'.
         lv_started_on = |{ lv_day(4) }-{ lv_day+4(2) }-{ lv_day+6(2) }|.
-        DATA(lv_clock) = CONV string( ls_session_row-starttime ).
+        DATA(lv_clock) = condense( CONV string( ls_session_row-starttime ) ).
         IF strlen( lv_clock ) >= 6.
-          lv_started_at = |{ lv_clock(2) }:{ lv_clock+2(2) }:{ lv_clock+4(2) }|.
+          IF lv_clock(6) CO '0123456789'.
+            lv_started_at = |{ lv_clock(2) }:{ lv_clock+2(2) }:{ lv_clock+4(2) }|.
+          ENDIF.
         ENDIF.
       ENDIF.
       APPEND VALUE ty_row(
