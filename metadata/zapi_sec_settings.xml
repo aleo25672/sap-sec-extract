@@ -268,8 +268,8 @@
         <Property Name="TransactionCount" Type="Edm.Int32"/>
         <Property Name="ErrorCount" Type="Edm.Int32"/>
         <Property Name="DeletedCount" Type="Edm.Int32"/>
-        <Property Name="StartedOn" Type="Edm.Date"/>
-        <Property Name="StartedAt" Type="Edm.TimeOfDay"/>
+        <Property Name="StartedOn" Type="Edm.String" MaxLength="10"/>
+        <Property Name="StartedAt" Type="Edm.String" MaxLength="8"/>
         <Property Name="UserName" Type="Edm.String" MaxLength="12"/>
       </EntityType>
       <EntityType Name="ProgramsType">

@@ -204,7 +204,7 @@ This is the population of security-parameter changes in the audit period. The st
 
 `ForbiddenPasswords` is `USR40`. `PasswordPattern` is the forbidden pattern in `BCODE`, and `CaseSensitive` is the flag beside it. This is the password rule, not a user's password hash. User password hashes stay out of the extract.
 
-`BatchInputSessions` is the SM35 header in `APQI`. `QueueState` is the session status: blank is to be processed, `C` creating, `E` incorrect, `F` finished, `R` processing, and `S` in background. Failed and unfinished sessions are filters the caller applies. `ErrorCount` is `TRANSCNTE`. The queue password in `APQI-PASSWD` is not selected.
+`BatchInputSessions` is the SM35 header in `APQI`. `QueueState` is the session status: blank is to be processed, `C` creating, `E` incorrect, `F` finished, `R` processing, and `S` in background. Failed and unfinished sessions are filters the caller applies. `ErrorCount` is `TRANSCNTE`. `StartedOn` and `StartedAt` are blank when the session has not started, because an empty `STARTDATE` is not a valid date. When the session has started, `StartedOn` is `YYYY-MM-DD` and `StartedAt` is `HH:MM:SS`. The queue password in `APQI-PASSWD` is not selected.
 
 `Programs` is `TRDIR` for the names in `ProgramName`. A request without that filter is an error. The row is the program type, the created and changed user and date, the version, and the authorization group. The source is not returned. `ProgramIncludes` is `D010INC` for the same program names.
 

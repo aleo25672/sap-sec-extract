@@ -13,7 +13,7 @@ define custom entity ZC_SEC_BATCH
       TransactionCount   : abap.int4;
       ErrorCount         : abap.int4;
       DeletedCount       : abap.int4;
-      StartedOn          : abap.dats;
-      StartedAt          : abap.tims;
+      StartedOn          : abap.char(10);
+      StartedAt          : abap.char(8);
       UserName           : abap.char(12);
 }

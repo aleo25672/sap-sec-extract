@@ -1,5 +1,5 @@
 {
-  "note": "Contract sample. These are not values read from an SAP system. The queue password is not returned.",
+  "note": "Contract sample. These are not values read from an SAP system. The queue password is not returned. StartedOn and StartedAt are blank when the session has not started.",
   "value": [
     {
       "Client": "100",

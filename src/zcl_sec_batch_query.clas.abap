@@ -19,8 +19,8 @@ CLASS zcl_sec_batch_query DEFINITION
         transactioncount TYPE i,
         errorcount       TYPE i,
         deletedcount     TYPE i,
-        startedon        TYPE d,
-        startedat        TYPE t,
+        startedon        TYPE c LENGTH 10,
+        startedat        TYPE c LENGTH 8,
         username         TYPE c LENGTH 12,
       END OF ty_row,
       tt_row TYPE STANDARD TABLE OF ty_row WITH EMPTY KEY.
@@ -92,7 +92,19 @@ CLASS zcl_sec_batch_query IMPLEMENTATION.
       INTO TABLE @DATA(lt_session).
 
     DATA lt_rows TYPE tt_row.
+    DATA lv_started_on TYPE c LENGTH 10.
+    DATA lv_started_at TYPE c LENGTH 8.
     LOOP AT lt_session INTO DATA(ls_session_row).
+      CLEAR: lv_started_on, lv_started_at.
+      " An initial start date is not a valid OData date. A session that has not started stays blank.
+      IF ls_session_row-startdate IS NOT INITIAL.
+        DATA(lv_day) = CONV string( ls_session_row-startdate ).
+        lv_started_on = |{ lv_day(4) }-{ lv_day+4(2) }-{ lv_day+6(2) }|.
+        DATA(lv_clock) = CONV string( ls_session_row-starttime ).
+        IF strlen( lv_clock ) >= 6.
+          lv_started_at = |{ lv_clock(2) }:{ lv_clock+2(2) }:{ lv_clock+4(2) }|.
+        ENDIF.
+      ENDIF.
       APPEND VALUE ty_row(
         client           = ls_session_row-mandant
         queueid          = ls_session_row-qid
@@ -105,8 +117,8 @@ CLASS zcl_sec_batch_query IMPLEMENTATION.
         transactioncount = ls_session_row-transcnt
         errorcount       = ls_session_row-transcnte
         deletedcount     = ls_session_row-transcntd
-        startedon        = ls_session_row-startdate
-        startedat        = ls_session_row-starttime
+        startedon        = lv_started_on
+        startedat        = lv_started_at
         username         = ls_session_row-userid ) TO lt_rows.
     ENDLOOP.
 
