@@ -58,8 +58,8 @@ CLASS zcl_sec_salflt_query DEFINITION
     METHODS append_lines
       IMPORTING
         iv_source      TYPE csequence
-        iv_host        TYPE csequence
-        iv_profile     TYPE csequence
+        iv_host        TYPE csequence DEFAULT ''
+        iv_profile     TYPE csequence DEFAULT ''
         iv_slot        TYPE numeric
         iv_client      TYPE csequence
         iv_user        TYPE csequence
@@ -223,6 +223,7 @@ CLASS zcl_sec_salflt_query IMPLEMENTATION.
       append_lines(
         EXPORTING
           iv_source   = 'Static'
+          iv_host     = ''
           iv_profile  = ls_profile-profname
           iv_slot     = ls_profile-slotno
           iv_client   = ls_profile-client
@@ -296,6 +297,7 @@ CLASS zcl_sec_salflt_query IMPLEMENTATION.
         EXPORTING
           iv_source   = 'Dynamic'
           iv_host     = lv_host
+          iv_profile  = ''
           iv_slot     = sy-tabix
           iv_client   = ls_slot-mandt
           iv_user     = ls_slot-uname
