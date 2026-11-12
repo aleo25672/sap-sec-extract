@@ -24,6 +24,7 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_USH10        as ProfileChangeDocuments;
   expose ZC_SEC_UST10C       as CompositeProfiles;
   expose ZC_SEC_SALCFG       as AuditConfiguration;
+  expose ZC_SEC_SALFLT       as AuditFilterEvents;
   expose ZC_SEC_SALEVT       as AuditEvents;
   expose ZC_SEC_SYSLOG       as SystemLog;
 }

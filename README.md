@@ -62,6 +62,7 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_USH10        as ProfileChangeDocuments;
   expose ZC_SEC_UST10C       as CompositeProfiles;
   expose ZC_SEC_SALCFG       as AuditConfiguration;
+  expose ZC_SEC_SALFLT       as AuditFilterEvents;
   expose ZC_SEC_SALEVT       as AuditEvents;
   expose ZC_SEC_SYSLOG       as SystemLog;
 }
@@ -323,6 +324,7 @@ Published service:
 | `ProfileChangeDocuments` | `USH10` | One saved change of a profile header |
 | `CompositeProfiles` | `UST10C` | One single profile inside one composite profile |
 | `AuditConfiguration` | `RSAUPROF` | One static security-audit profile slot |
+| `AuditFilterEvents` | `RSAUPROF`, `RSAUPROFEX`, `RSAU_GET_AUDIT_CONFIG` | One selected event or class of one static or dynamic filter |
 | `AuditEvents` | `RSAU_BUF_DATA` | One security-audit event in the database buffer |
 | `SystemLog` | SM21 local file | One system-log record on this application server |
 
@@ -475,7 +477,9 @@ GET .../TransactionUsage?$filter=PeriodType eq 'D' and PeriodStart ge 2026-10-26
 
 `CompositeProfiles` is `UST10C`. `ProfileName` is the composite, `Version` is `AKTPS`, and `SubProfile` is the single profile inside it. `ProfileAuthorizations` stays `UST10S` and is not mixed into this set. `A` is the active version and `P` is the maintenance copy.
 
-`AuditConfiguration` is `RSAUPROF`, the static SM19 profile. `ProfileName` is `PROFNAME` and `SlotNumber` is `SLOTNO`. The row named `$CURPROF$` stores the profile the server loaded in `ActiveProfile` (`CURRPROF`). A slot number above `0000` on any other profile is one filter. `Client` is `CLIENT` and `UserName` is `UNAME`. `SlotStatus` is `STATUS`. `X` means the slot is active. `AuditClasses` is the class bitmask: `1` other, `2` logon, `4` transaction start, `8` report, `16` RFC logon, `32` user master, `64` system, and `128` RFC call. `AuditClassText` lists the bits that are set. `Severity` is `2` low, `5` medium, or `9` high. When both `AuditClasses` and `Severity` are `0`, the filter uses detailed events and `AuditClassText` is `Detailed events`. The event bit vector is `MSGVECT` and the selection variant is `SELVAR`. Both are raw and are not selected. Rows of profile `$KERNEL$` are recording parameters, not event filters, so the bitmask text is left blank. The dynamic filters SM19 keeps in memory are not a second table, and this set does not invent them.
+`AuditConfiguration` is `RSAUPROF`, the static SM19 profile. `ProfileName` is `PROFNAME` and `SlotNumber` is `SLOTNO`. The row named `$CURPROF$` stores the profile the server loaded in `ActiveProfile` (`CURRPROF`). A slot number above `0000` on any other profile is one filter. `Client` is `CLIENT` and `UserName` is `UNAME`. `SlotStatus` is `STATUS`. `X` means the slot is active. `AuditClasses` is the class bitmask: `1` other, `2` logon, `4` transaction start, `8` report, `16` RFC logon, `32` user master, `64` system, and `128` RFC call. `AuditClassText` lists the bits that are set. `Severity` is `2` low, `5` medium, or `9` high. When both `AuditClasses` and `Severity` are `0`, the filter uses detailed events and `AuditClassText` is `Detailed events`. Rows of profile `$KERNEL$` are recording parameters, not event filters, so the bitmask text is left blank.
+
+`AuditFilterEvents` is the selected content of each filter, which is the detail behind an SM19 filter screenshot. `Source` `Static` reads `RSAUPROF` for slots above `0000`, and uses `RSAUPROFEX-MSGVECT` when that extended vector is filled. `ProfileName` and `SlotNumber` match `AuditConfiguration`. Profiles `$KERNEL$`, `$CURPROF$`, `$FLAG$`, and `$CONFIG$` are not filters. `LineKind` `Event` is one selected message id in `LineValue`, such as `EUH` or `FU2`. The id is decoded from `MSGVECT`: one byte per subid in the order `0`–`9` then `A`–`Z`, and eight area bits `AU`, `BU`, `CU`, `DU`, `EU`, `FU`, `GU`, and `HU`. The message text shown on the SM19 screen is not in the row. `LineKind` `Class` is a filter that records a whole audit class, and `LineValue` is `Logon`, `Transaction start`, `Report`, `RFC logon`, `User master`, `RFC call`, `Other`, or `System`. `LineKind` `Filter` is a slot with no selected event and no selected class. `Source` `Dynamic` calls `RSAU_GET_AUDIT_CONFIG` on the application server that answered. `HostName` is that server and `ProfileName` is empty. `SlotNumber` is the position returned by the function. A dynamic change on another server is not in this response. When the shared-memory read fails, the static rows are still returned.
 
 `AuditEvents` is `RSAU_BUF_DATA`, the database buffer behind SM20. `MessageId` is `AREA` and `SUBID` joined, three characters. `EventTimestamp` is `SLGDATTIM`, 16 characters. `EventOn` is the first eight digits of that stamp, so the caller filters a date. `ProcessId` is `SLGPROC`, `Client` is `SLGMAND`, `SystemId` is `SID`, `InstanceName` is `INSTANCE`, and `Counter` is the key counter. `Terminal` is `SLGLTRM2`, `UserName` is `SLGUSER`, `TransactionCode` is `SLGTC`, `ProgramName` is `SLGREPNA`, and `TerminalAddress` is `TERM_IPV6`. `EventData` is `SAL_DATA`, the message variables. Pass `EventOn` with both a start and an end. A missing date is an error (message 005 of `ZSEC_ACCESS`). A date with no end is an error (message 002). `Client` and `UserName` are optional. Omit them to read every client and every user. A system that records the audit log only in files has an empty buffer, and this set is then empty.
 
@@ -499,7 +503,7 @@ A reviewer authorizes roles. The kernel checks profiles. A generated profile is 
 | Developer keys and SNC | `DeveloperKeys`, `SncNames` | Which users hold a developer key, and which SNC name is stored for this user? |
 | Object registrations | `ObjectAccessRegistrations` | Which repository objects have an access key registered? |
 | Profile history | `ProfileAssignmentHistory`, `ProfileChangeDocuments`, `CompositeProfiles` | Which profiles were assigned, which profiles changed, and which single profiles sit inside a composite? |
-| Audit log | `AuditConfiguration`, `AuditEvents` | Which static SM19 filters are stored, and which audit events were written in this period? |
+| Audit log | `AuditConfiguration`, `AuditFilterEvents`, `AuditEvents` | Which SM19 filters are stored, which events each static or dynamic filter records, and which audit events were written in this period? |
 | System log | `SystemLog` | Which SM21 messages were written on this application server in this period? |
 
 `RoleAssignments` is the review population. `ValidFrom` and `ValidTo` are the interval stored on `AGR_USERS`. `Excluded` means the role was removed from the composite for this user. `FromCompositeRole` means the single role arrived through a composite, and `RoleHierarchy` names that composite. `FromOrgManagement` means HR organizational management assigned the role. `Users.SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service for the password and logon rules that apply to the account.
@@ -541,7 +545,7 @@ A failed check is an OData error. The response is not an empty list. Each check 
 | `DeveloperKeys`, `SncNames`, `ProfileAssignmentHistory` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
 | `ObjectAccessRegistrations` | `S_TABU_NAM` for `ADIRACCESS`, activity 03 |
 | `TransactionUsage` | `S_TOOLS_EX` field `AUTH` = `S_TOOLS_EX_A` |
-| `AuditConfiguration`, `AuditEvents` | `S_ADMI_FCD` value `AUDD` |
+| `AuditConfiguration`, `AuditFilterEvents`, `AuditEvents` | `S_ADMI_FCD` value `AUDD` |
 | `SystemLog` | `S_ADMI_FCD` value `SM21` |
 
 `S_USER_AGR` stores the role name in `ACT_GROUP`. `AGR_NAME` is the column on `AGR_USERS` and `AGR_DEFINE`. SU53 lists `ACTVT` and `ACT_GROUP` for this object. Profile `SAP_ALL` grants both fields as `*`.
@@ -573,6 +577,8 @@ GET .../ProfileAssignmentHistory?$filter=ChangedOn ge 2026-01-01 and ChangedOn l
 GET .../ProfileChangeDocuments?$filter=ChangedOn ge 2026-01-01 and ChangedOn le 2026-01-31 and ProfileName eq 'Z_FI_DISPLAY'
 GET .../CompositeProfiles?$filter=ProfileName eq 'Z_FI_COMPOSITE' and Version eq 'A'
 GET .../AuditConfiguration
+GET .../AuditFilterEvents?$count=true&$filter=Source eq 'Static' and ProfileName eq '!DISPLAY'
+GET .../AuditFilterEvents?$count=true&$filter=Source eq 'Dynamic'
 GET .../AuditEvents?$count=true&$top=1000&$filter=EventOn ge 2026-01-01 and EventOn le 2026-12-31
 GET .../SystemLog?$count=true&$top=1000&$filter=EventOn ge 2026-01-01 and EventOn le 2026-12-31 and MessageId eq 'A14'
 ```
