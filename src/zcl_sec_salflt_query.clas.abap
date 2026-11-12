@@ -60,7 +60,7 @@ CLASS zcl_sec_salflt_query DEFINITION
         iv_source      TYPE csequence
         iv_host        TYPE csequence DEFAULT ''
         iv_profile     TYPE csequence DEFAULT ''
-        iv_slot        TYPE numeric
+        iv_slot        TYPE n LENGTH 4
         iv_client      TYPE csequence
         iv_user        TYPE csequence
         iv_status      TYPE csequence
@@ -293,12 +293,14 @@ CLASS zcl_sec_salflt_query IMPLEMENTATION.
         CONTINUE.
       ENDIF.
 
+      DATA lv_slot TYPE n LENGTH 4.
+      lv_slot = sy-tabix.
       append_lines(
         EXPORTING
           iv_source   = 'Dynamic'
           iv_host     = lv_host
           iv_profile  = ''
-          iv_slot     = sy-tabix
+          iv_slot     = lv_slot
           iv_client   = ls_slot-mandt
           iv_user     = ls_slot-uname
           iv_status   = ls_slot-status
