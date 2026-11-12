@@ -12,7 +12,7 @@ CLASS zcl_sec_salflt_query DEFINITION
         hostname    TYPE c LENGTH 32,
         profilename TYPE c LENGTH 8,
         slotnumber  TYPE n LENGTH 4,
-        linekind    TYPE c LENGTH 5,
+        linekind    TYPE c LENGTH 6,
         linevalue   TYPE c LENGTH 20,
         client      TYPE c LENGTH 3,
         username    TYPE c LENGTH 12,
@@ -39,6 +39,10 @@ CLASS zcl_sec_salflt_query DEFINITION
         zcx_sec_access.
 
   PRIVATE SECTION.
+    TYPES:
+      ty_slot   TYPE n LENGTH 4,
+      ty_client TYPE c LENGTH 3.
+
     DATA mo_auth TYPE REF TO zif_sec_access_auth.
 
     METHODS static_rows
@@ -57,16 +61,18 @@ CLASS zcl_sec_salflt_query DEFINITION
 
     METHODS append_lines
       IMPORTING
-        iv_source      TYPE csequence
-        iv_host        TYPE csequence DEFAULT ''
-        iv_profile     TYPE csequence DEFAULT ''
-        iv_slot        TYPE csequence
-        iv_client      TYPE csequence
-        iv_user        TYPE csequence
-        iv_status      TYPE csequence
-        iv_vector      TYPE xstring
-        iv_detailed    TYPE abap_bool
-        it_classes     TYPE string_table
+        iv_source        TYPE csequence
+        iv_host          TYPE csequence DEFAULT ''
+        iv_profile       TYPE csequence DEFAULT ''
+        " Slot and client are numeric text. Pass them by value into the row types:
+        " a csequence parameter accepts c and string, not NUMC or CLNT.
+        VALUE(iv_slot)   TYPE ty_slot
+        VALUE(iv_client) TYPE ty_client
+        iv_user          TYPE csequence
+        iv_status        TYPE csequence
+        iv_vector        TYPE xstring
+        iv_detailed      TYPE abap_bool
+        it_classes       TYPE string_table
       CHANGING
         ct_rows        TYPE tt_row.
 ENDCLASS.

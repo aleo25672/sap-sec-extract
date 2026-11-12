@@ -430,7 +430,7 @@
         <Property Name="HostName" Type="Edm.String" MaxLength="32" Nullable="false"/>
         <Property Name="ProfileName" Type="Edm.String" MaxLength="8" Nullable="false"/>
         <Property Name="SlotNumber" Type="Edm.String" MaxLength="4" Nullable="false"/>
-        <Property Name="LineKind" Type="Edm.String" MaxLength="5" Nullable="false"/>
+        <Property Name="LineKind" Type="Edm.String" MaxLength="6" Nullable="false"/>
         <Property Name="LineValue" Type="Edm.String" MaxLength="20" Nullable="false"/>
         <Property Name="Client" Type="Edm.String" MaxLength="3"/>
         <Property Name="UserName" Type="Edm.String" MaxLength="12"/>

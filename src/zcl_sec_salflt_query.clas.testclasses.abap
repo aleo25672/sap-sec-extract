@@ -31,7 +31,8 @@ ENDCLASS.
 
 CLASS ltcl_salflt IMPLEMENTATION.
   METHOD system_events_aue_to_auj.
-    DATA(lt_ids) = zcl_sec_salflt_query=>message_ids( CONV xstring( '0000000000000000000000000000808080808080' ) ).
+    DATA lv_vector TYPE x LENGTH 20 VALUE '0000000000000000000000000000808080808080'.
+    DATA(lt_ids) = zcl_sec_salflt_query=>message_ids( CONV xstring( lv_vector ) ).
     cl_abap_unit_assert=>assert_equals( act = lines( lt_ids ) exp = 6 ).
     cl_abap_unit_assert=>assert_equals( act = lt_ids[ 1 ] exp = 'AUE' ).
     cl_abap_unit_assert=>assert_equals( act = lt_ids[ 2 ] exp = 'AUF' ).
@@ -42,7 +43,8 @@ CLASS ltcl_salflt IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD area_f_is_the_fourth_bit.
-    DATA(lt_ids) = zcl_sec_salflt_query=>message_ids( CONV xstring( '040004' ) ).
+    DATA lv_vector TYPE x LENGTH 3 VALUE '040004'.
+    DATA(lt_ids) = zcl_sec_salflt_query=>message_ids( CONV xstring( lv_vector ) ).
     cl_abap_unit_assert=>assert_equals( act = lines( lt_ids ) exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = lt_ids[ 1 ] exp = 'FU0' ).
     cl_abap_unit_assert=>assert_equals( act = lt_ids[ 2 ] exp = 'FU2' ).
