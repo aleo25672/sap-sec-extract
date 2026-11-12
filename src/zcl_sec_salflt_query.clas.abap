@@ -60,7 +60,7 @@ CLASS zcl_sec_salflt_query DEFINITION
         iv_source      TYPE csequence
         iv_host        TYPE csequence DEFAULT ''
         iv_profile     TYPE csequence DEFAULT ''
-        iv_slot        TYPE n LENGTH 4
+        iv_slot        TYPE csequence
         iv_client      TYPE csequence
         iv_user        TYPE csequence
         iv_status      TYPE csequence
