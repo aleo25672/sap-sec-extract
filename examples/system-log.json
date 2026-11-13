@@ -1,0 +1,19 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. The row is one local system-log record. The file often does not keep a full fiscal year.",
+  "value": [
+    {
+      "InstanceName": "PRD_sapapp01_00",
+      "FileNumber": "000012",
+      "FilePosition": "0000001840",
+      "EventOn": "2026-01-15",
+      "EventAt": "10:12:03",
+      "MessageId": "A14",
+      "Client": "100",
+      "UserName": "JSMITH",
+      "TransactionCode": "SM19",
+      "ProgramName": "SAPMSAUD",
+      "Terminal": "WS0123",
+      "MessageData": "Audit configuration changed"
+    }
+  ]
+}

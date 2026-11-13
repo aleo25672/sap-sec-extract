@@ -10,18 +10,17 @@ define view ZI_SEC_USR_CHG
 {
   key cdhdr.objectid                                              as UserId,
   key cdhdr.changenr                                              as ChangeNumber,
-      coalesce( cdpos.tabname, cast( '' as abap.char(30) ) )      as TableName,
-      coalesce( cdpos.tabkey, cast( '' as abap.char(70) ) )       as TableKey,
-      coalesce( cdpos.fname, cast( '' as abap.char(30) ) )        as FieldName,
-      coalesce( cdpos.chngind, cast( '' as abap.char(1) ) )       as ItemChange,
+      coalesce( cdpos.tabname, lpad( ' ', 30, ' ' ) )             as TableName,
+      coalesce( cdpos.tabkey, lpad( ' ', 70, ' ' ) )              as TableKey,
+      coalesce( cdpos.fname, lpad( ' ', 30, ' ' ) )               as FieldName,
+      coalesce( cdpos.chngind, lpad( ' ', 1, ' ' ) )              as ItemChange,
       cdhdr.username                                              as ChangedBy,
       cdhdr.udate                                                 as ChangeDate,
       cdhdr.utime                                                 as ChangeTime,
       cdhdr.tcode                                                 as TransactionCode,
       cdhdr.change_ind                                            as HeaderChange,
       // Same tables and fields as ZCL_SEC_USR_CHG_GUARD and ZI_SEC_ROLE_CHG.
-      cast(
-        case
+      case
           when cdpos.tabname is initial
             or cdpos.tabname = 'ADRP' or cdpos.tabname = 'ADRC' or cdpos.tabname = 'ADR2'
             or cdpos.tabname = 'ADR3' or cdpos.tabname = 'ADR6' or cdpos.tabname = 'ADCP'
@@ -38,11 +37,10 @@ define view ZI_SEC_USR_CHG
             or cdpos.fname = 'FIRSTNAME' or cdpos.fname = 'LASTNAME'
             or cdpos.fname = 'TEL_NUMBER' or cdpos.fname = 'TELNR' or cdpos.fname = 'TELNR_LONG'
             or cdpos.fname = 'TEL_EXTENS' or cdpos.fname = 'MOB_NUMBER'
-            then cast( '' as abap.char(254) )
+            then lpad( ' ', 254, ' ' )
           else cdpos.value_old
-        end as abap.char(254) )                                   as ValueOld,
-      cast(
-        case
+        end                                                       as ValueOld,
+      case
           when cdpos.tabname is initial
             or cdpos.tabname = 'ADRP' or cdpos.tabname = 'ADRC' or cdpos.tabname = 'ADR2'
             or cdpos.tabname = 'ADR3' or cdpos.tabname = 'ADR6' or cdpos.tabname = 'ADCP'
@@ -59,8 +57,9 @@ define view ZI_SEC_USR_CHG
             or cdpos.fname = 'FIRSTNAME' or cdpos.fname = 'LASTNAME'
             or cdpos.fname = 'TEL_NUMBER' or cdpos.fname = 'TELNR' or cdpos.fname = 'TELNR_LONG'
             or cdpos.fname = 'TEL_EXTENS' or cdpos.fname = 'MOB_NUMBER'
-            then cast( '' as abap.char(254) )
+            then lpad( ' ', 254, ' ' )
           else cdpos.value_new
-        end as abap.char(254) )                                   as ValueNew
+        end                                                       as ValueNew,
+      cdhdr.objectclas
 }
 where cdhdr.objectclas = 'IDENTITY'

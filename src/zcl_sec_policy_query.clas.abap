@@ -9,7 +9,7 @@ CLASS zcl_sec_policy_query DEFINITION
     TYPES:
       BEGIN OF ty_row,
         policyname         TYPE c LENGTH 40,
-        client             TYPE mandt,
+        client             TYPE c LENGTH 3,
         description        TYPE c LENGTH 60,
         createdby          TYPE c LENGTH 12,
         createdon          TYPE p LENGTH 8 DECIMALS 0,

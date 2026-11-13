@@ -8,7 +8,7 @@ CLASS zcl_sec_client_query DEFINITION
 
     TYPES:
       BEGIN OF ty_row,
-        client                     TYPE mandt,
+        client                     TYPE c LENGTH 3,
         clientname                 TYPE c LENGTH 25,
         clientrole                 TYPE c LENGTH 1,
         clientroletext             TYPE c LENGTH 60,

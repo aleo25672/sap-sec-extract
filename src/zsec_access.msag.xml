@@ -32,6 +32,12 @@
      <MSGNR>004</MSGNR>
      <TEXT>Not authorized to display workload statistics</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZSEC_ACCESS</ARBGB>
+     <MSGNR>005</MSGNR>
+     <TEXT>A filter on &amp;1 is required</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

@@ -1,6 +1,6 @@
 # SAP security settings extract
 
-Read-only OData V4 service for the profile parameters shown by report RSPFPAR, plus the four settings that sit beside that report and change an IT general control conclusion: security policies, client settings, system change options, and parameter history.
+Read-only OData V4 service for the profile parameters shown by report RSPFPAR, plus the settings that sit beside that report and change an IT general control conclusion: security policies, client settings, system change options, and parameter history. The same service returns the system status, the kernel, the installed software components, the customizing and catalog tables, and the transport configuration in [System identity](#system-identity), [Customizing and catalogs](#customizing-and-catalogs), and [Transports](#transports).
 
 The service returns raw values and, where a value is derived, the derivation. The caller compares a policy with the application server and decides whether a production client is locked.
 
@@ -39,6 +39,7 @@ The pull imports both service definitions. `ZAPI_SEC_ACCESS` is stored the same 
 @EndUserText.label: 'Security access'
 define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_USER         as Users;
+  expose ZC_SEC_USRADDR      as UserAddresses;
   expose ZC_SEC_ROLE_ASSIGN  as RoleAssignments;
   expose ZC_SEC_PROF_ASSIGN  as ProfileAssignments;
   expose ZC_SEC_ROLE         as Roles;
@@ -54,10 +55,20 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_USR_CHG      as UserChangeDocuments;
   expose ZC_SEC_ROLE_CHG     as RoleChangeDocuments;
   expose ZC_SEC_TCODE_USAGE  as TransactionUsage;
+  expose ZC_SEC_DEVKEY       as DeveloperKeys;
+  expose ZC_SEC_SNC          as SncNames;
+  expose ZC_SEC_OBJKEY       as ObjectAccessRegistrations;
+  expose ZC_SEC_USH04        as ProfileAssignmentHistory;
+  expose ZC_SEC_USH10        as ProfileChangeDocuments;
+  expose ZC_SEC_UST10C       as CompositeProfiles;
+  expose ZC_SEC_SALCFG       as AuditConfiguration;
+  expose ZC_SEC_SALFLT       as AuditFilterEvents;
+  expose ZC_SEC_SALEVT       as AuditEvents;
+  expose ZC_SEC_SYSLOG       as SystemLog;
 }
 ```
 
-`Client` on these entities is a 3-character client id. `ClientSettings` keeps `abap.clnt` because there the client is the key.
+`Client` on these entities is a 3-character client id, including `ClientSettings`. A custom entity does not use `abap.clnt`.
 
 The pull also imports both service bindings. Each binding is OData V4, Web API, version `0001`, and the pull publishes it. abapGit writes the binding after its service definition. The version that publishes during the pull is in [Prerequisite](#prerequisite). The published paths are:
 
@@ -67,11 +78,11 @@ The pull also imports both service bindings. Each binding is OData V4, Web API, 
 
 The OData `$metadata` for those paths is in [metadata/zapi_sec_settings.xml](metadata/zapi_sec_settings.xml) and [metadata/zapi_sec_access.xml](metadata/zapi_sec_access.xml). Each file is produced from the service definition and the custom entities in this repository. An entity set uses the name from `expose ... as`. Its entity type is that name with the suffix `Type`. `python3 metadata/build.py` writes the files again after an entity changes. abapGit ignores `metadata/`, so the pull does not import these files into the package.
 
-A binding that is already published is unpublished, updated, and published again. The path stays the same. Reload `$metadata` after the pull. When an entity set from this repository is absent from the entity container, unpublish binding `ZAPI_SEC_ACCESS` version `0001` and publish it again.
+A binding that is already published is unpublished, updated, and published again. The path stays the same. Reload `$metadata` after the pull. When an entity set from this repository is absent from the entity container, unpublish that binding at version `0001` and publish it again. Do this for `ZAPI_SEC_SETTINGS` after a pull that adds entity sets, and for `ZAPI_SEC_ACCESS` as well.
 
 The service definitions and the bindings are in the repository, so a later pull updates them.
 
-Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, blanking of password and address values on a user or role change, role-change filters, workload period bounds, and an authorization failure that does not read profile parameters, access rows, or workload aggregates. They do not read the kernel or the database.
+Run ABAP Unit on package `$ZEVOLVER_SEC2F`. The tests cover security classification, policy value origin, domain-text fallbacks, filter and paging, lock-flag bits, password state, blanking of password and address values on a user or role change, role-change filters, workload period bounds, component and program type texts, batch session status text, closed date bounds, transport and request texts, and an authorization failure that does not read profile parameters, system status, kernel information, access rows, workload aggregates, developer keys, composite profiles, object registrations, transport domains, transport requests, the audit configuration, or the system log. They do not read the kernel or the database.
 
 `examples/` holds one contract sample per entity set. The values are illustrative.
 
@@ -89,6 +100,25 @@ Published service:
 | `ClientSettings` | SCC4 / `T000` | One row per client |
 | `SystemChangeOptions` | SE06 | Global row, software components, and namespaces |
 | `ProfileParameterChanges` | TU02 / `PAHI` | Parameter history for a host and a date |
+| `SystemStatus` | System, Status | One row for the application server that answered |
+| `KernelInformation` | System, Status, Shift+F5 | Kernel release, patch, and compilation of that server |
+| `SoftwareComponents` | `CVERS` | Installed component, release, and support package level |
+| `CompanyCodes` | `T001` | Company code, including the productive flag |
+| `TableLogging` | `DD09L` | Logging flag for every active table, or for the tables the caller names |
+| `TableChangeLogs` | `DBTABLOG` | One logged change of a named table in a closed period |
+| `Se16nChangeDocuments` | `SE16N_CD_KEY` | Header of an SE16N change, for a table or a date |
+| `RoleCustomizing` | `PRGN_CUST` | One PFCG customizing switch and its stored value |
+| `ForbiddenPasswords` | `USR40` | One forbidden password pattern |
+| `BatchInputSessions` | SM35 / `APQI` | Session header, without the queue password |
+| `Programs` | `TRDIR` | Change facts for the programs the caller names |
+| `ProgramIncludes` | `D010INC` | Includes of those programs |
+| `TransportDomains` | `TMSCDOM`, `TMSCDOMT` | One transport domain and its controller |
+| `TransportSystems` | `TMSCSYS`, `TMSCSYST` | One system in that domain |
+| `TransportRoutes` | `TCERELE`, `TCEDELI` | One consolidation or delivery route of the newest configuration |
+| `ImportHistory` | `TPALOG` | One import step in a closed period |
+| `TpParameters` | `TMSPCONF` | One tp parameter of the newest profile version |
+| `TransportRequests` | `E070`, `E07T` | One request or task whose last change falls in a closed period |
+| `TransportRequestObjects` | `E071` joined to `E070` | One object of those requests |
 
 `SecurityProfileParameters` keeps three value fields:
 
@@ -102,7 +132,7 @@ The service does not choose which of those is in force.
 
 `DISABLE_PASSWORD_LOGON` also supersedes `login/password_logon_usergroup`. The payload carries the single profile parameter name stored on `SEC_POLICY_ATTR`.
 
-A landscape pull is one call per application server. Policy and client data are for the logon client (`sap-client`) or, for `T000`, every client. There is no RFC to other instances.
+A landscape pull is one call per application server. Policy and client data are for the logon client (`sap-client`) or, for `T000`, every client. `SystemStatus` and `KernelInformation` are the application server that answered the request. There is no RFC to other instances.
 
 ## IT general controls
 
@@ -114,6 +144,12 @@ RSPFPAR is the current profile of this application server. These four entity set
 | `ClientSettings` | Change management | Whether this client allows customizing, repository changes, a client copy, or eCATT |
 | `SystemChangeOptions` | Change management | Whether the system as a whole allows repository and cross-client changes |
 | `ProfileParameterChanges` | Change management, and access to programs and data | Which security parameters changed, on which host, and on which date |
+| `SystemStatus`, `KernelInformation`, `SoftwareComponents` | Change management | Which system, kernel, and component version the extract was taken from |
+| `CompanyCodes`, `TableLogging`, `TableChangeLogs`, `Programs`, `ProgramIncludes` | Change management | Productive company codes, table logging, the logged changes, and the last change of named programs |
+| `Se16nChangeDocuments`, `RoleCustomizing`, `ForbiddenPasswords` | Access to programs and data | SE16N change headers, PFCG switches, and forbidden password patterns |
+| `BatchInputSessions` | Change management | Which batch input sessions are not finished |
+| `TransportDomains`, `TransportSystems`, `TransportRoutes`, `TpParameters` | Change management | The transport landscape and the tp parameters in force |
+| `ImportHistory`, `TransportRequests`, `TransportRequestObjects` | Change management | What was imported, and which requests and objects changed in the period |
 
 ### Security policies
 
@@ -147,6 +183,48 @@ A production client can be closed in SCC4 while this global row is still modifia
 
 This is the population of security-parameter changes in the audit period. The store keeps a day and a 64-character value. It does not keep the user or the time. The account that saved an RZ10 change is in the profile comment. A dynamic RZ11 change is system log message Q19. The newest day appears after the TU02 changelog update.
 
+### System identity
+
+`SystemStatus` is the System, Status screen for the application server that answered. `ApplicationServer` is `sy-host`. `DatabaseSystem`, `DatabaseHost`, `OperatingSystem`, `MachineType`, `IpAddress`, and `SapRelease` come from `RFC_SYSTEM_INFO`. `SapRelease` is the basis release, four characters. The product version is `SoftwareComponents`. `DatabaseRelease` is the first database line from `TH_SAPREL`. `InstallationNumber` comes from `SLIC_GET_LICENCE_NUMBER`. A blank installation number means that function returned nothing. `UnicodeSystem` is `X` when the character size is greater than one.
+
+`KernelInformation` is the same server, Shift+F5. `TH_SAPREL` supplies `KernelRelease`, `KernelPatchLevel`, `CompiledOn`, `CompiledAt`, and `DatabaseLibrary`. Join it to `SystemStatus` on `SystemId` and `ApplicationServer`.
+
+`SoftwareComponents` is `CVERS`, one row per installed component. `ComponentRelease` is `CVERS-RELEASE`. `SupportPackageLevel` is `CVERS-EXTRELEASE`. The support package name is not on the row. `ComponentTypeText` is the `RELC_TYPE` text.
+
+### Customizing and catalogs
+
+`CompanyCodes` is `T001` for the logon client. `Productive` is `XPROD`. The row keeps the code, the name, the country, the currency, the chart of accounts, the fiscal-year variant, and the language. Address numbers and tax numbers stay out.
+
+`TableLogging` is the active `DD09L` row. `LogDataChanges` is `PROTOKOLL`. A request with no `TableName` returns every active row. The caller follows `@odata.nextLink` for the full table. `TableName` still limits the read when it is passed.
+
+`TableChangeLogs` is `DBTABLOG`, the same online log report RSTBHIST reads. `LogDate` is `LOGDATE`, `LogTime` is `LOGTIME`, and `LogId` is `LOGID`. `TableName` is `TABNAME` and `RecordKey` is `LOGKEY`. `Operation` is `OPTYPE`: `I` insert, `U` update, and `D` delete. `OperationText` is that word. `VersionNumber` is `VERSNO`. `LOGDATA` is the binary image of the changed row and is not selected. `DATALN` is not selected. Archived log records are not in this table, so they are not in the set. Pass `TableName` and a closed `LogDate` (`eq`, `bt`, or `ge` together with `le`). A missing table or a missing date is an error (message 005). A date with no end is an error (message 004). The authorization check is `S_TABU_NAM` activity 03 for each concrete table in the filter, such as `T000`.
+
+`Se16nChangeDocuments` is the header in `SE16N_CD_KEY`: the table, the user, and the date of an SE16N change. The changed values stay in `SE16N_CD_DATA` and are not returned. Pass `TableName` or `ChangedOn`. A request with neither is an error.
+
+`RoleCustomizing` is `PRGN_CUST`. `CustomizingId` is `ID` and `CustomizingValue` is `PATH`. `CHECK_S_USER_SAS` is a filter the caller applies.
+
+`ForbiddenPasswords` is `USR40`. `PasswordPattern` is the forbidden pattern in `BCODE`, and `CaseSensitive` is the flag beside it. This is the password rule, not a user's password hash. User password hashes stay out of the extract.
+
+`BatchInputSessions` is the SM35 header in `APQI`. `QueueState` is the session status: blank is to be processed, `C` creating, `E` incorrect, `F` finished, `R` processing, and `S` in background. Failed and unfinished sessions are filters the caller applies. `ErrorCount` is `TRANSCNTE`. `StartedOn` and `StartedAt` are blank when the session has not started, because an empty `STARTDATE` is not a valid date. When the session has started, `StartedOn` is `YYYY-MM-DD` and `StartedAt` is `HH:MM:SS`. The queue password in `APQI-PASSWD` is not selected.
+
+`Programs` is `TRDIR` for the names in `ProgramName`. A request without that filter is an error. The row is the program type, the created and changed user and date, the version, and the authorization group. The source is not returned. `ProgramIncludes` is `D010INC` for the same program names.
+
+### Transports
+
+`TransportDomains` is `TMSCDOM`. `DomainName` is `DOMNAM` and `ControllerSystem` is `DOMCTL`. `Description` is `TMSCDOMT-DOMTXT` in the logon language, or English when that language is missing.
+
+`TransportSystems` is `TMSCSYS`. `SystemType` is `SYSTYP`: `S` is an SAP system, `V` is virtual, and `E` is external. `TransportGroup` is `NFSGRP`. A row with `LIMBO` set is a system waiting to be deleted, and the read skips it. `Description` is `TMSCSYST-SYSTXT`, with the same language fallback.
+
+`TransportRoutes` is the STMS route graphic, not the RFC routing table `TMSCROUTE`. A consolidation row comes from `TCERELE`. `SourceSystem` is `INTSYS`, `TargetSystem` is `CONSYS`, `TransportLayer` is `TRANSLAYER`, and `ConsolidationSystem` is `ORICON`. A delivery row comes from `TCEDELI`. `SourceSystem` is `FROMSYSTEM` and `TargetSystem` is `TOSYSTEM`. `FROMCLIENT` is the source client and is not a separate property. `RouteKind` is `Consolidation` or `Delivery`. `ConfigVersion` is the newest version in `TCEVERS`. When that version has no rows in one of the route tables, the read uses the newest version stored in that table. A delivery row leaves `TransportLayer` and `ConsolidationSystem` blank.
+
+`TpParameters` is `TMSPCONF`, the tp profile. The read keeps the newest `VERSION`. `ParameterName` is `NAME` and `ParameterValue` is `VALUE`. A blank `SystemName` is a global parameter. `OperatingSystem` is `OPSYS` and `DatabaseSystem` is `DBSYS`.
+
+`ImportHistory` is `TPALOG`, the buffer behind the STMS import history. `TPALOGHDR` is the file header and is not a separate row. `ImportTimestamp` is `TRTIME`. `ImportOn` is the first eight digits of that timestamp, so the caller filters a date. `Request` is `TRKORR`, `TargetSystem` is `TARSYSTEM`, `SourceClient` is `TRCLI`, and `Step` is `TRSTEP`. `ReturnCode` is `RETCODE`. `0000` is success, `0004` is a warning, `0008` is an error, and `0012` or `0016` is fatal. `UserName` is `TRUSER` and `Administrator` is `ADMIN`. Pass `ImportOn` with both a start and an end (`eq`, `bt`, or `ge` together with `le`). A missing date is an error (message 005). A date with no end is an error (message 004).
+
+`TransportRequests` is `E070` for requests and tasks in this system. It is not the import history. `ChangedOn` is `AS4DATE` and `ChangedAt` is `AS4TIME`, the last change stored on the request. `RequestFunction` is `TRFUNCTION`. `K` is a workbench request and `W` is a customizing request. `RequestStatus` is `TRSTATUS`. `D` is modifiable and `R` is released. `Category` is `KORRDEV`. `CUST` is customizing and `SYST` is workbench. `Owner` is `AS4USER`. `ParentRequest` is `STRKORR`. `Description` is `E07T-AS4TEXT`, with the same language fallback. The same closed `ChangedOn` filter is required.
+
+`TransportRequestObjects` is `E071` joined to that `E070` header, so the same `ChangedOn` filter selects the objects. `ObjectPosition` is `AS4POS`. `ProgramId` is `PGMID`, `ObjectType` is `OBJECT`, and `ObjectName` is `OBJ_NAME`. `ObjectFunction` is `OBJFUNC`. `Owner`, `ChangedOn`, `TargetSystem`, `RequestStatus`, and `Description` come from the header.
+
 ## Authorization
 
 | Entity sets | Check |
@@ -155,6 +233,19 @@ This is the population of security-parameter changes in the audit period. The st
 | `SecurityPolicies`, `SecurityPolicyAttributes` | `S_SECPOL` activity 03 |
 | `ClientSettings` | `S_TABU_NAM` for `T000`, activity 03 |
 | `SystemChangeOptions` | `S_CTS_ADMI` function `TABL`. Report `RSWBO004` uses that function for the SE06 display. Confirm it on the target system. |
+| `SystemStatus`, `KernelInformation` | `S_RZL_ADM` activity 03 |
+| `SoftwareComponents` | `S_TABU_NAM` for `CVERS`, activity 03 |
+| `CompanyCodes` | `S_TABU_NAM` for `T001`, activity 03 |
+| `TableLogging` | `S_TABU_NAM` for `DD09L`, activity 03 |
+| `TableChangeLogs` | `S_TABU_NAM` activity 03 for each table named in `TableName` |
+| `Se16nChangeDocuments` | `S_TABU_NAM` for `SE16N_CD_KEY`, activity 03 |
+| `RoleCustomizing` | `S_TABU_NAM` for `PRGN_CUST`, activity 03 |
+| `ForbiddenPasswords` | `S_TABU_NAM` for `USR40`, activity 03 |
+| `BatchInputSessions` | `S_BDC_MONI` activity `ANAL` for group `*` |
+| `Programs` | `S_TABU_NAM` for `TRDIR`, activity 03 |
+| `ProgramIncludes` | `S_TABU_NAM` for `D010INC`, activity 03 |
+| `TransportDomains`, `TransportSystems`, `TransportRoutes`, `TpParameters` | `S_CTS_ADMI` function `TADM`. A display-only role may not have `TADM`. |
+| `ImportHistory`, `TransportRequests`, `TransportRequestObjects` | `S_TRANSPRT` field `TTYPE` = `*`, activity 03 |
 
 A failed check is an OData error. The response is not an empty list.
 
@@ -162,7 +253,7 @@ A failed check is an OData error. The response is not an empty list.
 
 ## Filters
 
-Range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count`. Every property of an entity accepts a range filter. A filter on an unknown property is an error (message 004). Character comparisons are case-insensitive, and a blank flag matches an empty value. `gt`, `ge`, `lt`, `le`, and `bt` compare integers numerically when both sides are integers, so 10 is greater than 2.
+Range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count`. Every property of an entity accepts a range filter. A filter on an unknown property is an error (message 004). A missing filter on `Programs`, `ProgramIncludes`, `Se16nChangeDocuments`, or `TableChangeLogs` is an error (message 005). `TableLogging` returns every active row when `TableName` is omitted. `TableChangeLogs` requires `TableName` and `LogDate`. `ImportHistory` requires `ImportOn`, and `TransportRequests` and `TransportRequestObjects` require `ChangedOn`. The date needs both a start and an end: `eq`, `bt`, or `ge` together with `le`. A missing date is message 005. A date with no end is message 004. Character comparisons are case-insensitive, and a blank flag matches an empty value. `gt`, `ge`, `lt`, `le`, and `bt` compare integers numerically when both sides are integers, so 10 is greater than 2.
 
 ```http
 GET .../SecurityProfileParameters?$filter=SecurityRelevant eq 'X'&$count=true
@@ -171,6 +262,26 @@ GET .../SecurityPolicyAttributes?$filter=ValueOrigin eq 'KernelDefault'
 GET .../ClientSettings?$filter=ClientRole eq 'P'
 GET .../SystemChangeOptions?$filter=SettingScope eq 'Global'
 GET .../ProfileParameterChanges?$filter=ChangeDate ge 2026-01-01 and ParameterName eq 'login/min_password_lng'
+GET .../SystemStatus
+GET .../KernelInformation
+GET .../SoftwareComponents?$filter=Component eq 'S4CORE'
+GET .../CompanyCodes?$filter=Productive eq 'X'
+GET .../TableLogging?$count=true&$top=1000
+GET .../TableLogging?$filter=TableName eq 'T000'
+GET .../TableChangeLogs?$count=true&$top=1000&$filter=TableName eq 'T000' and LogDate ge 2026-01-01 and LogDate le 2026-12-31
+GET .../Se16nChangeDocuments?$filter=TableName eq 'T000' and ChangedOn ge 2026-01-01
+GET .../RoleCustomizing?$filter=CustomizingId eq 'CHECK_S_USER_SAS'
+GET .../ForbiddenPasswords
+GET .../BatchInputSessions?$filter=QueueState eq 'E'
+GET .../Programs?$filter=ProgramName eq 'ZFI_POST'
+GET .../ProgramIncludes?$filter=ProgramName eq 'ZFI_POST'
+GET .../TransportDomains
+GET .../TransportSystems?$filter=SystemType eq 'V'
+GET .../TransportRoutes?$filter=RouteKind eq 'Consolidation'
+GET .../TpParameters?$filter=ParameterName eq 'CTC'
+GET .../ImportHistory?$filter=ImportOn ge 2026-01-01 and ImportOn le 2026-01-31
+GET .../TransportRequests?$filter=ChangedOn ge 2026-01-01 and ChangedOn le 2026-01-31 and RequestFunction eq 'K'
+GET .../TransportRequestObjects?$filter=ChangedOn ge 2026-01-01 and ChangedOn le 2026-01-31
 ```
 
 `ProfileParameterChanges` pushes the host, parameter name, date, and parameter type filters into the `PAHI` select. Character filters are applied with `upper`, so the name match is case-insensitive. An empty range does not restrict the select. Pass a date or name filter. The table also holds database and operating-system parameters. The entity key is host, parameter name, date, parameter type, and system id, which is the `PAHI` key. `PAHI-SYSTEMID` is CHAR 2; the property is 8 characters so the value is not clipped. `ParameterValue` is 64 characters. The row has a date and no time, and it has no user. The newest day appears only after the TU02 changelog update.
@@ -181,7 +292,7 @@ The gateway returns 100 rows in one response. `@odata.count` is the size of the 
 
 ## Security access extract
 
-Read-only OData V4 service for the accounts in the logon client, the roles and profiles assigned to them, the authorization values stored on those roles and profiles, and the change documents of the user master. The caller decides which accounts, objects, profiles, and changes are in scope. The service returns the stored rows. It does not classify an object, a profile, or a change as critical.
+Read-only OData V4 service for the accounts in the logon client, the roles and profiles assigned to them, the authorization values stored on those roles and profiles, the change documents of the user master, and the access records in [Access records](#access-records). The caller decides which accounts, objects, profiles, and changes are in scope. The service returns the stored rows. It does not classify an object, a profile, or a change as critical.
 
 Published service:
 
@@ -190,6 +301,7 @@ Published service:
 | Entity set | Source | What a row is |
 | --- | --- | --- |
 | `Users` | `USR02`, `USREFUS` | One user in the logon client |
+| `UserAddresses` | `USER_ADDR`, `ADR6` | The current address and email of one user |
 | `RoleAssignments` | `AGR_USERS` | One role on one user, with validity dates |
 | `ProfileAssignments` | `UST04`, and the reference user's profiles | One profile on one user |
 | `Roles` | `AGR_DEFINE`, `AGR_TEXTS` line `00000` | The role header and its first description line |
@@ -205,10 +317,22 @@ Published service:
 | `UserChangeDocuments` | `CDHDR`, `CDPOS` object `IDENTITY` | One changed field of one user-master change document |
 | `RoleChangeDocuments` | `CDHDR`, `CDPOS` object `PFCG` | One changed field of one role change document |
 | `TransactionUsage` | ST03 aggregate `USERTCODE`, component `TOTAL` | One user and one workload entry for one task type and one period |
+| `DeveloperKeys` | `DEVACCESS` | One user who holds a developer key. The key value is not in the row |
+| `SncNames` | `USRACL` | The printable SNC name of one user |
+| `ObjectAccessRegistrations` | `ADIRACCESS` | One object that has an access registration. The key value is not in the row |
+| `ProfileAssignmentHistory` | `USH04` | One saved list of profiles on one user |
+| `ProfileChangeDocuments` | `USH10` | One saved change of a profile header |
+| `CompositeProfiles` | `UST10C` | One single profile inside one composite profile |
+| `AuditConfiguration` | `RSAUPROF` | One static security-audit profile slot |
+| `AuditFilterEvents` | `RSAUPROF`, `RSAUPROFEX`, `RSAU_GET_AUDIT_CONFIG` | One selected event or class of one static or dynamic filter |
+| `AuditEvents` | `RSAU_BUF_DATA` | One security-audit event in the database buffer |
+| `SystemLog` | SM21 local file | One system-log record on this application server |
 
 `Users` carries the user type, user group, validity, the raw `USR02-UFLAG`, the three lock bits, the password state, the password-hash version, the last logon, who created the user, the security policy, and the reference user. `SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service. `Client` is the logon client on every row and joins to `ClientSettings`.
 
-The password hash is not in the extract. The person name and the email address are not in the extract. `I_User` is not a source: a normal read of that view returns no rows, and the account fields the review uses are on `USR02`.
+The password hash is not in the extract. The current name, email, and address are `UserAddresses`. `I_User` is not a source: a normal read of that view returns no rows, and the account fields the review uses are on `USR02`.
+
+`UserAddresses` is the SE16 view `USER_ADDR` for the logon client, one row per user. `FirstName`, `LastName`, and `FullName` are `NAME_FIRST`, `NAME_LAST`, and `NAME_TEXTC`. `Department`, `PhoneExtension`, `Building`, `Room`, `InternalMail`, `CostCenter`, `CompanyName`, `City`, `PostalCode`, and `Company` are the other address columns on that view. The uppercase search copies are omitted. `EmailAddress` is `ADR6-SMTP_ADDR`, joined through `USR21`. The standard address (`FLGDEFAULT` = `X`) is kept. When a user has no standard address, the newest current address is kept. A user with no `USER_ADDR` row is absent, which is the same population SE16 shows. Follow `@odata.nextLink` for the full list.
 
 `UserType` is `A` dialog, `B` system, `C` communications, `L` reference, or `S` service. `UserTypeText` is the domain text, with those English names when the domain text is missing.
 
@@ -296,7 +420,7 @@ GET .../UserChangeDocuments?$filter=ChangedBy eq 'ADMIN' and ChangeDate eq 2026-
 
 The service returns every changed field of that object. It does not keep a list of tables. `TableName` is whatever `CDPOS` stored. User assignment is often `AGR_USERS`. Authorization values are often `AGR_1251`. Organizational values are often `AGR_1252`. Composite membership is often `AGR_AGRS`. The generated profile is often `AGR_1016`. The role header and its text are often `AGR_DEFINE` and `AGR_TEXTS`. Menu and transaction changes are other stored structures. Read `TableName` from the result, the same way a profile assignment on a user change is `SUSR_UST04`.
 
-`ItemChange` `I` or `J` is a line inserted. That is how a user assignment and a new authorization are stored. `D` or `E` is a line removed. `U` is a changed field, with `ValueOld` and `ValueNew`. An inserted key often has empty values, and the user id or the authorization value is then in `TableKey`. `FieldName` `UNAME` and `KEY` keep their values. Password hashes, person names, and email addresses are blanked with the same rules as `UserChangeDocuments`.
+`ItemChange` `I` or `J` is a line inserted. That is how a user assignment and a new authorization are stored. `D` or `E` is a line removed. `U` is a changed field, with `ValueOld` and `ValueNew`. An inserted key often has empty values, and the user id or the authorization value is then in `TableKey`. `FieldName` `UNAME` and `KEY` keep their values. Password hashes are blanked with the same rules as `UserChangeDocuments`. The old and new values of a name or an email stay blank on the change document. The current address is `UserAddresses`.
 
 `RoleName`, `ChangeDate`, and `ChangedBy` are applied in the database read. A read with none of those filters returns the whole PFCG history before the page. Request `$count=true` and `$top`, and follow `@odata.nextLink`.
 
@@ -339,7 +463,27 @@ GET .../TransactionUsage?$count=true&$top=20&$filter=PeriodType eq 'D' and Perio
 GET .../TransactionUsage?$filter=PeriodType eq 'D' and PeriodStart ge 2026-10-26 and PeriodStart le 2026-10-28 and EntryId eq 'FB03'
 ```
 
-The security audit log from SM20 is the following population.
+### Access records
+
+`DeveloperKeys` is `DEVACCESS`. `UserName` is `UNAME`. The table is client-independent, so the row is the user who holds a developer key in this system. `ACCESSKEY` is not selected.
+
+`SncNames` is `USRACL` for the logon client. `SncName` is `PNAME`, the printable SNC name. `GuiPasswordLogon` is `GUIFLAG`. `X` means a password logon is also allowed. `SecuritySystem` is `SNC_SID`. `CreatedBy`, `CreatedOn`, and `CreatedAt` are `CNAME`, `CDATE`, and `CTIME`. `ChangedBy`, `ChangedOn`, and `ChangedAt` are `MNAME`, `MDATE`, and `MTIME`. `HNAME`, `CHKVAL`, and `KNAME` are not selected.
+
+`ObjectAccessRegistrations` is `ADIRACCESS`. `ProgramId` is `PGMID`, `ObjectType` is `OBJECT`, and `ObjectName` is `OBJ_NAME`. The table is client-independent. `ACCESSKEY` is not selected. The row exists because a key was entered for that object.
+
+`ProfileAssignmentHistory` is `USH04`, the history of the profile list on a user. `ChangedOn` is `MODDA`, `ChangedAt` is `MODTI`, and `ChangedBy` is `MODBE`. `ProfileCount` is `NRPRO`. `ProfileList` is `PROFS`, the profile names stored on that change. Pass `ChangedOn` with both a start and an end. A missing date is an error (message 005 of `ZSEC_ACCESS`). A date with no end is an error (message 002).
+
+`ProfileChangeDocuments` is `USH10`, the profile history header that report `RSUSR101` reads. `ProfileName` is `PROFN` and `Version` is `AKTPS`. `ChangedOn`, `ChangedAt`, and `ChangedBy` are `MODDA`, `MODTI`, and `MODBE`. The same closed `ChangedOn` filter is required. The added and removed authorization values are `USH12` and are not on this row.
+
+`CompositeProfiles` is `UST10C`. `ProfileName` is the composite, `Version` is `AKTPS`, and `SubProfile` is the single profile inside it. `ProfileAuthorizations` stays `UST10S` and is not mixed into this set. `A` is the active version and `P` is the maintenance copy.
+
+`AuditConfiguration` is `RSAUPROF`, the static SM19 profile. `ProfileName` is `PROFNAME` and `SlotNumber` is `SLOTNO`. The row named `$CURPROF$` stores the profile the server loaded in `ActiveProfile` (`CURRPROF`). A slot number above `0000` on any other profile is one filter. `Client` is `CLIENT` and `UserName` is `UNAME`. `SlotStatus` is `STATUS`. `X` means the slot is active. `AuditClasses` is the class bitmask: `1` other, `2` logon, `4` transaction start, `8` report, `16` RFC logon, `32` user master, `64` system, and `128` RFC call. `AuditClassText` lists the bits that are set. `Severity` is `2` low, `5` medium, or `9` high. When both `AuditClasses` and `Severity` are `0`, the filter uses detailed events and `AuditClassText` is `Detailed events`. Rows of profile `$KERNEL$` are recording parameters, not event filters, so the bitmask text is left blank.
+
+`AuditFilterEvents` is the selected content of each filter, which is the detail behind an SM19 filter screenshot. `Source` `Static` reads `RSAUPROF` for slots above `0000`, and uses `RSAUPROFEX-MSGVECT` when that extended vector is filled. `ProfileName` and `SlotNumber` match `AuditConfiguration`. Profiles `$KERNEL$`, `$CURPROF$`, `$FLAG$`, and `$CONFIG$` are not filters. `LineKind` `Event` is one selected message id in `LineValue`, such as `EUH` or `FU2`. The id is decoded from `MSGVECT`: one byte per subid in the order `0`–`9` then `A`–`Z`, and eight area bits `AU`, `BU`, `CU`, `DU`, `EU`, `FU`, `GU`, and `HU`. The message text shown on the SM19 screen is not in the row. `LineKind` `Class` is a filter that records a whole audit class, and `LineValue` is `Logon`, `Transaction start`, `Report`, `RFC logon`, `User master`, `RFC call`, `Other`, or `System`. `LineKind` `Filter` is a slot with no selected event and no selected class. `Source` `Dynamic` calls `RSAU_GET_AUDIT_CONFIG` on the application server that answered. `HostName` is that server and `ProfileName` is empty. `SlotNumber` is the position returned by the function. A dynamic change on another server is not in this response. When the shared-memory read fails, the static rows are still returned.
+
+`AuditEvents` is `RSAU_BUF_DATA`, the database buffer behind SM20. `MessageId` is `AREA` and `SUBID` joined, three characters. `EventTimestamp` is `SLGDATTIM`, 16 characters. `EventOn` is the first eight digits of that stamp, so the caller filters a date. `ProcessId` is `SLGPROC`, `Client` is `SLGMAND`, `SystemId` is `SID`, `InstanceName` is `INSTANCE`, and `Counter` is the key counter. `Terminal` is `SLGLTRM2`, `UserName` is `SLGUSER`, `TransactionCode` is `SLGTC`, `ProgramName` is `SLGREPNA`, and `TerminalAddress` is `TERM_IPV6`. `EventData` is `SAL_DATA`, the message variables. Pass `EventOn` with both a start and an end. A missing date is an error (message 005 of `ZSEC_ACCESS`). A date with no end is an error (message 002). `Client` and `UserName` are optional. Omit them to read every client and every user. A system that records the audit log only in files has an empty buffer, and this set is then empty.
+
+`SystemLog` is the local SM21 file on the application server that answered. The read uses `RSLG_FILEINFO_INIT` and `RSLG_READ_FILE` for the local log. `InstanceName` is the sender. `FileNumber` and `FilePosition` are the file key. `MessageId` is `AREA` and `SUBID` joined, so the caller filters message ids such as `A14`, `A19`, and `A23`. The service does not hardcode those ids. `EventOn` and `EventAt` come from the log timestamp. `Client`, `UserName`, `TransactionCode`, `ProgramName`, `Terminal`, and `MessageData` come from the log entry. Pass a closed `EventOn`. The same messages apply: a missing date is message 005, and a date with no end is message 002. `Client`, `UserName`, and `MessageId` are optional filters applied after the file is read. The local file often does not keep a full fiscal year. There is no RFC to the logs of other application servers.
 
 ### Access to programs and data
 
@@ -348,6 +492,7 @@ A reviewer authorizes roles. The kernel checks profiles. A generated profile is 
 | Population | Entity sets | Control question |
 | --- | --- | --- |
 | Accounts and their roles | `Users`, `RoleAssignments`, `RoleHierarchy` | Which roles does this account have, including a role received through a composite or through organizational management? |
+| User addresses | `UserAddresses` | What name, email, and address are stored for this user? |
 | Profiles on the account | `ProfileAssignments` | Which profiles will the kernel check, including a profile typed directly on the user and a profile inherited from a reference user? |
 | Generated profile of a single role | `RoleProfiles` | Was each of those profiles generated by a role the account still has? |
 | Values inside a role or a profile | `RoleAuthorizations`, `RoleOrgLevels`, `Profiles`, `ProfileAuthorizations`, `AuthorizationValues` | Which authorization objects and values are stored, and which profiles were not generated from a role? |
@@ -355,6 +500,11 @@ A reviewer authorizes roles. The kernel checks profiles. A generated profile is 
 | User master changes | `UserChangeDocuments` | Who created, locked, or changed this user, and which field changed? |
 | Role changes | `RoleChangeDocuments` | Who created, changed, assigned, or removed this role, and which field changed? |
 | Transaction usage | `TransactionUsage` | Which transactions, reports, and jobs did this user run in this period, and how many steps? |
+| Developer keys and SNC | `DeveloperKeys`, `SncNames` | Which users hold a developer key, and which SNC name is stored for this user? |
+| Object registrations | `ObjectAccessRegistrations` | Which repository objects have an access key registered? |
+| Profile history | `ProfileAssignmentHistory`, `ProfileChangeDocuments`, `CompositeProfiles` | Which profiles were assigned, which profiles changed, and which single profiles sit inside a composite? |
+| Audit log | `AuditConfiguration`, `AuditFilterEvents`, `AuditEvents` | Which SM19 filters are stored, which events each static or dynamic filter records, and which audit events were written in this period? |
+| System log | `SystemLog` | Which SM21 messages were written on this application server in this period? |
 
 `RoleAssignments` is the review population. `ValidFrom` and `ValidTo` are the interval stored on `AGR_USERS`. `Excluded` means the role was removed from the composite for this user. `FromCompositeRole` means the single role arrived through a composite, and `RoleHierarchy` names that composite. `FromOrgManagement` means HR organizational management assigned the role. `Users.SecurityPolicy` joins to `SecurityPolicies.PolicyName` on the settings service for the password and logon rules that apply to the account.
 
@@ -387,21 +537,26 @@ A failed check is an OData error. The response is not an empty list. Each check 
 
 | Entity sets | Check |
 | --- | --- |
-| `Users`, `UserChangeDocuments` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
+| `Users`, `UserAddresses`, `UserChangeDocuments` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
 | `RoleAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
 | `ProfileAssignments` | `S_USER_GRP` field `CLASS` = `*` activity 03, and `S_USER_PRO` field `PROFILE` = `*` activity 03 |
 | `Roles`, `RoleHierarchy`, `RoleProfiles`, `RoleAuthorizations`, `RoleOrgLevels`, `RoleChangeDocuments`, `CriticalAuthorizations`, `CriticalAuthorizationVariants` | `S_USER_AGR` field `ACT_GROUP` = `*` activity 03 |
-| `Profiles`, `ProfileAuthorizations`, `AuthorizationValues` | `S_USER_PRO` field `PROFILE` = `*` activity 03 |
+| `Profiles`, `ProfileAuthorizations`, `AuthorizationValues`, `ProfileChangeDocuments`, `CompositeProfiles` | `S_USER_PRO` field `PROFILE` = `*` activity 03 |
+| `DeveloperKeys`, `SncNames`, `ProfileAssignmentHistory` | `S_USER_GRP` field `CLASS` = `*`, activity 03 |
+| `ObjectAccessRegistrations` | `S_TABU_NAM` for `ADIRACCESS`, activity 03 |
 | `TransactionUsage` | `S_TOOLS_EX` field `AUTH` = `S_TOOLS_EX_A` |
+| `AuditConfiguration`, `AuditFilterEvents`, `AuditEvents` | `S_ADMI_FCD` value `AUDD` |
+| `SystemLog` | `S_ADMI_FCD` value `SM21` |
 
 `S_USER_AGR` stores the role name in `ACT_GROUP`. `AGR_NAME` is the column on `AGR_USERS` and `AGR_DEFINE`. SU53 lists `ACTVT` and `ACT_GROUP` for this object. Profile `SAP_ALL` grants both fields as `*`.
 
 ### Filters
 
-The same range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count` as the settings service. A filter on an unknown property is an error (message 002 of `ZSEC_ACCESS`).
+The same range filters, `$select`, `$orderby`, `$top`, `$skip`, and `$count` as the settings service. A filter on an unknown property is an error (message 002 of `ZSEC_ACCESS`). `ProfileAssignmentHistory` and `ProfileChangeDocuments` require `ChangedOn` with both a start and an end. `AuditEvents` and `SystemLog` require `EventOn` with both a start and an end. A missing date is message 005. A date with no end is message 002.
 
 ```http
 GET .../Users?$filter=UserType eq 'A' and GloballyLocked eq 'X'
+GET .../UserAddresses?$count=true&$top=1000
 GET .../RoleAssignments?$filter=UserId eq 'JSMITH' and FromCompositeRole eq 'X'
 GET .../ProfileAssignments?$filter=ProfileSource eq 'ReferenceUser'
 GET .../Roles?$filter=ParentRole eq 'Z_FI_TEMPLATE'
@@ -415,6 +570,17 @@ GET .../CriticalAuthorizations?$filter=AuthorizationId eq 'ZTCD'
 GET .../UserChangeDocuments?$filter=UserId eq 'JSMITH' and ChangeDate ge 2026-01-01 and FieldName eq 'UFLAG'
 GET .../RoleChangeDocuments?$filter=RoleName eq 'Z_FI_DISPLAY' and ChangeDate ge 2026-01-01 and TableName eq 'AGR_USERS'
 GET .../TransactionUsage?$filter=PeriodType eq 'M' and PeriodStart eq 2026-10-15 and UserId eq 'JSMITH' and EntryId eq 'FB03'
+GET .../DeveloperKeys
+GET .../SncNames?$filter=UserName eq 'JSMITH'
+GET .../ObjectAccessRegistrations?$filter=ObjectName eq 'ZFI_POST'
+GET .../ProfileAssignmentHistory?$filter=ChangedOn ge 2026-01-01 and ChangedOn le 2026-01-31 and UserName eq 'JSMITH'
+GET .../ProfileChangeDocuments?$filter=ChangedOn ge 2026-01-01 and ChangedOn le 2026-01-31 and ProfileName eq 'Z_FI_DISPLAY'
+GET .../CompositeProfiles?$filter=ProfileName eq 'Z_FI_COMPOSITE' and Version eq 'A'
+GET .../AuditConfiguration
+GET .../AuditFilterEvents?$count=true&$filter=Source eq 'Static' and ProfileName eq '!DISPLAY'
+GET .../AuditFilterEvents?$count=true&$filter=Source eq 'Dynamic'
+GET .../AuditEvents?$count=true&$top=1000&$filter=EventOn ge 2026-01-01 and EventOn le 2026-12-31
+GET .../SystemLog?$count=true&$top=1000&$filter=EventOn ge 2026-01-01 and EventOn le 2026-12-31 and MessageId eq 'A14'
 ```
 
 A read is the logon client. There is no RFC to other clients or other application servers.

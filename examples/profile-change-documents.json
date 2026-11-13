@@ -1,0 +1,13 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. This is the USH10 header, not the USH12 value lines.",
+  "value": [
+    {
+      "ProfileName": "Z_FI_DISPLAY",
+      "Version": "A",
+      "ChangedOn": "2026-01-15",
+      "ChangedAt": "11:20:00",
+      "ChangedBy": "ADMIN",
+      "Client": "100"
+    }
+  ]
+}

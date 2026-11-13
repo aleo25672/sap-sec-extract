@@ -32,6 +32,18 @@
      <MSGNR>004</MSGNR>
      <TEXT>Filter field &amp;1 is not supported</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZSEC_SETTINGS</ARBGB>
+     <MSGNR>005</MSGNR>
+     <TEXT>A filter on &amp;1 is required</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZSEC_SETTINGS</ARBGB>
+     <MSGNR>006</MSGNR>
+     <TEXT>System information could not be read</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>

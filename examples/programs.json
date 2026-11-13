@@ -1,0 +1,17 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. The program source is not returned.",
+  "value": [
+    {
+      "ProgramName": "ZFI_POST",
+      "ProgramType": "1",
+      "ProgramTypeText": "Executable program",
+      "CreatedBy": "DEV01",
+      "CreatedOn": "2024-03-01",
+      "ChangedBy": "DEV01",
+      "ChangedOn": "2026-01-10",
+      "Version": "0001",
+      "AuthorizationGroup": "",
+      "UnicodeCheck": "X"
+    }
+  ]
+}

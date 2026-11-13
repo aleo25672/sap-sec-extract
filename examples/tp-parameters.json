@@ -1,0 +1,14 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. The row is the newest TMSPCONF version.",
+  "value": [
+    {
+      "DomainName": "DOMAIN_PRD",
+      "ConfigVersion": "0003",
+      "SystemName": "PRD",
+      "OperatingSystem": "",
+      "DatabaseSystem": "",
+      "ParameterName": "CTC",
+      "ParameterValue": "1"
+    }
+  ]
+}

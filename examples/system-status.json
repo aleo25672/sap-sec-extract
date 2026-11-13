@@ -1,0 +1,18 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "SystemId": "S4Q",
+      "ApplicationServer": "s4qapp01",
+      "DatabaseSystem": "HDB",
+      "DatabaseHost": "s4qdb01",
+      "DatabaseRelease": "2.00.059.00",
+      "OperatingSystem": "Linux",
+      "MachineType": "390",
+      "IpAddress": "10.0.0.19",
+      "SapRelease": "758",
+      "UnicodeSystem": "X",
+      "InstallationNumber": "0020123456"
+    }
+  ]
+}

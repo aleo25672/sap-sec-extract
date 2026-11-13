@@ -1,0 +1,9 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "TableName": "T000",
+      "LogDataChanges": "X"
+    }
+  ]
+}

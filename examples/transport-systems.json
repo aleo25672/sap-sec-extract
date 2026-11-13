@@ -1,0 +1,13 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "DomainName": "DOMAIN_PRD",
+      "SystemName": "DEV",
+      "SystemType": "S",
+      "SystemTypeText": "SAP system",
+      "TransportGroup": "GROUP_DEV",
+      "Description": "Development system"
+    }
+  ]
+}

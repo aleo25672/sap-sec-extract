@@ -2,7 +2,7 @@
 @ObjectModel.query.implementedBy: 'ABAP:ZCL_SEC_CLIENT_QUERY'
 define custom entity ZC_SEC_CLIENT
 {
-  key Client                    : abap.clnt;
+  key Client                    : abap.char(3);
       ClientName                : abap.char(25);
       ClientRole                : abap.char(1);
       ClientRoleText            : abap.char(60);

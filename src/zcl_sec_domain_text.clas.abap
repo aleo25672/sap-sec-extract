@@ -61,6 +61,50 @@ CLASS zcl_sec_domain_text DEFINITION
     CLASS-METHODS catt_fallbacks
       RETURNING
         VALUE(rt_values) TYPE tt_value.
+
+    CLASS-METHODS component_type_fallbacks
+      RETURNING
+        VALUE(rt_values) TYPE tt_value.
+
+    CLASS-METHODS program_type_fallbacks
+      RETURNING
+        VALUE(rt_values) TYPE tt_value.
+
+    CLASS-METHODS batch_session_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS transport_system_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS request_function_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS request_status_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS request_category_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
+
+    CLASS-METHODS tp_return_text
+      IMPORTING
+        iv_code        TYPE csequence
+      RETURNING
+        VALUE(rv_text) TYPE string.
 ENDCLASS.
 
 
@@ -175,5 +219,149 @@ CLASS zcl_sec_domain_text IMPLEMENTATION.
       ( code = 'T' text = 'eCATT and CATT allowed for trusted RFC only' )
       ( code = 'E' text = 'eCATT allowed, FUN/ABAP and CATT not allowed' )
       ( code = 'F' text = 'eCATT allowed, FUN/ABAP and CATT only for trusted RFC' ) ).
+  ENDMETHOD.
+
+  METHOD component_type_fallbacks.
+    rt_values = VALUE #(
+      ( code = '' text = 'Main component' )
+      ( code = 'A' text = 'Add-on component' )
+      ( code = 'S' text = 'NetWeaver basis component' )
+      ( code = 'X' text = 'NetWeaver plug-in' )
+      ( code = 'W' text = 'NetWeaver add-on' )
+      ( code = 'V' text = 'Application platform component' )
+      ( code = 'R' text = 'Application component' )
+      ( code = 'P' text = 'Application plug-in' )
+      ( code = 'O' text = 'Common application objects' )
+      ( code = 'N' text = 'Application extensions' )
+      ( code = 'I' text = 'Industry solution, layer 1' )
+      ( code = 'H' text = 'Industry solution, layer 2' )
+      ( code = 'G' text = 'Industry solution, layer 3' )
+      ( code = 'F' text = 'Industry solution, layer 4' )
+      ( code = 'E' text = 'Industry solution, layer 5' )
+      ( code = 'C' text = 'Project' ) ).
+  ENDMETHOD.
+
+  METHOD program_type_fallbacks.
+    rt_values = VALUE #(
+      ( code = '1' text = 'Executable program' )
+      ( code = 'I' text = 'Include' )
+      ( code = 'M' text = 'Module pool' )
+      ( code = 'F' text = 'Function group' )
+      ( code = 'S' text = 'Subroutine pool' )
+      ( code = 'J' text = 'Interface pool' )
+      ( code = 'K' text = 'Class pool' )
+      ( code = 'T' text = 'Type pool' ) ).
+  ENDMETHOD.
+
+  METHOD batch_session_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN ''.
+        rv_text = 'To be processed'.
+      WHEN 'C'.
+        rv_text = 'Creating'.
+      WHEN 'E'.
+        rv_text = 'Incorrect'.
+      WHEN 'F'.
+        rv_text = 'Finished'.
+      WHEN 'R'.
+        rv_text = 'Processing'.
+      WHEN 'S'.
+        rv_text = 'In background'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD transport_system_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN 'S'.
+        rv_text = 'SAP system'.
+      WHEN 'V'.
+        rv_text = 'Virtual system'.
+      WHEN 'E'.
+        rv_text = 'External system'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD request_function_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN 'K'.
+        rv_text = 'Workbench request'.
+      WHEN 'W'.
+        rv_text = 'Customizing request'.
+      WHEN 'C'.
+        rv_text = 'Relocation of objects without package change'.
+      WHEN 'O'.
+        rv_text = 'Relocation of objects with package change'.
+      WHEN 'E'.
+        rv_text = 'Relocation of a complete package'.
+      WHEN 'T'.
+        rv_text = 'Transport of copies'.
+      WHEN 'S'.
+        rv_text = 'Development/correction'.
+      WHEN 'R'.
+        rv_text = 'Repair'.
+      WHEN 'X'.
+        rv_text = 'Unclassified task'.
+      WHEN 'Q'.
+        rv_text = 'Customizing task'.
+      WHEN 'G'.
+        rv_text = 'Piece list'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD request_status_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN 'D'.
+        rv_text = 'Modifiable'.
+      WHEN 'L'.
+        rv_text = 'Modifiable, protected'.
+      WHEN 'O'.
+        rv_text = 'Release started'.
+      WHEN 'R'.
+        rv_text = 'Released'.
+      WHEN 'N'.
+        rv_text = 'Released, protected'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD request_category_text.
+    CASE to_upper( condense( iv_code ) ).
+      WHEN 'CUST'.
+        rv_text = 'Customizing'.
+      WHEN 'SYST'.
+        rv_text = 'Workbench'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD tp_return_text.
+    DATA(lv_code) = condense( CONV string( iv_code ) ).
+    IF lv_code IS INITIAL.
+      RETURN.
+    ENDIF.
+    SHIFT lv_code LEFT DELETING LEADING '0'.
+    IF lv_code IS INITIAL.
+      lv_code = '0'.
+    ENDIF.
+    CASE lv_code.
+      WHEN '0'.
+        rv_text = 'Success'.
+      WHEN '4'.
+        rv_text = 'Warning'.
+      WHEN '8'.
+        rv_text = 'Error'.
+      WHEN '12' OR '16'.
+        rv_text = 'Fatal error'.
+      WHEN OTHERS.
+        rv_text = iv_code.
+    ENDCASE.
   ENDMETHOD.
 ENDCLASS.

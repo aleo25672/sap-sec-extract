@@ -1,0 +1,15 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "CompanyCode": "1000",
+      "CompanyName": "Example AG",
+      "Country": "DE",
+      "Currency": "EUR",
+      "ChartOfAccounts": "INT",
+      "FiscalYearVariant": "K4",
+      "Productive": "X",
+      "Language": "E"
+    }
+  ]
+}

@@ -6,4 +6,23 @@ define service ZAPI_SEC_SETTINGS {
   expose ZC_SEC_CLIENT     as ClientSettings;
   expose ZC_SEC_SYS_CHANGE as SystemChangeOptions;
   expose ZC_SEC_PFL_CHG    as ProfileParameterChanges;
+  expose ZC_SEC_SYSTEM     as SystemStatus;
+  expose ZC_SEC_KERNEL     as KernelInformation;
+  expose ZC_SEC_COMPONENT  as SoftwareComponents;
+  expose ZC_SEC_COMPANY    as CompanyCodes;
+  expose ZC_SEC_TABLOG     as TableLogging;
+  expose ZC_SEC_DBLOG      as TableChangeLogs;
+  expose ZC_SEC_SE16N      as Se16nChangeDocuments;
+  expose ZC_SEC_PRGN       as RoleCustomizing;
+  expose ZC_SEC_USR40      as ForbiddenPasswords;
+  expose ZC_SEC_BATCH      as BatchInputSessions;
+  expose ZC_SEC_PROGRAM    as Programs;
+  expose ZC_SEC_PROGINC    as ProgramIncludes;
+  expose ZC_SEC_TMSDOM     as TransportDomains;
+  expose ZC_SEC_TMSSYS     as TransportSystems;
+  expose ZC_SEC_TMSROUTE   as TransportRoutes;
+  expose ZC_SEC_TPALOG     as ImportHistory;
+  expose ZC_SEC_TPPAR      as TpParameters;
+  expose ZC_SEC_E070       as TransportRequests;
+  expose ZC_SEC_E071       as TransportRequestObjects;
 }

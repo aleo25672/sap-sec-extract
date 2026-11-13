@@ -1,0 +1,10 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. The access key value is not in the row.",
+  "value": [
+    {
+      "ProgramId": "R3TR",
+      "ObjectType": "PROG",
+      "ObjectName": "ZFI_POST"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system.",
+  "value": [
+    {
+      "CustomizingId": "CHECK_S_USER_SAS",
+      "CustomizingValue": "YES"
+    }
+  ]
+}

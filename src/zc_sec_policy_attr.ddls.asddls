@@ -9,5 +9,5 @@ define custom entity ZC_SEC_POLICY_ATTR
       DefaultValue     : abap.int4;
       ProfileParameter : abap.char(60);
       Description      : abap.char(60);
-      Client           : abap.clnt;
+      Client           : abap.char(3);
 }

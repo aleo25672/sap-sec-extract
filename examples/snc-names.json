@@ -1,0 +1,18 @@
+{
+  "note": "Contract sample. These are not values read from an SAP system. SncName is the printable SNC name. Hashes stay out.",
+  "value": [
+    {
+      "UserName": "JSMITH",
+      "Client": "100",
+      "SncName": "p:CN=JSMITH, O=EXAMPLE",
+      "GuiPasswordLogon": "",
+      "SecuritySystem": "SAP",
+      "CreatedBy": "ADMIN",
+      "CreatedOn": "2026-01-15",
+      "CreatedAt": "09:00:00",
+      "ChangedBy": "ADMIN",
+      "ChangedOn": "2026-02-01",
+      "ChangedAt": "10:15:00"
+    }
+  ]
+}

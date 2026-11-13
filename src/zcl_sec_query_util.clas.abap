@@ -68,6 +68,82 @@ CLASS zcl_sec_query_util DEFINITION
       RAISING
         cx_rap_query_provider.
 
+    CLASS-METHODS require_filter
+      IMPORTING
+        io_request TYPE REF TO if_rap_query_request
+        iv_name    TYPE string
+      RAISING
+        zcx_sec_settings.
+
+    CLASS-METHODS apply
+      IMPORTING
+        io_request  TYPE REF TO if_rap_query_request
+        io_response TYPE REF TO if_rap_query_response
+      CHANGING
+        ct_rows     TYPE STANDARD TABLE
+      RAISING
+        cx_rap_query_provider.
+
+    CLASS-METHODS apply_access
+      IMPORTING
+        io_request  TYPE REF TO if_rap_query_request
+        io_response TYPE REF TO if_rap_query_response
+      CHANGING
+        ct_rows     TYPE STANDARD TABLE
+      RAISING
+        zcx_sec_access.
+
+    CLASS-METHODS closed_period
+      IMPORTING
+        it_range      TYPE tt_range
+      RETURNING
+        VALUE(rv_yes) TYPE abap_bool.
+
+    CLASS-METHODS canonical_date
+      IMPORTING
+        iv_value       TYPE csequence
+        iv_name        TYPE csequence
+      RETURNING
+        VALUE(rv_date) TYPE string
+      RAISING
+        zcx_sec_settings.
+
+    CLASS-METHODS date_selection
+      IMPORTING
+        it_range        TYPE tt_range
+        iv_name         TYPE csequence
+      RETURNING
+        VALUE(rt_range) TYPE tt_range
+      RAISING
+        zcx_sec_settings.
+
+    CLASS-METHODS timestamp_selection
+      IMPORTING
+        it_range        TYPE tt_range
+        iv_name         TYPE csequence
+      RETURNING
+        VALUE(rt_range) TYPE tt_range
+      RAISING
+        zcx_sec_settings.
+
+    CLASS-METHODS access_date_selection
+      IMPORTING
+        it_range        TYPE tt_range
+        iv_name         TYPE csequence
+      RETURNING
+        VALUE(rt_range) TYPE tt_range
+      RAISING
+        zcx_sec_access.
+
+    CLASS-METHODS access_timestamp_selection
+      IMPORTING
+        it_range        TYPE tt_range
+        iv_name         TYPE csequence
+      RETURNING
+        VALUE(rt_range) TYPE tt_range
+      RAISING
+        zcx_sec_access.
+
   PRIVATE SECTION.
     TYPES:
       BEGIN OF ty_named_range,
@@ -89,6 +165,12 @@ CLASS zcl_sec_query_util DEFINITION
         iv_value       TYPE string
       RETURNING
         VALUE(rv_yes)  TYPE abap_bool.
+
+    CLASS-METHODS raise_as_access
+      IMPORTING
+        ix_settings TYPE REF TO zcx_sec_settings
+      RAISING
+        zcx_sec_access.
 ENDCLASS.
 
 
@@ -339,5 +421,245 @@ CLASS zcl_sec_query_util IMPLEMENTATION.
     LOOP AT <keep> ASSIGNING <kept>.
       APPEND <kept> TO ct_rows.
     ENDLOOP.
+  ENDMETHOD.
+
+  METHOD require_filter.
+    IF ranges_for( io_request = io_request iv_name = iv_name ) IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid      = zcx_sec_settings=>filter_required
+          filter_name = to_upper( iv_name ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD apply.
+    filter_rows( EXPORTING io_request = io_request CHANGING ct_rows = ct_rows ).
+
+    DATA(lt_sort) = sort_from_request( io_request ).
+    sort_by( EXPORTING it_sort = lt_sort CHANGING ct_data = ct_rows ).
+
+    DATA lv_skip TYPE i.
+    DATA lv_top TYPE i.
+    DATA lv_from TYPE i.
+    DATA lv_to TYPE i.
+    paging_from_request( EXPORTING io_request = io_request IMPORTING ev_skip = lv_skip ev_top = lv_top ).
+    page(
+      EXPORTING iv_lines = lines( ct_rows ) iv_skip = lv_skip iv_top = lv_top
+      IMPORTING ev_from = lv_from ev_to = lv_to ).
+
+    DATA lr_page TYPE REF TO data.
+    FIELD-SYMBOLS <page> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <row> TYPE any.
+    CREATE DATA lr_page LIKE ct_rows.
+    ASSIGN lr_page->* TO <page>.
+    IF lv_to >= lv_from.
+      LOOP AT ct_rows ASSIGNING <row> FROM lv_from TO lv_to.
+        APPEND <row> TO <page>.
+      ENDLOOP.
+    ENDIF.
+
+    IF io_request->is_data_requested( ) = abap_true.
+      io_response->set_data( <page> ).
+    ENDIF.
+    IF io_request->is_total_numb_of_rec_requested( ) = abap_true.
+      io_response->set_total_number_of_records( lines( ct_rows ) ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD apply_access.
+    TRY.
+        apply( EXPORTING io_request = io_request io_response = io_response CHANGING ct_rows = ct_rows ).
+      CATCH zcx_sec_settings INTO DATA(lx_settings).
+        raise_as_access( lx_settings ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD raise_as_access.
+    DATA(ls_key) = ix_settings->if_t100_message~t100key.
+    IF ls_key-msgno = '005'.
+      RAISE EXCEPTION TYPE zcx_sec_access
+        EXPORTING
+          textid      = zcx_sec_access=>filter_required
+          filter_name = ix_settings->filter_name.
+    ENDIF.
+    RAISE EXCEPTION TYPE zcx_sec_access
+      EXPORTING
+        textid      = zcx_sec_access=>filter_not_supported
+        filter_name = ix_settings->filter_name.
+  ENDMETHOD.
+
+  METHOD closed_period.
+    DATA lv_low TYPE abap_bool.
+    DATA lv_high TYPE abap_bool.
+    LOOP AT it_range INTO DATA(ls_range).
+      IF to_upper( ls_range-sign ) = 'E'.
+        CONTINUE.
+      ENDIF.
+      CASE to_upper( ls_range-option ).
+        WHEN 'EQ' OR 'BT'.
+          lv_low = abap_true.
+          lv_high = abap_true.
+        WHEN 'GE' OR 'GT'.
+          lv_low = abap_true.
+        WHEN 'LE' OR 'LT'.
+          lv_high = abap_true.
+        WHEN OTHERS.
+          RETURN.
+      ENDCASE.
+    ENDLOOP.
+    rv_yes = xsdbool( lv_low = abap_true AND lv_high = abap_true ).
+  ENDMETHOD.
+
+  METHOD canonical_date.
+    DATA(lv_raw) = condense( CONV string( iv_value ) ).
+    IF lv_raw IS INITIAL.
+      RETURN.
+    ENDIF.
+    DATA(lv_t) = find( val = lv_raw sub = 'T' ).
+    IF lv_t > 0.
+      lv_raw = substring( val = lv_raw len = lv_t ).
+    ENDIF.
+    lv_raw = replace( val = lv_raw sub = '-' with = '' occ = 0 ).
+    lv_raw = replace( val = lv_raw sub = '/' with = '' occ = 0 ).
+    CONDENSE lv_raw NO-GAPS.
+    IF strlen( lv_raw ) <> 8 OR lv_raw CN '0123456789'.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid      = zcx_sec_settings=>filter_not_supported
+          filter_name = to_upper( iv_name ).
+    ENDIF.
+    rv_date = lv_raw.
+  ENDMETHOD.
+
+  METHOD date_selection.
+    IF it_range IS INITIAL.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid      = zcx_sec_settings=>filter_required
+          filter_name = to_upper( iv_name ).
+    ENDIF.
+    IF closed_period( it_range ) = abap_false.
+      RAISE EXCEPTION TYPE zcx_sec_settings
+        EXPORTING
+          textid      = zcx_sec_settings=>filter_not_supported
+          filter_name = to_upper( iv_name ).
+    ENDIF.
+    DATA lt_include TYPE tt_range.
+    DATA lt_exclude TYPE tt_range.
+    LOOP AT it_range INTO DATA(ls_range).
+      DATA(lv_option) = to_upper( ls_range-option ).
+      IF lv_option = 'BT' AND ( ls_range-low IS INITIAL OR ls_range-high IS INITIAL ).
+        RAISE EXCEPTION TYPE zcx_sec_settings
+          EXPORTING
+            textid      = zcx_sec_settings=>filter_not_supported
+            filter_name = to_upper( iv_name ).
+      ENDIF.
+      IF lv_option <> 'BT' AND ls_range-low IS INITIAL AND to_upper( ls_range-sign ) <> 'E'.
+        RAISE EXCEPTION TYPE zcx_sec_settings
+          EXPORTING
+            textid      = zcx_sec_settings=>filter_not_supported
+            filter_name = to_upper( iv_name ).
+      ENDIF.
+      DATA(ls_date) = VALUE ty_range(
+        sign   = ls_range-sign
+        option = lv_option
+        low    = canonical_date( iv_value = ls_range-low iv_name = iv_name )
+        high   = canonical_date( iv_value = ls_range-high iv_name = iv_name ) ).
+      IF to_upper( ls_range-sign ) = 'E'.
+        APPEND ls_date TO lt_exclude.
+      ELSE.
+        APPEND ls_date TO lt_include.
+      ENDIF.
+    ENDLOOP.
+
+    " Two include lines are OR in a SQL range. ge and le are one window, so they become one BT.
+    DATA lv_low_count TYPE i.
+    DATA lv_high_count TYPE i.
+    DATA lv_other TYPE i.
+    DATA lv_from TYPE string.
+    DATA lv_to TYPE string.
+    DATA lv_from_option TYPE string.
+    DATA lv_to_option TYPE string.
+    LOOP AT lt_include INTO DATA(ls_include).
+      CASE ls_include-option.
+        WHEN 'EQ' OR 'BT'.
+          lv_other = lv_other + 1.
+        WHEN 'GE' OR 'GT'.
+          lv_low_count = lv_low_count + 1.
+          lv_from = ls_include-low.
+          lv_from_option = ls_include-option.
+        WHEN 'LE' OR 'LT'.
+          lv_high_count = lv_high_count + 1.
+          lv_to = ls_include-low.
+          lv_to_option = ls_include-option.
+      ENDCASE.
+    ENDLOOP.
+
+    IF lv_other = 0 AND lv_low_count = 1 AND lv_high_count = 1.
+      DATA lv_start TYPE d.
+      DATA lv_end TYPE d.
+      lv_start = lv_from.
+      lv_end = lv_to.
+      IF lv_from_option = 'GT'.
+        lv_start = lv_start + 1.
+      ENDIF.
+      IF lv_to_option = 'LT'.
+        lv_end = lv_end - 1.
+      ENDIF.
+      APPEND VALUE #(
+        sign   = 'I'
+        option = 'BT'
+        low    = lv_start
+        high   = lv_end ) TO rt_range.
+    ELSE.
+      APPEND LINES OF lt_include TO rt_range.
+    ENDIF.
+    APPEND LINES OF lt_exclude TO rt_range.
+  ENDMETHOD.
+
+  METHOD timestamp_selection.
+    DATA(lt_date) = date_selection( it_range = it_range iv_name = iv_name ).
+    LOOP AT lt_date INTO DATA(ls_date).
+      DATA(lv_option) = to_upper( ls_date-option ).
+      IF lv_option = 'EQ' AND ls_date-low IS NOT INITIAL.
+        APPEND VALUE #(
+          sign   = ls_date-sign
+          option = 'BT'
+          low    = ls_date-low && '000000'
+          high   = ls_date-low && '235959' ) TO rt_range.
+      ELSEIF lv_option = 'BT'.
+        APPEND VALUE #(
+          sign   = ls_date-sign
+          option = 'BT'
+          low    = ls_date-low && '000000'
+          high   = ls_date-high && '235959' ) TO rt_range.
+      ELSEIF lv_option = 'GE'.
+        APPEND VALUE #( sign = ls_date-sign option = 'GE' low = ls_date-low && '000000' ) TO rt_range.
+      ELSEIF lv_option = 'GT'.
+        APPEND VALUE #( sign = ls_date-sign option = 'GT' low = ls_date-low && '235959' ) TO rt_range.
+      ELSEIF lv_option = 'LE'.
+        APPEND VALUE #( sign = ls_date-sign option = 'LE' low = ls_date-low && '235959' ) TO rt_range.
+      ELSEIF lv_option = 'LT'.
+        APPEND VALUE #( sign = ls_date-sign option = 'LT' low = ls_date-low && '000000' ) TO rt_range.
+      ELSE.
+        APPEND ls_date TO rt_range.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD access_date_selection.
+    TRY.
+        rt_range = date_selection( it_range = it_range iv_name = iv_name ).
+      CATCH zcx_sec_settings INTO DATA(lx_settings).
+        raise_as_access( lx_settings ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD access_timestamp_selection.
+    TRY.
+        rt_range = timestamp_selection( it_range = it_range iv_name = iv_name ).
+      CATCH zcx_sec_settings INTO DATA(lx_settings).
+        raise_as_access( lx_settings ).
+    ENDTRY.
   ENDMETHOD.
 ENDCLASS.

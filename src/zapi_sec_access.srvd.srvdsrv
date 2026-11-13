@@ -1,6 +1,7 @@
 @EndUserText.label: 'Security access'
 define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_USER         as Users;
+  expose ZC_SEC_USRADDR      as UserAddresses;
   expose ZC_SEC_ROLE_ASSIGN  as RoleAssignments;
   expose ZC_SEC_PROF_ASSIGN  as ProfileAssignments;
   expose ZC_SEC_ROLE         as Roles;
@@ -16,4 +17,14 @@ define service ZAPI_SEC_ACCESS {
   expose ZC_SEC_USR_CHG      as UserChangeDocuments;
   expose ZC_SEC_ROLE_CHG     as RoleChangeDocuments;
   expose ZC_SEC_TCODE_USAGE  as TransactionUsage;
+  expose ZC_SEC_DEVKEY       as DeveloperKeys;
+  expose ZC_SEC_SNC          as SncNames;
+  expose ZC_SEC_OBJKEY       as ObjectAccessRegistrations;
+  expose ZC_SEC_USH04        as ProfileAssignmentHistory;
+  expose ZC_SEC_USH10        as ProfileChangeDocuments;
+  expose ZC_SEC_UST10C       as CompositeProfiles;
+  expose ZC_SEC_SALCFG       as AuditConfiguration;
+  expose ZC_SEC_SALFLT       as AuditFilterEvents;
+  expose ZC_SEC_SALEVT       as AuditEvents;
+  expose ZC_SEC_SYSLOG       as SystemLog;
 }
