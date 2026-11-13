@@ -136,6 +136,8 @@ A landscape pull is one call per application server. Policy and client data are 
 
 ## IT general controls
 
+[docs/controls.md](docs/controls.md) reads each PBC control in four parts: the purpose, the data the purpose needs, a plain-language description of each field, and the logic that joins the raw rows.
+
 RSPFPAR is the current profile of this application server. These four entity sets are the settings that report does not show. Read together, they are the evidence for two SOX IT general controls: access to programs and data, and change management. The accounts, the roles, and the profiles for that access control are the [security access extract](#security-access-extract). The test that ties a profile on a user back to the role that generated it is under [Role profiles](#role-profiles).
 
 | Entity sets | IT general control | What it adds to RSPFPAR |
