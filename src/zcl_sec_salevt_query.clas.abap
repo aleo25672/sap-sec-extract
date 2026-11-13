@@ -39,16 +39,56 @@ CLASS zcl_sec_salevt_query DEFINITION
       RAISING
         zcx_sec_access.
 
+    CLASS-METHODS file_event
+      IMPORTING
+        is_file        TYPE rsauetab2
+        iv_system      TYPE csequence
+      RETURNING
+        VALUE(rs_row) TYPE ty_row.
+
   PRIVATE SECTION.
-    TYPES ty_stamp TYPE c LENGTH 16.
+    TYPES:
+      ty_stamp        TYPE c LENGTH 16,
+      ty_stamp_range  TYPE RANGE OF ty_stamp,
+      ty_client_range TYPE RANGE OF rsau_buf_data-slgmand,
+      ty_user_range   TYPE RANGE OF rsau_buf_data-slguser,
+      BEGIN OF ty_seen,
+        messagearea    TYPE c LENGTH 2,
+        messagesubid   TYPE c LENGTH 1,
+        eventtimestamp TYPE c LENGTH 16,
+        processid      TYPE c LENGTH 12,
+        client         TYPE c LENGTH 3,
+        systemid       TYPE c LENGTH 8,
+        instancename   TYPE c LENGTH 40,
+      END OF ty_seen,
+      tt_seen TYPE HASHED TABLE OF ty_seen WITH UNIQUE KEY
+        messagearea messagesubid eventtimestamp processid client systemid instancename.
 
     DATA mo_auth TYPE REF TO zif_sec_access_auth.
 
-    METHODS event_date
+    CLASS-METHODS event_date
       IMPORTING
-        iv_stamp     TYPE csequence
+        iv_stamp       TYPE csequence
       RETURNING
         VALUE(rv_date) TYPE d.
+
+    METHODS database_rows
+      IMPORTING
+        ir_time        TYPE ty_stamp_range
+        ir_client      TYPE ty_client_range
+        ir_user        TYPE ty_user_range
+      RETURNING
+        VALUE(rt_rows) TYPE tt_row.
+
+    METHODS file_rows
+      IMPORTING
+        ir_time        TYPE ty_stamp_range
+        ir_client      TYPE ty_client_range
+        ir_user        TYPE ty_user_range
+      RETURNING
+        VALUE(rt_rows) TYPE tt_row
+      RAISING
+        zcx_sec_access.
 ENDCLASS.
 
 
@@ -114,35 +154,63 @@ CLASS zcl_sec_salevt_query IMPLEMENTATION.
         high   = to_upper( ls_user-high ) ) TO lr_user.
     ENDLOOP.
 
+    rt_rows = database_rows( ir_time = lr_time ir_client = lr_client ir_user = lr_user ).
+    DATA lt_seen TYPE tt_seen.
+    LOOP AT rt_rows INTO DATA(ls_known).
+      INSERT VALUE ty_seen(
+        messagearea    = ls_known-messagearea
+        messagesubid   = ls_known-messagesubid
+        eventtimestamp = ls_known-eventtimestamp
+        processid      = ls_known-processid
+        client         = ls_known-client
+        systemid       = ls_known-systemid
+        instancename   = ls_known-instancename ) INTO TABLE lt_seen.
+    ENDLOOP.
+    LOOP AT file_rows( ir_time = lr_time ir_client = lr_client ir_user = lr_user ) INTO DATA(ls_file_row).
+      INSERT VALUE ty_seen(
+        messagearea    = ls_file_row-messagearea
+        messagesubid   = ls_file_row-messagesubid
+        eventtimestamp = ls_file_row-eventtimestamp
+        processid      = ls_file_row-processid
+        client         = ls_file_row-client
+        systemid       = ls_file_row-systemid
+        instancename   = ls_file_row-instancename ) INTO TABLE lt_seen.
+      IF sy-subrc = 0.
+        APPEND ls_file_row TO rt_rows.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD database_rows.
     " An empty range matches nothing, so each optional filter has its own select.
     DATA lt_event TYPE STANDARD TABLE OF rsau_buf_data.
-    IF lr_client IS INITIAL AND lr_user IS INITIAL.
+    IF ir_client IS INITIAL AND ir_user IS INITIAL.
       SELECT area, subid, slgdattim, slgproc, slgmand, sid, instance, counter,
              slgltrm2, slguser, slgtc, slgrepna, term_ipv6, sal_data
         FROM rsau_buf_data
-        WHERE slgdattim IN @lr_time
+        WHERE slgdattim IN @ir_time
         INTO CORRESPONDING FIELDS OF TABLE @lt_event.
-    ELSEIF lr_user IS INITIAL.
+    ELSEIF ir_user IS INITIAL.
       SELECT area, subid, slgdattim, slgproc, slgmand, sid, instance, counter,
              slgltrm2, slguser, slgtc, slgrepna, term_ipv6, sal_data
         FROM rsau_buf_data
-        WHERE slgdattim IN @lr_time
-          AND slgmand IN @lr_client
+        WHERE slgdattim IN @ir_time
+          AND slgmand IN @ir_client
         INTO CORRESPONDING FIELDS OF TABLE @lt_event.
-    ELSEIF lr_client IS INITIAL.
+    ELSEIF ir_client IS INITIAL.
       SELECT area, subid, slgdattim, slgproc, slgmand, sid, instance, counter,
              slgltrm2, slguser, slgtc, slgrepna, term_ipv6, sal_data
         FROM rsau_buf_data
-        WHERE slgdattim IN @lr_time
-          AND slguser IN @lr_user
+        WHERE slgdattim IN @ir_time
+          AND slguser IN @ir_user
         INTO CORRESPONDING FIELDS OF TABLE @lt_event.
     ELSE.
       SELECT area, subid, slgdattim, slgproc, slgmand, sid, instance, counter,
              slgltrm2, slguser, slgtc, slgrepna, term_ipv6, sal_data
         FROM rsau_buf_data
-        WHERE slgdattim IN @lr_time
-          AND slgmand IN @lr_client
-          AND slguser IN @lr_user
+        WHERE slgdattim IN @ir_time
+          AND slgmand IN @ir_client
+          AND slguser IN @ir_user
         INTO CORRESPONDING FIELDS OF TABLE @lt_event.
     ENDIF.
 
@@ -164,6 +232,128 @@ CLASS zcl_sec_salevt_query IMPLEMENTATION.
         programname     = ls_event-slgrepna
         terminaladdress = ls_event-term_ipv6
         eventdata       = ls_event-sal_data ) TO rt_rows.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD file_event.
+    DATA ls_entry TYPE rsauentr2.
+    ls_entry = is_file-centdata.
+
+    DATA lv_stamp TYPE c LENGTH 16.
+    lv_stamp = ls_entry-slgdattim.
+    IF lv_stamp IS INITIAL.
+      lv_stamp = is_file-pos_creatt.
+    ENDIF.
+    IF lv_stamp IS INITIAL.
+      lv_stamp = is_file-recevive_t.
+    ENDIF.
+
+    DATA lv_area TYPE c LENGTH 2.
+    DATA lv_subid TYPE c LENGTH 1.
+    lv_area = is_file-area.
+    lv_subid = is_file-subid.
+    IF lv_area IS INITIAL.
+      DATA lv_type TYPE c LENGTH 4.
+      lv_type = ls_entry-slgtype.
+      IF strlen( lv_type ) >= 4.
+        lv_area = substring( val = lv_type off = 1 len = 2 ).
+        lv_subid = substring( val = lv_type off = 3 len = 1 ).
+      ENDIF.
+    ENDIF.
+
+    DATA lv_proc TYPE c LENGTH 12.
+    lv_proc = ls_entry-slgproc.
+    DATA lv_instance TYPE c LENGTH 40.
+    lv_instance = is_file-sender_id.
+
+    rs_row = VALUE ty_row(
+      messagearea     = lv_area
+      messagesubid    = lv_subid
+      eventtimestamp  = lv_stamp
+      processid       = lv_proc
+      client          = ls_entry-slgmand
+      systemid        = iv_system
+      instancename    = lv_instance
+      messageid       = lv_area && lv_subid
+      eventon         = event_date( lv_stamp )
+      terminal        = ls_entry-slgltrm2
+      username        = ls_entry-slguser
+      transactioncode = ls_entry-slgtc
+      programname     = ls_entry-slgrepna
+      eventdata       = ls_entry-slgdata ).
+  ENDMETHOD.
+
+  METHOD file_rows.
+    DATA lv_from TYPE ty_stamp.
+    DATA lv_to TYPE ty_stamp.
+    LOOP AT ir_time INTO DATA(ls_time).
+      IF ls_time-low IS NOT INITIAL AND ( lv_from IS INITIAL OR ls_time-low < lv_from ).
+        lv_from = ls_time-low.
+      ENDIF.
+      DATA lv_high TYPE ty_stamp.
+      IF ls_time-high IS NOT INITIAL.
+        lv_high = ls_time-high.
+      ELSE.
+        lv_high = ls_time-low.
+      ENDIF.
+      IF lv_high IS NOT INITIAL AND ( lv_to IS INITIAL OR lv_high > lv_to ).
+        lv_to = lv_high.
+      ENDIF.
+    ENDLOOP.
+
+    " RB_FILE in RSAU_READ_LOG. WHICHLOG A is the audit file on this server.
+    DATA ls_sel TYPE rslgsel.
+    DATA ls_audit TYPE rsausel.
+    ls_sel-whichlog = 'A'.
+    ls_sel-startdate = lv_from.
+    ls_sel-stop_date = lv_to.
+    IF strlen( lv_from ) >= 14.
+      ls_sel-date = substring( val = CONV string( lv_from ) len = 8 ).
+      ls_sel-time = substring( val = CONV string( lv_from ) off = 8 len = 6 ).
+    ENDIF.
+    IF strlen( lv_to ) >= 14.
+      ls_sel-edate = substring( val = CONV string( lv_to ) len = 8 ).
+      ls_sel-etime = substring( val = CONV string( lv_to ) off = 8 len = 6 ).
+    ENDIF.
+    CALL FUNCTION 'RSAU_SELINFO_INIT'
+      CHANGING
+        audit_selection = ls_audit.
+    ls_audit-subclasid = 255.
+
+    DATA lt_file TYPE STANDARD TABLE OF rsauetab2.
+    TRY.
+        CALL FUNCTION 'RSAU_READ_FILE'
+          EXPORTING
+            selection       = ls_sel
+            selection_audit = ls_audit
+          TABLES
+            syslog_in_table = lt_file.
+      CATCH cx_root INTO DATA(lx_read).
+        RAISE EXCEPTION TYPE zcx_sec_access
+          EXPORTING
+            previous = lx_read.
+    ENDTRY.
+
+    LOOP AT lt_file INTO DATA(ls_file).
+      DATA(ls_row) = file_event( is_file = ls_file iv_system = sy-sysid ).
+      IF ls_row-eventtimestamp NOT IN ir_time.
+        CONTINUE.
+      ENDIF.
+      IF ir_client IS NOT INITIAL.
+        DATA lv_client TYPE rsau_buf_data-slgmand.
+        lv_client = ls_row-client.
+        IF lv_client NOT IN ir_client.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+      IF ir_user IS NOT INITIAL.
+        DATA lv_user TYPE rsau_buf_data-slguser.
+        lv_user = ls_row-username.
+        IF lv_user NOT IN ir_user.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+      APPEND ls_row TO rt_rows.
     ENDLOOP.
   ENDMETHOD.
 
