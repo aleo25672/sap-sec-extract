@@ -1,5 +1,5 @@
 {
-  "note": "Contract sample. These are not values read from an SAP system. RSAU_BUF_DATA is the database buffer. A system that records the audit log only in files returns no rows.",
+  "note": "Contract sample. These are not values read from an SAP system. AuditEvents reads the audit files through RSAU_READ_FILE and the database buffer RSAU_BUF_DATA. A row present in both is returned once.",
   "value": [
     {
       "MessageArea": "AU",
