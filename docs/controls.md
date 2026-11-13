@@ -9,7 +9,7 @@ Every control has four parts:
 3. **Fields.** What each field means, in plain language.
 4. **Logic.** How the rows are combined, and which rows answer the control.
 
-The spreadsheet uses F.66 twice and has no F.44 or F.60. Both F.66 rows are kept, under the table each one exports.
+The spreadsheet uses F.66 twice and has no F.44 or F.60. Both rows are kept. The first is F.66 for `UST10C`, and the second is F.67 for `UST10S`.
 
 ## How a stored value matches
 
@@ -1083,9 +1083,9 @@ Then list the users who have that role or that profile.
 
 **Logic.** Join `SubProfile` to F.18 `ProfileName` to see users who hold a single profile directly. A user who holds `ProfileName` also receives each `SubProfile`. This set is not the authorization rows of F.65.
 
-## F.66 Profile authorizations
+## F.67 Profile authorizations
 
-The spreadsheet numbers this row F.66 as well. It is the export of `UST10S`, not `UST10C`.
+The spreadsheet numbers this row F.66 a second time. The guide calls it F.67. It is the export of `UST10S`, not `UST10C`.
 
 **Purpose.** Which authorization objects and authorization names each profile contains. Read with F.65, it is the contents of the profile.
 
