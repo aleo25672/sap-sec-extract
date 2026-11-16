@@ -813,9 +813,16 @@ Then list the users who have that role or that profile.
 
 ## F.48 Program change facts
 
-**Purpose.** Last change of the named programs and of their includes. A local change to one of these programs affects the report the review relies on.
+**Purpose.** Last change of the named programs and of their includes. A local change to one of these programs affects the report the review relies on. The names are the ones in the PBC workbook for F.48: `SAPLSETB`, `SAPMS38M`, `SAPLTMSU`, `SAPLSLVC_FULLSCREEN`, `SAPLSTCE`, `SAPMSBDC_CC`, `RSPARAM`, `RSTBHIST`, `RSUSR002`, `RSUSR100`, `RSUSR003`, and `RSUSR200`.
 
-**Data.** `Programs` and `ProgramIncludes` on `ZAPI_SEC_SETTINGS`. A `ProgramName` filter is required. Run one call per program name.
+**Data.** `Programs` and `ProgramIncludes` on `ZAPI_SEC_SETTINGS`. A `ProgramName` filter is required. Run one call per program name, for each of the twelve names above:
+
+```
+GET .../Programs?$count=true&$filter=ProgramName eq 'SAPLSETB'
+GET .../ProgramIncludes?$count=true&$filter=ProgramName eq 'SAPLSETB'
+```
+
+The workbook gives the same two reads in SE16. `D010INC` filtered on the program names gives the includes, and `TRDIR` filtered on the same names, with the list of includes, gives the program rows. Export both to compare the rows with the service results.
 
 **Fields.**
 
@@ -829,7 +836,7 @@ Then list the users who have that role or that profile.
 | AuthorizationGroup | Authorization group of the program. |
 | IncludeName | One include of the program, from `ProgramIncludes`. |
 
-**Logic.** Join `ProgramIncludes.ProgramName` to `Programs.ProgramName`. The source code is not returned. `ChangedOn` of the program and of each include is the evidence of a change.
+**Logic.** Join `ProgramIncludes.ProgramName` to `Programs.ProgramName`. The source code is not returned. `ChangedOn` of the program and of each include is the evidence of a change. The `SAPL` names are function groups, and their includes are the function group's own include programs, as `D010INC` lists them. A name with no `Programs` row is not in `TRDIR` on the server that answered.
 
 ## F.49 Role assignments
 
