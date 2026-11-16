@@ -1019,7 +1019,7 @@ Then list the users who have that role or that profile.
 
 **Fields.** Object, AuthName, Version, Field, Low, High, ProfileName.
 
-**Logic.** Keep an AuthName that has both field values. ProfileAuthorizations links that AuthName to ProfileName. Users of those profiles are F.18, and are a second step this control does not require.
+**Logic.** Read the object type and the activity as two sets. Each row is one field, so one filter cannot require both at once. Keep an AuthName that is in both sets, object type DEBUG and activity 02, at version A. An AuthName that is in only one set is out of scope. ProfileAuthorizations links that AuthName to ProfileName. Users of those profiles are F.18, and are a second step this control does not require.
 
 ## F.51 Profiles that change authorization objects
 
